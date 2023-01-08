@@ -2,6 +2,7 @@ package com.example.studyschedule.service.member;
 
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.model.dto.member.MemberDto;
+import com.example.studyschedule.model.request.member.MemberControllerRequest;
 import com.example.studyschedule.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -45,4 +46,19 @@ public class MemberService {
 
         return MemberDto.entityToDto(member);
     }
+
+
+    /**
+     * 새로운 스터디 회원을 추가한다.
+     *
+     * @param request 신규 스터디 회원 정보를 가진 객체
+     * @return 생성된 스터디 회원 Entity
+     */
+    @Transactional
+    public Member createMember(MemberControllerRequest.CreateMemberRequest request) {
+        Member newMember = new Member(request.getName(), request.getAge());
+        return memberRepository.save(newMember);
+    }
+
+
 }
