@@ -1,10 +1,15 @@
 package com.example.studyschedule.entity.member;
 
 import com.example.studyschedule.entity.common.BaseEntity;
+import com.example.studyschedule.entity.schedule.Schedule;
+import com.example.studyschedule.entity.schedule.Todo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "study_member")
@@ -24,4 +29,10 @@ public class Member extends BaseEntity {
         this.name = name;
         this.age = age;
     }
+
+    @OneToMany(mappedBy = "schedule")
+    private List<Schedule> scheduleList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "todo")
+    private List<Todo> todoList = new ArrayList<>();
 }
