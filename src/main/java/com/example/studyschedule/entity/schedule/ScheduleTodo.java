@@ -3,9 +3,11 @@ package com.example.studyschedule.entity.schedule;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.enums.IsClear;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
 @Table(name = "schedule_todo_map")
+@Getter
 public class ScheduleTodo extends BaseEntity {
 
     @Id

@@ -4,6 +4,7 @@ import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.enums.IsUse;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "member_schedule")
+@Getter
 public class Schedule extends BaseEntity {
 
     @Id
@@ -21,7 +23,7 @@ public class Schedule extends BaseEntity {
     private List<ScheduleTodo> scheduleTodoList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     private LocalDateTime startDate;

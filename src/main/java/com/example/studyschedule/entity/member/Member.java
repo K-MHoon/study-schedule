@@ -30,9 +30,9 @@ public class Member extends BaseEntity {
         this.age = age;
     }
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "member")
     private List<Schedule> scheduleList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "todo")
+    @OneToMany(mappedBy = "member")
     private List<Todo> todoList = new ArrayList<>();
 }
