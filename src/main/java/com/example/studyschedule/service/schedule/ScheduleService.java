@@ -1,6 +1,7 @@
 package com.example.studyschedule.service.schedule;
 
 import com.example.studyschedule.entity.member.Member;
+import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.repository.member.MemberRepository;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
@@ -31,7 +32,13 @@ public class ScheduleService {
 
     private Member validateExistedMemberId(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("해당하는 멤버 id를 찾을 수 없습니다. id = %d", memberId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("ID에 해당하는 멤버를 찾을 수 없습니다. id = %d", memberId)));
     }
 
+    @Transactional(readOnly = true)
+    public ScheduleDto getSchedule(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException("ID에 해당하는 스케줄을 찾을 수 없습니다."));
+        return ScheduleDto.entityToDto(schedule);
+    }
 }

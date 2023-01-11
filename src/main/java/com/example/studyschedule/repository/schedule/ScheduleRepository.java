@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
@@ -14,4 +15,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             "join fetch stl.todo " +
             "where s.member.id = :memberId")
     List<Schedule> findAllByMember_Id(@Param("memberId") Long memberId);
+
+    @Query("select s from Schedule s " +
+            "join fetch s.scheduleTodoList stl " +
+            "join fetch stl.todo " +
+            "where s.id = :id")
+    Optional<Schedule> findById(@Param("id") Long id);
 }

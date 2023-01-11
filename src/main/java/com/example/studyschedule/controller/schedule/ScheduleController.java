@@ -22,11 +22,20 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @GetMapping("/{member_id}")
+    @GetMapping("/member/{member_id}")
     public ResponseEntity<List<ScheduleDto>> getMemberScheduleList(@PathVariable(name = "member_id") Long memberId) {
         log.info("[getMemberSchedule] call");
 
         List<ScheduleDto> response = scheduleService.getMemberScheduleList(memberId);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{schedule_id}")
+    public ResponseEntity<ScheduleDto> getSchedule(@PathVariable(name = "schedule_id") Long scheduleId) {
+        log.info("[getSchedule] call");
+
+        ScheduleDto response = scheduleService.getSchedule(scheduleId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
