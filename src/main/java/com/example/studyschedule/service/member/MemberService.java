@@ -41,10 +41,7 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public MemberDto getMember(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("해당하는 스터디 회원의 정보를 확인할 수 없습니다."));
-
-        return MemberDto.entityToDto(member);
+        return MemberDto.entityToDto(validateExistedMemberId(memberId));
     }
 
 
@@ -60,5 +57,16 @@ public class MemberService {
         return memberRepository.save(newMember);
     }
 
+    /**
+     * 회원 ID가 정상적인 스터디 회원인지 검증한다.
+     *
+     * @param memberId 회원 ID
+     * @return 검증된 회원
+     */
+    @Transactional(readOnly = true)
+    public Member validateExistedMemberId(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("ID에 해당하는 멤버를 찾을 수 없습니다. id = %d", memberId)));
+    }
 
 }
