@@ -6,7 +6,6 @@ import com.example.studyschedule.enums.IsClear;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class Todo extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "todo")
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     private List<ScheduleTodo> scheduleTodoList = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)

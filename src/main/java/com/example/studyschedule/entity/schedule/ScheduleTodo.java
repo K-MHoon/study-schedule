@@ -3,12 +3,21 @@ package com.example.studyschedule.entity.schedule;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.enums.IsClear;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "schedule_todo_map")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleTodo extends BaseEntity {
+
+    public ScheduleTodo(Schedule schedule, Todo todo) {
+        this.schedule = schedule;
+        this.todo = todo;
+        this.isClear = IsClear.N;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
