@@ -37,6 +37,16 @@ public class TodoService {
 
     @Transactional(readOnly = true)
     public boolean checkTargetTodoListInNormalTodoList(List<Todo> targetList, List<Todo> normalList) {
+        if(Objects.isNull(targetList) || Objects.isNull(normalList)) {
+            return false;
+        }
+        if(targetList.isEmpty()) {
+            return false;
+        }
+        if(targetList.size() > normalList.size()) {
+            return false;
+        }
+
         return !targetList.stream()
                 .filter(todo -> !normalList.contains(todo))
                 .findAny()
