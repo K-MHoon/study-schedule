@@ -1,6 +1,12 @@
 package com.example.studyschedule.service.schedule;
 
+import com.example.studyschedule.entity.member.Member;
+import com.example.studyschedule.entity.schedule.Schedule;
+import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
+import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
+import com.example.studyschedule.service.member.MemberService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,6 +28,12 @@ class ScheduleServiceTest {
 
     @Autowired
     ScheduleService scheduleService;
+
+    @Autowired
+    TodoService todoService;
+
+    @Autowired
+    MemberService memberService;
 
     @Test
     @DisplayName("회원 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
@@ -48,5 +63,28 @@ class ScheduleServiceTest {
         Long scheduleId = 1_000_000L;
 
         assertThrows(EntityNotFoundException.class, () -> scheduleService.getSchedule(scheduleId));
+    }
+
+    @Test
+    @DisplayName("스케줄이 정상적으로 생성된다.")
+    void createSchedule() {
+        // given
+        Long memberId = 1L;
+        Member member = memberService.validateExistedMemberId(memberId);
+
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime endDate = startDate.plusDays(10);
+        IsUse isUse = IsUse.Y;
+
+        List<Todo> todoList = todoService.getTodoListLinkedMember(member);
+        List<Long> todoIdList = todoList.stream().map(Todo::getId).collect(Collectors.toList());
+
+        ScheduleControllerRequest.CreateScheduleRequest request = new ScheduleControllerRequest.CreateScheduleRequest(startDate, endDate, isUse, todoIdList);
+
+        // when
+        Schedule schedule = scheduleService.createSchedule(memberId, request);
+
+        // then
+        assertEquals(memberId, schedule.getMember().getId());
     }
 }

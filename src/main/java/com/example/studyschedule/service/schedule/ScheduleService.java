@@ -49,10 +49,10 @@ public class ScheduleService {
             throw new IllegalArgumentException("시작 일자가 종료 일자보다 뒤에 있을 수 없습니다.");
         }
         Schedule newSchedule = new Schedule(member, request.getStartDate(), request.getEndDate(), request.getIsUse());
-        scheduleRepository.save(newSchedule);
+        Schedule savedSchedule = scheduleRepository.save(newSchedule);
+        createScheduleTodo(request.getTodoList(), member, savedSchedule);
 
-        createScheduleTodo(request.getTodoList(), member, newSchedule);
-        return newSchedule;
+        return savedSchedule;
     }
 
     private void createScheduleTodo(List<Long> targetIdList, Member member, Schedule newSchedule) {
