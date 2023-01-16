@@ -2,7 +2,9 @@ package com.example.studyschedule.service.schedule;
 
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.model.dto.schedule.TodoDto;
 import com.example.studyschedule.repository.schedule.TodoRepository;
+import com.example.studyschedule.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,16 @@ import java.util.Objects;
 public class TodoService {
 
     private final TodoRepository todoRepository;
+    private final MemberService memberService;
+
+    @Transactional(readOnly = true)
+    public List<TodoDto> getTodoDtoListLinkedMember(Long memberId) {
+        Member member = memberService.validateExistedMemberId(memberId);
+        List<Todo> todoList = getTodoListLinkedMember(member);
+        return todoList.stream()
+                .map(TodoDto::entityToDto)
+                .collect(Collectors.toList());
+    }
 
     @Transactional(readOnly = true)
     public List<Todo> getTodoListLinkedMember(Member member) {

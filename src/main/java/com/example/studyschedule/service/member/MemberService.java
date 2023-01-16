@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,6 +66,9 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public Member validateExistedMemberId(Long memberId) {
+        if(Objects.isNull(memberId)) {
+            throw new IllegalArgumentException("스터디 회원 정보는 null일 수 없습니다.");
+        }
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("ID에 해당하는 멤버를 찾을 수 없습니다. id = %d", memberId)));
     }
