@@ -23,7 +23,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final MemberCommonService memberCommonService;
-    private final TodoService todoService;
+    private final TodoCommonService todoCommonService;
     private final ScheduleTodoService scheduleTodoService;
 
     @Transactional(readOnly = true)
@@ -55,10 +55,10 @@ public class ScheduleService {
     }
 
     private void createScheduleTodo(List<Long> targetIdList, Member member, Schedule newSchedule) {
-        List<Todo> target = todoService.getTodoListByIdList(targetIdList);
-        List<Todo> todoListLinkedMember = todoService.getTodoListLinkedMember(member);
+        List<Todo> target = todoCommonService.getTodoListByIdList(targetIdList);
+        List<Todo> todoListLinkedMember = todoCommonService.getTodoListLinkedMember(member);
 
-        if(todoService.checkTargetTodoListInNormalTodoList(target, todoListLinkedMember)) {
+        if(todoCommonService.checkTargetTodoListInNormalTodoList(target, todoListLinkedMember)) {
             scheduleTodoService.createScheduleTodo(newSchedule, target);
         }
     }

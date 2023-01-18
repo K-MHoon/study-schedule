@@ -35,22 +35,6 @@ class TodoServiceTest {
     MemberCommonService memberCommonService;
 
     @Test
-    @DisplayName("파라미터로 모두 빈 배열을 받을 경우 false를 반환한다.")
-    void checkTargetTodoListInNormalTodoListWhenParameterAllEmpty() {
-        boolean result = todoService.checkTargetTodoListInNormalTodoList(new ArrayList<>(), new ArrayList<>());
-
-        assertEquals(false, result);
-    }
-
-    @Test
-    @DisplayName("target 배열은 비어있고, normal 배열은 비어있지 않은 경우, false를 반환한다.")
-    void checkTargetTodoListInNormalTodoListWhenTargetArrayEmpty() {
-        boolean result = todoService.checkTargetTodoListInNormalTodoList(new ArrayList<>(), Arrays.asList(new Todo(), new Todo()));
-
-        assertEquals(false, result);
-    }
-
-    @Test
     @DisplayName("스터디 회원과 연결된 Todo 정보를 가지고 온다.")
     void getTodoDtoListLinkedMember() {
         Long memberId = 1L;

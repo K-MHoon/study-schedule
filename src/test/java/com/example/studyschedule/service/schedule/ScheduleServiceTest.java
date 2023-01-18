@@ -29,7 +29,7 @@ class ScheduleServiceTest {
     ScheduleService scheduleService;
 
     @Autowired
-    TodoService todoService;
+    TodoCommonService todoCommonService;
 
     @Autowired
     MemberCommonService memberCommonService;
@@ -75,7 +75,7 @@ class ScheduleServiceTest {
         LocalDateTime endDate = startDate.plusDays(10);
         IsUse isUse = IsUse.Y;
 
-        List<Todo> todoList = todoService.getTodoListLinkedMember(member);
+        List<Todo> todoList = todoCommonService.getTodoListLinkedMember(member);
         List<Long> todoIdList = todoList.stream().map(Todo::getId).collect(Collectors.toList());
 
         ScheduleControllerRequest.CreateScheduleRequest request = new ScheduleControllerRequest.CreateScheduleRequest(startDate, endDate, isUse, todoIdList);
