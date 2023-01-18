@@ -6,7 +6,7 @@ import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
-import com.example.studyschedule.service.member.MemberService;
+import com.example.studyschedule.service.member.MemberCommonService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,7 @@ class ScheduleServiceTest {
     TodoService todoService;
 
     @Autowired
-    MemberService memberService;
+    MemberCommonService memberCommonService;
 
     @Test
     @DisplayName("회원 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
@@ -70,7 +69,7 @@ class ScheduleServiceTest {
     void createSchedule() {
         // given
         Long memberId = 1L;
-        Member member = memberService.validateExistedMemberId(memberId);
+        Member member = memberCommonService.validateExistedMemberId(memberId);
 
         LocalDateTime startDate = LocalDateTime.now();
         LocalDateTime endDate = startDate.plusDays(10);

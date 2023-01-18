@@ -4,7 +4,7 @@ import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.model.dto.schedule.TodoDto;
 import com.example.studyschedule.repository.schedule.TodoRepository;
-import com.example.studyschedule.service.member.MemberService;
+import com.example.studyschedule.service.member.MemberCommonService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +32,7 @@ class TodoServiceTest {
     EntityManager entityManager;
 
     @Autowired
-    MemberService memberService;
+    MemberCommonService memberCommonService;
 
     @Test
     @DisplayName("파라미터로 모두 빈 배열을 받을 경우 false를 반환한다.")
@@ -58,7 +57,7 @@ class TodoServiceTest {
 
         List<TodoDto> result = todoService.getTodoDtoListLinkedMember(memberId);
         entityManager.clear();
-        Member member = memberService.validateExistedMemberId(memberId);
+        Member member = memberCommonService.validateExistedMemberId(memberId);
         List<Todo> compareList = todoRepository.findAllByMember(member);
 
         assertEquals(compareList.size(), result.size());

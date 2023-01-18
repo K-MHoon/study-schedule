@@ -6,9 +6,8 @@ import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
-import com.example.studyschedule.service.member.MemberService;
+import com.example.studyschedule.service.member.MemberCommonService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,13 +22,13 @@ import java.util.stream.Collectors;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final MemberService memberService;
+    private final MemberCommonService memberCommonService;
     private final TodoService todoService;
     private final ScheduleTodoService scheduleTodoService;
 
     @Transactional(readOnly = true)
     public List<ScheduleDto> getMemberScheduleList(Long memberId) {
-        memberService.validateExistedMemberId(memberId);
+        memberCommonService.validateExistedMemberId(memberId);
         return scheduleRepository.findAllByMember_Id(memberId).stream()
                 .map(ScheduleDto::entityToDto)
                 .collect(Collectors.toList());
@@ -44,7 +43,7 @@ public class ScheduleService {
 
     @Transactional
     public Schedule createSchedule(Long memberId, ScheduleControllerRequest.CreateScheduleRequest request) {
-        Member member = memberService.validateExistedMemberId(memberId);
+        Member member = memberCommonService.validateExistedMemberId(memberId);
         if (request.getStartDate().isAfter(request.getEndDate())) {
             throw new IllegalArgumentException("시작 일자가 종료 일자보다 뒤에 있을 수 없습니다.");
         }

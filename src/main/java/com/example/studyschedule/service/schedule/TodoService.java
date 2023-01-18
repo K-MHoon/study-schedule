@@ -4,7 +4,7 @@ import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.model.dto.schedule.TodoDto;
 import com.example.studyschedule.repository.schedule.TodoRepository;
-import com.example.studyschedule.service.member.MemberService;
+import com.example.studyschedule.service.member.MemberCommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 public class TodoService {
 
     private final TodoRepository todoRepository;
-    private final MemberService memberService;
+    private final MemberCommonService memberCommonService;
 
     @Transactional(readOnly = true)
     public List<TodoDto> getTodoDtoListLinkedMember(Long memberId) {
-        Member member = memberService.validateExistedMemberId(memberId);
+        Member member = memberCommonService.validateExistedMemberId(memberId);
         List<Todo> todoList = getTodoListLinkedMember(member);
         return todoList.stream()
                 .map(TodoDto::entityToDto)
