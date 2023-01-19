@@ -25,6 +25,7 @@ public class ScheduleService {
     private final MemberCommonService memberCommonService;
     private final TodoCommonService todoCommonService;
     private final ScheduleTodoService scheduleTodoService;
+    private final ScheduleCommonService scheduleCommonService;
 
     @Transactional(readOnly = true)
     public List<ScheduleDto> getMemberScheduleList(Long memberId) {
@@ -36,8 +37,7 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     public ScheduleDto getSchedule(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new EntityNotFoundException("ID에 해당하는 스케줄을 찾을 수 없습니다."));
+        Schedule schedule = scheduleCommonService.validateExistedScheduleId(scheduleId);
         return ScheduleDto.entityToDto(schedule);
     }
 

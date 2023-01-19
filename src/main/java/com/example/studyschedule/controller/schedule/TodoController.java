@@ -29,4 +29,13 @@ public class TodoController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/schedule/{schedule_id}")
+    public ResponseEntity<List<TodoDto>> getScheduleTodoList(@PathVariable(name = "schedule_id") Long scheduleId) {
+        log.info("[getScheduleTodoList] call, scheduleId = {}", scheduleId);
+
+        List<TodoDto> response = todoService.getTodoDtoListLinkedSchedule(scheduleId);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
