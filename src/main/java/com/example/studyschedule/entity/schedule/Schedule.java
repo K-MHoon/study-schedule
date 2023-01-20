@@ -22,6 +22,8 @@ public class Schedule extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<ScheduleTodo> scheduleTodoList = new ArrayList<>();
 

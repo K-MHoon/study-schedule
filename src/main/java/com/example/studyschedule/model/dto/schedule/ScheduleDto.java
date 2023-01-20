@@ -22,6 +22,7 @@ public class ScheduleDto {
 
     private Long id;
     private Long memberId;
+    private String name;
     private List<TodoDto> todoList;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -32,6 +33,7 @@ public class ScheduleDto {
     public static ScheduleDto entityToDto(Schedule schedule) {
         return ScheduleDto.builder()
                 .id(schedule.getId())
+                .name(schedule.getName())
                 .memberId(getMemberId(schedule))
                 .todoList(getTodoList(schedule))
                 .startDate(schedule.getStartDate())
