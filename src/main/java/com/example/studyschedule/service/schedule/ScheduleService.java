@@ -7,7 +7,6 @@ import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public ScheduleDto getSchedule(Long scheduleId) {
         Schedule schedule = scheduleCommonService.validateExistedScheduleId(scheduleId);
-        return ScheduleDto.entityToDto(schedule);
+        return ScheduleDto.entityToDtoWithTodo(schedule);
     }
 
     @Transactional

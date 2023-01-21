@@ -19,7 +19,6 @@ public class TodoDto {
     private Long id;
     private String title;
     private String content;
-    private IsClear isClear;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -28,7 +27,6 @@ public class TodoDto {
                 .id(todo.getId())
                 .title(todo.getTitle())
                 .content(todo.getContent())
-                .isClear(todo.getIsClear())
                 .createdAt(todo.getCreatedAt())
                 .updatedAt(todo.getUpdatedAt())
                 .build();

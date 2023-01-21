@@ -30,12 +30,25 @@ public class ScheduleDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static ScheduleDto entityToDto(Schedule schedule) {
+    public static ScheduleDto entityToDtoWithTodo(Schedule schedule) {
         return ScheduleDto.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
                 .memberId(getMemberId(schedule))
                 .todoList(getTodoList(schedule))
+                .startDate(schedule.getStartDate())
+                .endDate(schedule.getEndDate())
+                .isUse(schedule.getIsUse())
+                .createdAt(schedule.getCreatedAt())
+                .updatedAt(schedule.getUpdatedAt())
+                .build();
+    }
+
+    public static ScheduleDto entityToDto(Schedule schedule) {
+        return ScheduleDto.builder()
+                .id(schedule.getId())
+                .name(schedule.getName())
+                .memberId(getMemberId(schedule))
                 .startDate(schedule.getStartDate())
                 .endDate(schedule.getEndDate())
                 .isUse(schedule.getIsUse())

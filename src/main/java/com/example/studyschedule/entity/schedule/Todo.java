@@ -2,7 +2,6 @@ package com.example.studyschedule.entity.schedule;
 
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
-import com.example.studyschedule.enums.IsClear;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -27,7 +26,4 @@ public class Todo extends BaseEntity {
 
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     private List<ScheduleTodo> scheduleTodoList = new ArrayList<>();
-
-    @Enumerated(value = EnumType.STRING)
-    private IsClear isClear;
 }
