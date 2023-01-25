@@ -28,7 +28,7 @@ class TodoCommonServiceTest {
     @Test
     @DisplayName("target 배열은 비어있고, normal 배열은 비어있지 않은 경우, false를 반환한다.")
     void checkTargetTodoListInNormalTodoListWhenTargetArrayEmpty() {
-        boolean result = todoCommonService.checkTargetTodoListInNormalTodoList(new ArrayList<>(), Arrays.asList(new Todo(), new Todo()));
+        boolean result = todoCommonService.checkTargetTodoListInNormalTodoList(new ArrayList<>(), Arrays.asList(Todo.NoArgsInstance(), Todo.NoArgsInstance()));
 
         assertEquals(false, result);
     }

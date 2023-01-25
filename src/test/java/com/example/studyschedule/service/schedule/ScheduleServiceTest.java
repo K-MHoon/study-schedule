@@ -74,11 +74,12 @@ class ScheduleServiceTest {
         LocalDateTime startDate = LocalDateTime.now();
         LocalDateTime endDate = startDate.plusDays(10);
         IsUse isUse = IsUse.Y;
+        String name = "새로운 스케줄";
 
         List<Todo> todoList = todoCommonService.getTodoListLinkedMember(member);
         List<Long> todoIdList = todoList.stream().map(Todo::getId).collect(Collectors.toList());
 
-        ScheduleControllerRequest.CreateScheduleRequest request = new ScheduleControllerRequest.CreateScheduleRequest(startDate, endDate, isUse, todoIdList);
+        ScheduleControllerRequest.CreateScheduleRequest request = new ScheduleControllerRequest.CreateScheduleRequest(name, startDate, endDate, isUse, todoIdList);
 
         // when
         Schedule schedule = scheduleService.createSchedule(memberId, request);
