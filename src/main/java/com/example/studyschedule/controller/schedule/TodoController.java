@@ -1,15 +1,14 @@
 package com.example.studyschedule.controller.schedule;
 
 import com.example.studyschedule.model.dto.schedule.TodoDto;
+import com.example.studyschedule.model.request.schedule.TodoControllerRequest;
 import com.example.studyschedule.service.schedule.TodoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,5 +36,15 @@ public class TodoController {
         List<TodoDto> response = todoService.getTodoDtoListLinkedSchedule(scheduleId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/member/{member_id}")
+    public ResponseEntity createTodo(@PathVariable(name = "member_id") Long memberId,
+    @RequestBody @Valid TodoControllerRequest.CreateTodoRequest request) {
+        log.info("[createTodo] call, memberId = {}", memberId);
+
+        todoService.createTodo(memberId, request);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

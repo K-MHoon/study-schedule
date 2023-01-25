@@ -4,6 +4,7 @@ import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.model.dto.schedule.TodoDto;
+import com.example.studyschedule.model.request.schedule.TodoControllerRequest;
 import com.example.studyschedule.repository.schedule.TodoRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import jakarta.persistence.EntityManager;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -59,6 +61,20 @@ class TodoServiceTest {
         Schedule schedule = scheduleCommonService.validateExistedScheduleId(scheduleId);
 
         assertEquals(schedule.getScheduleTodoList().size(), result.size());
+    }
+
+    @Test
+    @DisplayName("새로운 할 일을 생성한다.")
+    void createTodo() {
+        Long memberId = 1L;
+        String title = "제목 테스트";
+        String content = "내용 테스트";
+        TodoControllerRequest.CreateTodoRequest request = new TodoControllerRequest.CreateTodoRequest(title, content);
+
+        Todo response = todoService.createTodo(memberId, request);
+
+        assertAll(() -> assertEquals(title, response.getTitle()),
+                () -> assertEquals(content, response.getContent()));
     }
 
 }

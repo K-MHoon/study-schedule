@@ -5,6 +5,8 @@ import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.model.dto.schedule.TodoDto;
+import com.example.studyschedule.model.request.schedule.TodoControllerRequest;
+import com.example.studyschedule.repository.schedule.TodoRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ public class TodoService {
     private final TodoCommonService todoCommonService;
     private final ScheduleCommonService scheduleCommonService;
 
+    private final TodoRepository todoRepository;
+
     @Transactional(readOnly = true)
     public List<TodoDto> getTodoDtoListLinkedMember(Long memberId) {
         Member member = memberCommonService.validateExistedMemberId(memberId);
@@ -38,5 +42,12 @@ public class TodoService {
                 .map(ScheduleTodo::getTodo)
                 .map(TodoDto::entityToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Todo createTodo(Long memberId, TodoControllerRequest.CreateTodoRequest request) {
+        Member member = memberCommonService.validateExistedMemberId(memberId);
+        Todo newTodo = new Todo(request.getTitle(), request.getContent(), member);
+        return todoRepository.save(newTodo);
     }
 }
