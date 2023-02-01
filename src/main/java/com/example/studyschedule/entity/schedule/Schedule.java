@@ -34,11 +34,12 @@ public class Schedule extends BaseEntity {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    public Schedule(Member member, LocalDateTime startDate, LocalDateTime endDate, IsUse isUse) {
+    public Schedule(Member member, LocalDateTime startDate, LocalDateTime endDate, IsUse isUse, String name) {
         this.member = member;
         this.startDate = startDate;
         this.endDate = endDate;
         this.isUse = isUse;
+        this.name = name;
     }
 
     /**
