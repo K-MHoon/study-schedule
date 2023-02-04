@@ -2,7 +2,6 @@ package com.example.studyschedule.controller.schedule;
 
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
-import com.example.studyschedule.repository.schedule.ScheduleRepository;
 import com.example.studyschedule.service.schedule.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
