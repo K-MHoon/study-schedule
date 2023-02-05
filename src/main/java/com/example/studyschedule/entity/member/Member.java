@@ -3,6 +3,7 @@ package com.example.studyschedule.entity.member;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.entity.study.StudyMember;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,4 +36,7 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Todo> todoList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<StudyMember> studyMemberList = new ArrayList<>();
 }
