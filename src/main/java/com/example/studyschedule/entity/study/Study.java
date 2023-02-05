@@ -4,7 +4,7 @@ import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.enums.IsUse;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,10 @@ import java.util.List;
 @Entity
 @Table(name = "study")
 @Getter
-public class Study extends BaseEntity {
+@Builder(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public final class Study extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +39,13 @@ public class Study extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IsUse isUse; // 스터디 사용 여부
 
+    public static Study ofPublicStudy(Member leader, String name, Long fullCount, IsUse isUse) {
+        return Study.builder()
+                .leader(leader)
+                .name(name)
+                .secret(false)
+                .fullCount(fullCount)
+                .isUse(isUse)
+                .build();
+    }
 }
