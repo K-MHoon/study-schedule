@@ -48,4 +48,12 @@ public final class Study extends BaseEntity {
                 .isUse(isUse)
                 .build();
     }
+
+    public long getRemainCount() {
+        return Long.valueOf(this.studyMemberList.stream().count());
+    }
+
+    public String getLeaderName() {
+        return this.leader.getName();
+    }
 }

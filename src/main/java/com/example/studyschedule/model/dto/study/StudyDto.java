@@ -25,10 +25,11 @@ public class StudyDto {
     public static StudyDto entityToDto(Study study) {
         return StudyDto.builder()
                 .id(study.getId())
-                .leaderName(study.getLeader().getName())
+                .leaderName(study.getLeaderName())
                 .studyName(study.getName())
-                .remainCount(Long.valueOf(study.getStudyMemberList().stream().count()))
+                .remainCount(study.getRemainCount())
                 .fullCount(study.getFullCount())
+                .createdBy(study.getCreatedAt())
                 .build();
     }
 }
