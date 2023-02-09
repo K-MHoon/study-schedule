@@ -1,9 +1,12 @@
 package com.example.studyschedule.controller.study;
 
+import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.service.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +24,10 @@ public class StudyController {
     private final StudyService studyService;
 
     @GetMapping
-    public ResponseEntity<List<StudyDto>> getPublicStudyList() {
+    public ResponseEntity<Pagination> getPublicStudyList(@PageableDefault Pageable pageable) {
         log.debug("[getPublicStudyList] call ");
 
-        List<StudyDto> response = studyService.getPublicStudyList();
+        Pagination<List<StudyDto>> response = studyService.getPublicStudyList(pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

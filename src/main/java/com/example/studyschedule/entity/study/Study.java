@@ -43,14 +43,15 @@ public final class Study extends BaseEntity {
         return Study.builder()
                 .leader(leader)
                 .name(name)
+                .studyMemberList(new ArrayList<>())
                 .secret(false)
                 .fullCount(fullCount)
                 .isUse(isUse)
                 .build();
     }
 
-    public long getRemainCount() {
-        return Long.valueOf(this.studyMemberList.stream().count());
+    public Long getRemainCount() {
+        return Long.valueOf(this.studyMemberList.size());
     }
 
     public String getLeaderName() {
