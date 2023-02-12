@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @Transactional
@@ -43,9 +44,9 @@ class StudyServiceTest {
 
         Pagination<List<StudyDto>> response = service.getPublicStudyList(pageRequest);
 
-        assertThat(response.getData()).hasSize(1);
-        assertThat(response.getData().get(0).getStudyName()).isEqualTo("Study Test");
-        assertThat(response.getData().get(0).getLeaderName()).isEqualTo("Test");
+        assertAll(() -> assertThat(response.getData()).hasSize(1),
+                () -> assertThat(response.getData().get(0).getStudyName()).isEqualTo("Study Test"),
+                () -> assertThat(response.getData().get(0).getLeaderName()).isEqualTo("Test"));
     }
 
 }

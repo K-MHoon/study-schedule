@@ -29,7 +29,7 @@ public final class Pagination<T> {
         private int size;
         private int number;
         private boolean first;
-        private Boolean last;
+        private boolean last;
 
         public PageInfo(Page page) {
             this.totalElements = page.getTotalElements();
