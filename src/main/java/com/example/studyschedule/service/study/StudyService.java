@@ -26,7 +26,8 @@ public class StudyService {
     @Transactional(readOnly = true)
     public Pagination<List<StudyDto>> getPublicStudyList(Pageable pageable) {
         Page<Study> studyPage = studyRepository.findAllBySecretAndIsUse(false, IsUse.Y, pageable);
-        List<StudyDto> data = studyPage.getContent().stream().map(StudyDto::entityToDto)
+        List<StudyDto> data = studyPage.getContent().stream()
+                .map(StudyDto::entityToDto)
                 .collect(Collectors.toList());
         return new Pagination<>(studyPage, data);
     }

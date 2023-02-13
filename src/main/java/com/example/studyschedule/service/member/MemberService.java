@@ -2,16 +2,19 @@ package com.example.studyschedule.service.member;
 
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.model.dto.member.MemberDto;
+import com.example.studyschedule.model.dto.security.TokenInfo;
 import com.example.studyschedule.model.request.member.MemberControllerRequest;
 import com.example.studyschedule.repository.member.MemberRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.studyschedule.security.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +24,17 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberCommonService commonService;
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+    @Transactional
+    public TokenInfo login(String memberId, String password) {
+        Authentication authentication = authenticationManagerBuilder.getObject()
+                .authenticate(new UsernamePasswordAuthenticationToken(memberId, password));
+        return jwtTokenProvider.generateToken(authentication);
+    }
 
     /**
      * 스터디 전체 회원 정보를 가지고 온다.

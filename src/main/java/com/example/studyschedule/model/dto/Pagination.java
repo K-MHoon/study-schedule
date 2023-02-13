@@ -22,7 +22,7 @@ public final class Pagination<T> {
     @Getter
     @ToString
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    private static class PageInfo {
+    private static final class PageInfo {
 
         private long totalElements;
         private int totalPages;
