@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberCommonService commonService;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
@@ -65,12 +68,17 @@ public class MemberService {
      * 새로운 스터디 회원을 추가한다.
      *
      * @param request 신규 스터디 회원 정보를 가진 객체
-     * @return 생성된 스터디 회원 Entity
      */
     @Transactional
-    public Member createMember(MemberControllerRequest.CreateMemberRequest request) {
-        Member newMember = new Member(request.getName(), request.getAge());
-        return memberRepository.save(newMember);
+    public void createMember(MemberControllerRequest.CreateMemberRequest request) {
+        memberRepository.findByMemberId(request.getMemberId())
+                .ifPresent(member -> {
+                    log.error("동일한 멤버가 존재합니다. ID = {}", member.getMemberId());
+                    throw new IllegalArgumentException("동일한 멤버가 존재합니다. ID = " + member.getMemberId());
+                });
+
+        Member newMember = new Member(request.getMemberId(), passwordEncoder.encode(request.getPassword()), List.of("USER"), request.getName(), request.getAge());
+        memberRepository.save(newMember);
     }
 
 }

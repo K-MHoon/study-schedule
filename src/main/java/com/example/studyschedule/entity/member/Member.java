@@ -4,15 +4,14 @@ import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.StudyMember;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -41,7 +40,10 @@ public class Member extends BaseEntity implements UserDetails {
 
     private Integer age;
 
-    public Member(String name, Integer age) {
+    public Member(String memberId, String password, List<String> roles, String name, Integer age) {
+        this.memberId = memberId;
+        this.password = password;
+        this.roles = roles;
         this.name = name;
         this.age = age;
     }

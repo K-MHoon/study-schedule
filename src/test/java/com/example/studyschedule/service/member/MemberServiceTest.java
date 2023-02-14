@@ -10,11 +10,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -30,6 +33,9 @@ class MemberServiceTest {
 
     @Autowired
     EntityManager entityManager;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("회원 전체 목록을 조회한다.")
@@ -60,14 +66,34 @@ class MemberServiceTest {
     @Test
     @DisplayName("새로운 스터디 회원을 생성한다.")
     public void createMember() {
+        String memberId = UUID.randomUUID().toString();
+        String password = UUID.randomUUID().toString();
         String name = "흑시바";
         Integer age = 10;
-        MemberControllerRequest.CreateMemberRequest request = new MemberControllerRequest.CreateMemberRequest(name, age);
+        MemberControllerRequest.CreateMemberRequest request = new MemberControllerRequest.CreateMemberRequest(memberId, password, name, age);
 
-        Member member = memberService.createMember(request);
+        memberService.createMember(request);
         entityManager.clear();
-        Member findMember = memberRepository.findById(member.getId()).get();
 
-        assertEquals(name, findMember.getName());
+        Member findMember = memberRepository.findByMemberId(memberId).get();
+
+        assertAll(() -> assertThat(findMember.getMemberId()).isEqualTo(memberId),
+                () -> assertThat(passwordEncoder.matches(password, findMember.getPassword())).isTrue()
+        );
+    }
+
+    @Test
+    @DisplayName("기존에 있는 MemberId 생성을 요청하면 예외가 발생한다.")
+    public void causeExceptionWhenRequestAlreadyExistedMemberIdCreate() {
+        String memberId = UUID.randomUUID().toString();
+        String password = UUID.randomUUID().toString();
+        String name = "흑시바";
+        Integer age = 10;
+        MemberControllerRequest.CreateMemberRequest request = new MemberControllerRequest.CreateMemberRequest(memberId, password, name, age);
+
+        memberService.createMember(request);
+        entityManager.clear();
+
+        assertThrows(IllegalArgumentException.class, () -> memberService.createMember(request));
     }
 }

@@ -13,6 +13,12 @@ public class MemberControllerRequest {
     public static class CreateMemberRequest {
 
         @NotBlank
+        private String memberId;
+
+        @NotBlank
+        private String password;
+
+        @NotBlank
         private String name;
 
         @Positive

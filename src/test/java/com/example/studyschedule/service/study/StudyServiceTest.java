@@ -11,13 +11,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -35,10 +35,13 @@ class StudyServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Test
     @DisplayName("현재 사용 가능하고 공개된 스터디가 조회된다.")
     void getPublicStudyListTest() {
-        Member savedMember = memberRepository.save(new Member("Test", 100));
+        Member savedMember = memberRepository.save(new Member("Test", passwordEncoder.encode(UUID.randomUUID().toString()), List.of("USER"), "Test", 100));
         studyRepository.save(Study.ofPublicStudy(savedMember, "Study Test", 10L, IsUse.Y));
         Pageable pageRequest = PageRequest.of(0, 10);
 
