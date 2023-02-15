@@ -25,4 +25,14 @@ public class MemberControllerRequest {
         @NotNull
         private Integer age;
     }
+
+    @Getter
+    public static class LoginRequest {
+
+        @NotBlank
+        private String memberId;
+
+        @NotBlank
+        private String password;
+    }
 }
