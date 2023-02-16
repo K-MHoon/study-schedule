@@ -28,7 +28,7 @@ public class TodoService {
 
     @Transactional(readOnly = true)
     public List<TodoDto> getTodoDtoListLinkedMember(Long memberId) {
-        Member member = memberCommonService.validateExistedMemberId(memberId);
+        Member member = memberCommonService.validateExistedMemberById(memberId);
         List<Todo> todoList = todoCommonService.getTodoListLinkedMember(member);
         return todoList.stream()
                 .map(TodoDto::entityToDto)
@@ -46,7 +46,7 @@ public class TodoService {
 
     @Transactional
     public Todo createTodo(Long memberId, TodoControllerRequest.CreateTodoRequest request) {
-        Member member = memberCommonService.validateExistedMemberId(memberId);
+        Member member = memberCommonService.validateExistedMemberById(memberId);
         Todo newTodo = new Todo(request.getTitle(), request.getContent(), member);
         return todoRepository.save(newTodo);
     }

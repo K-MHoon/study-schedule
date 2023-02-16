@@ -39,12 +39,12 @@ public final class Study extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IsUse isUse; // 스터디 사용 여부
 
-    public static Study ofPublicStudy(Member leader, String name, Long fullCount, IsUse isUse) {
+    public static Study of(Member leader, String name, Long fullCount, IsUse isUse, Boolean secret) {
         return Study.builder()
                 .leader(leader)
                 .name(name)
                 .studyMemberList(new ArrayList<>())
-                .secret(false)
+                .secret(secret)
                 .fullCount(fullCount)
                 .isUse(isUse)
                 .build();

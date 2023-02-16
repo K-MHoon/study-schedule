@@ -45,7 +45,7 @@ class TodoServiceTest {
 
         List<TodoDto> result = todoService.getTodoDtoListLinkedMember(memberId);
         entityManager.clear();
-        Member member = memberCommonService.validateExistedMemberId(memberId);
+        Member member = memberCommonService.validateExistedMemberById(memberId);
         List<Todo> compareList = todoRepository.findAllByMember(member);
 
         assertEquals(compareList.size(), result.size());

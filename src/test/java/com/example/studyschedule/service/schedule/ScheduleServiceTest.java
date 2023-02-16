@@ -69,7 +69,7 @@ class ScheduleServiceTest {
     void createSchedule() {
         // given
         Long memberId = 1L;
-        Member member = memberCommonService.validateExistedMemberId(memberId);
+        Member member = memberCommonService.validateExistedMemberById(memberId);
 
         LocalDateTime startDate = LocalDateTime.now();
         LocalDateTime endDate = startDate.plusDays(10);

@@ -42,7 +42,7 @@ class StudyServiceTest {
     @DisplayName("현재 사용 가능하고 공개된 스터디가 조회된다.")
     void getPublicStudyListTest() {
         Member savedMember = memberRepository.save(new Member("Test", passwordEncoder.encode(UUID.randomUUID().toString()), List.of("USER"), "Test", 100));
-        studyRepository.save(Study.ofPublicStudy(savedMember, "Study Test", 10L, IsUse.Y));
+        studyRepository.save(Study.of(savedMember, "Study Test", 10L, IsUse.Y, false));
         Pageable pageRequest = PageRequest.of(0, 10);
 
         Pagination<List<StudyDto>> response = service.getPublicStudyList(pageRequest);

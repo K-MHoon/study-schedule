@@ -60,7 +60,7 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public MemberDto getMember(Long memberId) {
-        return MemberDto.entityToDto(commonService.validateExistedMemberId(memberId));
+        return MemberDto.entityToDto(commonService.validateExistedMemberById(memberId));
     }
 
 
