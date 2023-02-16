@@ -3,6 +3,7 @@ package com.example.studyschedule.entity.study;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.enums.IsUse;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public final class Study extends BaseEntity {
     private Long id;
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<StudyMember> studyMemberList = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -39,15 +41,22 @@ public final class Study extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IsUse isUse; // 스터디 사용 여부
 
-    public static Study of(Member leader, String name, Long fullCount, IsUse isUse, Boolean secret) {
+    public static Study ofPublic(Member leader, String name, Long fullCount, IsUse isUse) {
         return Study.builder()
                 .leader(leader)
                 .name(name)
-                .studyMemberList(new ArrayList<>())
-                .secret(secret)
+                .secret(false)
                 .fullCount(fullCount)
                 .isUse(isUse)
                 .build();
+    }
+
+    public void changeToPrivate(String password) {
+        if(StringUtils.isEmpty(password)) {
+            throw new IllegalArgumentException("사설 스터디에는 반드시 비밀번호가 포함되어야 합니다.");
+        }
+        this.secret = true;
+        this.password = password;
     }
 
     public Long getRemainCount() {

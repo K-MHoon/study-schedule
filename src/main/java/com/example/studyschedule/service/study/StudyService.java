@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,8 @@ public class StudyService {
 
     private final MemberCommonService memberCommonService;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Transactional(readOnly = true)
     public Pagination<List<StudyDto>> getPublicStudyList(Pageable pageable) {
         Page<Study> studyPage = studyRepository.findAllBySecretAndIsUse(false, IsUse.Y, pageable);
@@ -37,15 +40,14 @@ public class StudyService {
 
     @Transactional
     public void createPublicStudy(StudyControllerRequest.CreateStudyRequest request) {
-        if(!request.getSecret() && request.getPassword() != null) {
-            throw new IllegalArgumentException("private 방이 아니라면, 비밀번호를 설정할 수 없습니다.");
-        }
-
-        Study newStudy = Study.of(memberCommonService.getLoggedInMember(),
+        Study newStudy = Study.ofPublic(memberCommonService.getLoggedInMember(),
                 request.getStudyName(),
                 request.getFullCount(),
-                request.getIsUse(),
-                request.getSecret());
+                request.getIsUse());
+
+        if(request.getSecret()) {
+            newStudy.changeToPrivate(passwordEncoder.encode(request.getPassword()));
+        }
 
         studyRepository.save(newStudy);
     }

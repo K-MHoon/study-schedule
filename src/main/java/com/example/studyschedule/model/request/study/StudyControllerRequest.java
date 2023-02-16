@@ -9,6 +9,7 @@ public final class StudyControllerRequest {
 
     @Getter
     @ToString
+    @AllArgsConstructor
     public static final class CreateStudyRequest {
 
         @NotEmpty
