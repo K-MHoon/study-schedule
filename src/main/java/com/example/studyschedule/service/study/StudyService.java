@@ -1,5 +1,6 @@
 package com.example.studyschedule.service.study;
 
+import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.Pagination;
@@ -7,6 +8,7 @@ import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +53,14 @@ public class StudyService {
         }
 
         studyRepository.save(newStudy);
+    }
+
+    @Transactional
+    public void deleteStudy(Long studyId) {
+        Member member = memberCommonService.getLoggedInMember();
+        Study study = studyRepository.findByIdAndLeaderAndIsUse(studyId, member, IsUse.Y)
+                .orElseThrow(() -> new EntityNotFoundException("로그인 계정에 해당하는 study가 존재하지 않습니다. id = " + studyId));
+        studyRepository.delete(study);
     }
 }
 

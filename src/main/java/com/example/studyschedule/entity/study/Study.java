@@ -59,6 +59,10 @@ public final class Study extends BaseEntity {
         this.password = password;
     }
 
+    public void addStudyMember(Member member) {
+        this.studyMemberList.add(new StudyMember(member, this));
+    }
+
     public Long getRemainCount() {
         return Long.valueOf(this.studyMemberList.size());
     }

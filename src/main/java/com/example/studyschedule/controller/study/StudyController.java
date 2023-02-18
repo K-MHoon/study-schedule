@@ -42,4 +42,13 @@ public class StudyController {
 
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @DeleteMapping("/{study_id}")
+    public ResponseEntity deleteStudy(@PathVariable("study_id") Long studyId, Principal principal) {
+        log.debug("[deleteStudy] called by = {}", principal.getName());
+
+        studyService.deleteStudy(studyId);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
