@@ -6,6 +6,8 @@ import com.example.studyschedule.model.dto.security.TokenInfo;
 import com.example.studyschedule.model.request.member.MemberControllerRequest;
 import com.example.studyschedule.repository.member.MemberRepository;
 import com.example.studyschedule.security.provider.JwtTokenProvider;
+import jakarta.servlet.http.Cookie;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,4 +85,45 @@ public class MemberService {
         memberRepository.save(newMember);
     }
 
+    public ClientAuthInfo tokenCheck(Cookie[] cookies) {
+        Map<String, String> cookieMap = Arrays.stream(cookies)
+                .collect(Collectors.toMap(cookie -> cookie.getName(), cookie -> cookie.getValue()));
+
+        if(!cookieMap.containsKey("access_token")) {
+            return new ClientAuthInfo(false);
+        }
+
+        if(jwtTokenProvider.validateToken(cookieMap.get("access_token"))){
+            return new ClientAuthInfo(true, false, null);
+        }
+
+        if(!cookieMap.containsKey("refresh_token")) {
+            return new ClientAuthInfo(false);
+        }
+
+        if(jwtTokenProvider.validateToken(cookieMap.get("refresh_token"))) {
+            TokenInfo newToken = jwtTokenProvider.generateToken(jwtTokenProvider.getAuthentication(cookieMap.get("accessToken")));
+            return new ClientAuthInfo(true, true, newToken);
+        }
+
+        return new ClientAuthInfo(false);
+    }
+
+    @Getter
+    public static class ClientAuthInfo {
+
+        private boolean auth;
+        private boolean refresh;
+        private TokenInfo tokenInfo;
+
+        public ClientAuthInfo(boolean auth) {
+            this.auth = auth;
+        }
+
+        public ClientAuthInfo(boolean auth, boolean refresh, TokenInfo tokenInfo) {
+            this.auth = auth;
+            this.refresh = refresh;
+            this.tokenInfo = tokenInfo;
+        }
+    }
 }

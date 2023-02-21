@@ -4,6 +4,8 @@ import com.example.studyschedule.model.dto.member.MemberDto;
 import com.example.studyschedule.model.dto.security.TokenInfo;
 import com.example.studyschedule.model.request.member.MemberControllerRequest;
 import com.example.studyschedule.service.member.MemberService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,5 +80,28 @@ public class MemberController {
         TokenInfo response = memberService.login(request.getMemberId(), request.getPassword());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/token/check")
+    public ResponseEntity<TokenInfo> tokenCheck(HttpServletRequest request) {
+        log.info("[tokenCheck] = request");
+
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies == null || cookies.length < 2) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        MemberService.ClientAuthInfo response = memberService.tokenCheck(cookies);
+
+        if(!response.isAuth()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        if(!response.isRefresh()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(response.getTokenInfo(), HttpStatus.OK);
     }
 }
