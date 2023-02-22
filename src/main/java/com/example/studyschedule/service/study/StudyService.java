@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,6 +60,14 @@ public class StudyService {
         Study study = studyRepository.findByIdAndLeaderAndIsUse(studyId, member, IsUse.Y)
                 .orElseThrow(() -> new EntityNotFoundException("로그인 계정에 해당하는 study가 존재하지 않습니다. id = " + studyId));
         studyRepository.delete(study);
+    }
+
+    @Transactional(readOnly = true)
+    public StudyDto getPublicStudyDetail(Long studyId) {
+        Study publicStudy = studyRepository.findByIdAndSecretAndIsUse(studyId, false, IsUse.Y)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디이거나 비공개 스터디 입니다. id = " + studyId));
+
+        return StudyDto.entityToDto(publicStudy);
     }
 }
 

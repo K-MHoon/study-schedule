@@ -26,9 +26,18 @@ public class StudyController {
 
     @GetMapping
     public ResponseEntity<Pagination> getPublicStudyList(@PageableDefault Pageable pageable) {
-        log.debug("[getPublicStudyList] call ");
+        log.info("[getPublicStudyList] call ");
 
         Pagination<List<StudyDto>> response = studyService.getPublicStudyList(pageable);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{study_id}")
+    public ResponseEntity<StudyDto> getPublicStudyDetail(@PathVariable("study_id") Long studyId) {
+        log.info("[getStudyDetail] call, studyId ={}", studyId);
+
+        StudyDto response = studyService.getPublicStudyDetail(studyId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -36,7 +45,7 @@ public class StudyController {
     @PostMapping
     public ResponseEntity createPublicStudy(@RequestBody @Validated StudyControllerRequest.CreateStudyRequest request,
                                             Principal principal) {
-        log.debug("[createPublicStudyList] called by = {}", principal.getName());
+        log.info("[createPublicStudyList] called by = {}", principal.getName());
 
         studyService.createPublicStudy(request);
 
@@ -45,7 +54,7 @@ public class StudyController {
 
     @DeleteMapping("/{study_id}")
     public ResponseEntity deleteStudy(@PathVariable("study_id") Long studyId, Principal principal) {
-        log.debug("[deleteStudy] called by = {}", principal.getName());
+        log.info("[deleteStudy] called by = {}", principal.getName());
 
         studyService.deleteStudy(studyId);
 

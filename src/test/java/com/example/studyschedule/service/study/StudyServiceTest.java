@@ -10,6 +10,7 @@ import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.repository.member.MemberRepository;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -93,6 +95,37 @@ class StudyServiceTest {
                 () -> assertThat(studyList).hasSize(1),
                 () -> assertThat(studyList.get(0).getName()).isEqualTo(studyName)
         );
+    }
+
+    @Test
+    @DisplayName("단일 공개 스터디를 정상 조회한다.")
+    void getPublicStudyDetail() {
+        // given
+        Study study = Study.ofPublic(member, "스터디 테스트", 10L, IsUse.Y);
+        Study mockStudy = studyRepository.save(study);
+        mockStudy.addStudyMember(createMockMember());
+        mockStudy.addStudyMember(createMockMember());
+
+        // when
+        StudyDto studyDetail = service.getPublicStudyDetail(mockStudy.getId());
+
+        // then
+        assertThat(studyDetail.getId()).isEqualTo(mockStudy.getId());
+    }
+
+    @Test
+    @DisplayName("비공개 스터디는 공개 스터디로 조회되지 않는다.")
+    void doNotFindStudyIfStudyIsSecret() {
+        // given
+        Study study = Study.ofPublic(member, "스터디 테스트", 10L, IsUse.Y);
+        study.changeToPrivate("test");
+        Study mockStudy = studyRepository.save(study);
+        mockStudy.addStudyMember(createMockMember());
+        mockStudy.addStudyMember(createMockMember());
+
+        // when & then
+        assertThrows(EntityNotFoundException.class
+                , () -> service.getPublicStudyDetail(mockStudy.getId()));
     }
 
     @Test
