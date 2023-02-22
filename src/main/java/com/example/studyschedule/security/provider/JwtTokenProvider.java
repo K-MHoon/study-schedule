@@ -4,6 +4,7 @@ import com.example.studyschedule.model.dto.security.TokenInfo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,8 +27,11 @@ public class JwtTokenProvider {
 
     private final Key key;
 
-    @Value("${jwt.expired}")
-    private long expired;
+    @Value("${jwt.access_token.expired}")
+    private long accessTokenExpired;
+
+    @Value("${jwt.refresh_token.expired}")
+    private long refreshTokenExpired;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -35,12 +39,12 @@ public class JwtTokenProvider {
     }
 
     public TokenInfo generateToken(Authentication authentication) {
-        Date expirationDate = calculateExpiredTime();
+        long currentTime = new Date().getTime();
 
-        String accessToken = createAccessToken(authentication, expirationDate);
-        String refreshToken = createRefreshToken(expirationDate);
+        Token accessToken = createAccessToken(authentication, currentTime);
+        Token refreshToken = createRefreshToken(currentTime);
 
-        return new TokenInfo("Bearer", accessToken, refreshToken);
+        return new TokenInfo("Bearer", accessToken.getToken(), accessToken.getExpiredTime(), refreshToken.getToken(), refreshToken.getExpiredTime());
     }
 
     public Authentication getAuthentication(String accessToken) {
@@ -91,23 +95,39 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
     }
 
-    private String createRefreshToken(Date expirationDate) {
-        return Jwts.builder()
-                .setExpiration(expirationDate)
+    private Token createRefreshToken(long currentTime) {
+        Date expiredDate = new Date(currentTime + refreshTokenExpired);
+
+        String token = Jwts.builder()
+                .setExpiration(expiredDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        return new Token(token, expiredDate.getTime());
     }
 
-    private String createAccessToken(Authentication authentication, Date expirationDate) {
-        return Jwts.builder()
+    private Token createAccessToken(Authentication authentication, long currentTime) {
+        Date expiredDate = new Date(currentTime + accessTokenExpired);
+
+        String token = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", getAuthorities(authentication))
-                .setExpiration(expirationDate)
+                .setExpiration(expiredDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        return new Token(token, expiredDate.getTime());
     }
 
-    private Date calculateExpiredTime() {
-        return new Date(new Date().getTime() + expired);
+    @Getter
+    private static class Token {
+
+        private String token;
+        private long expiredTime;
+
+        public Token(String token, long expiredTime) {
+            this.token = token;
+            this.expiredTime = expiredTime;
+        }
     }
 }

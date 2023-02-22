@@ -13,5 +13,7 @@ public final class TokenInfo {
 
     private String grantType;
     private String accessToken;
+    private long accessExpiredTime;
     private String refreshToken;
+    private long refreshExpiredTime;
 }
