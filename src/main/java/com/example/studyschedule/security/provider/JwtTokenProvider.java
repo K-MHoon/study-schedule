@@ -41,10 +41,14 @@ public class JwtTokenProvider {
     public TokenInfo generateToken(Authentication authentication) {
         long currentTime = new Date().getTime();
 
-        Token accessToken = createAccessToken(authentication, currentTime);
+        String accessToken = createAccessToken(authentication, currentTime);
         Token refreshToken = createRefreshToken(currentTime);
 
-        return new TokenInfo("Bearer", accessToken.getToken(), accessToken.getExpiredTime(), refreshToken.getToken(), refreshToken.getExpiredTime());
+        /**
+         * access_token과 refresh_token의 실제 유효기간은 분리 되어 있지만,
+         * 클라이언트 쿠키는 refresh_token의 만료 시간으로 공통되게 생성할 수 있도록 한다.
+         */
+        return new TokenInfo("Bearer", accessToken, refreshToken.getToken(), refreshToken.getExpiredTime());
     }
 
     public Authentication getAuthentication(String accessToken) {
@@ -106,17 +110,15 @@ public class JwtTokenProvider {
         return new Token(token, expiredDate.getTime());
     }
 
-    private Token createAccessToken(Authentication authentication, long currentTime) {
+    private String createAccessToken(Authentication authentication, long currentTime) {
         Date expiredDate = new Date(currentTime + accessTokenExpired);
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", getAuthorities(authentication))
                 .setExpiration(expiredDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-
-        return new Token(token, expiredDate.getTime());
     }
 
     @Getter

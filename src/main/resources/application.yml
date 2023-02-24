@@ -16,9 +16,9 @@ spring:
 jwt:
   secret: Yp2Pa88z8dKEWN7tXos3YgtclBbi2G4gUOoK86FqvrZvUF5rw2
   access_token:
-    expired: 300000 # 5 min
-  refresh_token:
     expired: 1800000 # 30 min
+  refresh_token:
+    expired: 604800000 # 7 days
 
 
 logging:

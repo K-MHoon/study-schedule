@@ -102,7 +102,7 @@ public class MemberService {
         }
 
         if(jwtTokenProvider.validateToken(cookieMap.get("refresh_token"))) {
-            TokenInfo newToken = jwtTokenProvider.generateToken(jwtTokenProvider.getAuthentication(cookieMap.get("accessToken")));
+            TokenInfo newToken = jwtTokenProvider.generateToken(jwtTokenProvider.getAuthentication(cookieMap.get("access_token")));
             return new ClientAuthInfo(true, true, newToken);
         }
 
