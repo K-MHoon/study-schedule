@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -28,11 +29,20 @@ public class MemberController {
      *
      * @return 스터디 전체 회원 정보
      */
-    @GetMapping("/member")
+    @GetMapping("/members")
     public ResponseEntity<List<MemberDto>> getMemberList() {
         log.info("[getMemberList] call");
 
         List<MemberDto> response = memberService.getMemberList();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/member/profile")
+    public ResponseEntity<MemberDto> getMemberProfile(Principal principal) {
+        log.info("[getMemberProfile] called by = {}", principal.getName());
+
+        MemberDto response = memberService.getMemberProfile();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

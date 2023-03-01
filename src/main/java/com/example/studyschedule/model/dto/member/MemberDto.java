@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
@@ -16,16 +17,20 @@ import java.time.LocalDateTime;
 public class MemberDto {
 
     private Long id;
+    private String memberId;
     private String name;
     private Integer age;
+    private List<String> roles;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public static MemberDto entityToDto(Member member) {
         return MemberDto.builder()
                 .id(member.getId())
+                .memberId(member.getMemberId())
                 .name(member.getName())
                 .age(member.getAge())
+                .roles(member.getRoles())
                 .createdAt(member.getCreatedAt())
                 .updatedAt(member.getUpdatedAt())
                 .build();

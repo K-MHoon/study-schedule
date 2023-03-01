@@ -109,6 +109,12 @@ public class MemberService {
         return new ClientAuthInfo(false);
     }
 
+    @Transactional(readOnly = true)
+    public MemberDto getMemberProfile() {
+        Member loggedInMember = commonService.getLoggedInMember();
+        return MemberDto.entityToDto(loggedInMember);
+    }
+
     @Getter
     public static class ClientAuthInfo {
 
