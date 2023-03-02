@@ -3,15 +3,20 @@ package com.example.studyschedule.entity.member;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
@@ -49,18 +54,27 @@ public class Member extends BaseEntity implements UserDetails {
     }
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private List<Schedule> scheduleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private List<Todo> todoList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<StudyMember> studyMemberList = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<Study> getMatchedStudyList() {
+        return this.studyMemberList.stream()
+                .map(StudyMember::getStudy)
                 .collect(Collectors.toList());
     }
 
