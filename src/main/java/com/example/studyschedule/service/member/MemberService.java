@@ -59,12 +59,12 @@ public class MemberService {
     /**
      * 스터디 단일 회원 정보를 가지고 온다.
      *
-     * @param memberId 스터디 회원 ID
+     * @param id 스터디 회원 ID
      * @return 단일 스터디 회원 정보
      */
     @Transactional(readOnly = true)
-    public MemberDto getMember(Long memberId) {
-        return MemberDto.entityToDto(commonService.validateExistedMemberById(memberId));
+    public MemberDto getMemberById(Long id) {
+        return MemberDto.entityToDto(commonService.validateExistedMemberById(id));
     }
 
 

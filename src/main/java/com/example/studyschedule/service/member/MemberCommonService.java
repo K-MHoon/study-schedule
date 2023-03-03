@@ -22,16 +22,16 @@ public class MemberCommonService {
     /**
      * 회원 ID가 정상적인 스터디 회원인지 검증한다.
      *
-     * @param memberId 회원 ID
+     * @param id 회원 ID
      * @return 검증된 회원
      */
     @Transactional(readOnly = true)
-    public Member validateExistedMemberById(Long memberId) {
-        if(Objects.isNull(memberId)) {
+    public Member validateExistedMemberById(Long id) {
+        if(Objects.isNull(id)) {
             throw new IllegalArgumentException("스터디 회원 정보는 null일 수 없습니다.");
         }
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("ID에 해당하는 멤버를 찾을 수 없습니다. id = %d", memberId)));
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("ID에 해당하는 멤버를 찾을 수 없습니다. id = %d", id)));
     }
 
     @Transactional(readOnly = true)

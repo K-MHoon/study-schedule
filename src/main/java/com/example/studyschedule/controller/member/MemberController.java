@@ -50,14 +50,14 @@ public class MemberController {
     /**
      * 특정 스터디 회원 정보를 가지고 온다.
      *
-     * @param memberId 스터디 회원 ID
+     * @param id 스터디 회원 ID
      * @return 스터디 회원 정보
      */
-    @GetMapping("/member/{member_id}")
-    public ResponseEntity<MemberDto> getMember(@PathVariable(name = "member_id") Long memberId) {
-        log.info("[getMember] call");
+    @GetMapping("/member/{id}")
+    public ResponseEntity<MemberDto> getMemberById(@PathVariable(name = "id") Long id, Principal principal) {
+        log.info("[getMemberById] called by = {}", principal.getName());
 
-        MemberDto response = memberService.getMember(memberId);
+        MemberDto response = memberService.getMemberById(id);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
