@@ -1,71 +1,59 @@
 package com.example.studyschedule.service.member;
 
+import com.example.studyschedule.TestHelper;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.model.dto.member.MemberDto;
 import com.example.studyschedule.model.request.member.MemberControllerRequest;
-import com.example.studyschedule.repository.member.MemberRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
-@Transactional
-@Rollback
-class MemberServiceTest {
+class MemberServiceTest extends TestHelper {
 
     @Autowired
     MemberService memberService;
 
-    @Autowired
-    MemberRepository memberRepository;
-
-    @Autowired
-    EntityManager entityManager;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
     @Test
     @DisplayName("회원 전체 목록을 조회한다.")
-    public void getMemberList(){
-        List<Member> memberList = memberRepository.findAll();
+    void getMemberList() {
+        createTestMembersAndSaveByCount(2);
 
         List<MemberDto> response = memberService.getMemberList();
 
-        assertEquals(memberList.size(), response.size());
+        assertAll(() -> assertThat(response).hasSize(2),
+                () -> assertThat(response).extracting("memberId").containsExactlyInAnyOrder("testMember0", "testMember1"));
     }
 
     @Test
     @DisplayName("회원 단일 정보를 조회한다.")
-    public void getMember() {
-        Member target = memberRepository.findById(1L).get();
+    void getMember() {
+        List<Member> memberList = createTestMembersAndSaveByCount(3);
 
-        MemberDto member = memberService.getMember(1L);
+        MemberDto member = memberService.getMemberById(memberList.get(0).getId());
 
-        assertEquals(target.getName(), member.getName());
+        assertThat(member.getId()).isEqualTo(memberList.get(0).getId());
     }
 
     @Test
     @DisplayName("존재하지 않는 회원의 정보를 요청할 경우 예외를 발생시킨다.")
-    public void causedExceptionWhenNotFoundMemberId() {
-        assertThrows(EntityNotFoundException.class, () -> memberService.getMember(99999L));
+    void causedExceptionWhenNotFoundMemberId() {
+        assertThatThrownBy(() -> memberService.getMemberById(99999L))
+                .isInstanceOf(EntityNotFoundException.class)
+                .extracting("message")
+                .isEqualTo("ID에 해당하는 멤버를 찾을 수 없습니다. id = " + 99999);
     }
 
     @Test
     @DisplayName("새로운 스터디 회원을 생성한다.")
-    public void createMember() {
+    void createMember() {
         String memberId = UUID.randomUUID().toString();
         String password = UUID.randomUUID().toString();
         String name = "흑시바";
@@ -84,7 +72,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("기존에 있는 MemberId 생성을 요청하면 예외가 발생한다.")
-    public void causeExceptionWhenRequestAlreadyExistedMemberIdCreate() {
+    void causeExceptionWhenRequestAlreadyExistedMemberIdCreate() {
         String memberId = UUID.randomUUID().toString();
         String password = UUID.randomUUID().toString();
         String name = "흑시바";
@@ -94,6 +82,9 @@ class MemberServiceTest {
         memberService.createMember(request);
         entityManager.clear();
 
-        assertThrows(IllegalArgumentException.class, () -> memberService.createMember(request));
+        assertThatThrownBy(() -> memberService.createMember(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                        .extracting("message")
+                                .isEqualTo("동일한 멤버가 존재합니다. ID = " + memberId);
     }
 }
