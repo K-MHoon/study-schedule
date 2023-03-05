@@ -4,9 +4,11 @@ import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
+import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.dto.schedule.TodoDto;
 import com.example.studyschedule.model.dto.study.StudyDto;
+import com.example.studyschedule.model.dto.study.StudyMemberDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,7 +30,7 @@ public class MemberDto {
     private String name;
     private Integer age;
     private List<String> roles;
-    private List<StudyDto> joinedStudyList;
+    private List<StudyMemberDto> joinedStudyList;
     private List<ScheduleDto> scheduleList;
     private List<TodoDto> todoList;
     private LocalDateTime createdAt;
@@ -42,7 +44,7 @@ public class MemberDto {
                 .name(member.getName())
                 .age(member.getAge())
                 .roles(member.getRoles())
-                .joinedStudyList(toStudyDtoList(member.getMatchedStudyList()))
+                .joinedStudyList(toStudyMemberDtoList(member.getStudyMemberList()))
                 .scheduleList(toScheduleDtoList(member.getScheduleList()))
                 .todoList(toTodoDtoList(member.getTodoList()))
                 .createdAt(member.getCreatedAt())
@@ -50,9 +52,9 @@ public class MemberDto {
                 .build();
     }
 
-    private static List<StudyDto> toStudyDtoList(List<Study> studyList) {
-        return studyList.stream()
-                .map(StudyDto::entityToDto)
+    private static List<StudyMemberDto> toStudyMemberDtoList(List<StudyMember> studyMemberList) {
+        return studyMemberList.stream()
+                .map(StudyMemberDto::entityToDto)
                 .collect(Collectors.toList());
     }
 
