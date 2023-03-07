@@ -86,6 +86,11 @@ public class TestHelper {
         return memberRepository.save(member);
     }
 
+    protected Member createSimpleMember(String memberId) {
+        Member member = Member.builder().memberId(memberId).password("testPassword").build();
+        return memberRepository.save(member);
+    }
+
     protected List<ScheduleTodo> connectScheduleTodoList(Schedule schedule, List<Todo> todoList) {
         return todoList.stream().map(todo -> {
                     ScheduleTodo scheduleTodo = new ScheduleTodo(schedule, todo);

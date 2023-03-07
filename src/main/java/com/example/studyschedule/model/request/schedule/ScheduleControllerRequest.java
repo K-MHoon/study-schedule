@@ -35,4 +35,15 @@ public class ScheduleControllerRequest {
         @UniqueElements
         private List<Long> todoList;
     }
+
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteScheduleRequest {
+
+        @UniqueElements
+        @NotNull
+        private List<Long> scheduleList;
+    }
 }

@@ -3,13 +3,14 @@ package com.example.studyschedule.controller.schedule;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
 import com.example.studyschedule.service.schedule.ScheduleService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -40,11 +41,20 @@ public class ScheduleController {
 
     @PostMapping("/member/{member_id}")
     public ResponseEntity createSchedule(@PathVariable(name = "member_id") Long memberId,
-                                         @RequestBody @Valid ScheduleControllerRequest.CreateScheduleRequest request) {
+                                         @RequestBody @Validated ScheduleControllerRequest.CreateScheduleRequest request) {
         log.info("[createSchedule] call, memberId = {}", memberId);
 
         scheduleService.createSchedule(memberId, request);
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteScheduleAll(@RequestBody @Validated ScheduleControllerRequest.DeleteScheduleRequest request,
+                                  Principal principal) {
+        log.info("[deleteScheduleAll] called by memberId = {}, schedule List = {}", principal.getName(), request.getScheduleList());
+
+        scheduleService.deleteScheduleAll(request);
     }
 }

@@ -10,15 +10,18 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@WithMockUser(username = "testMember")
 class ScheduleServiceTest extends TestHelper {
 
     @Autowired
@@ -79,5 +82,37 @@ class ScheduleServiceTest extends TestHelper {
                 () -> assertThat(schedule.getEndDate()).isEqualTo(endDate),
                 () -> assertThat(schedule.getIsUse()).isEqualTo(isUse),
                 () -> assertThat(schedule.getName()).isEqualTo(name));
+    }
+
+    @Test
+    @DisplayName("요청된 스케줄 전체를 정상적으로 삭제한다.")
+    void deleteScheduleAllSuccess() {
+        // given
+        Member member = createSimpleMember();
+        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 10);
+        ScheduleControllerRequest.DeleteScheduleRequest request = new ScheduleControllerRequest.DeleteScheduleRequest(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()));
+
+        // when
+        scheduleService.deleteScheduleAll(request);
+
+        // then
+        List<Schedule> allScheduleList = scheduleRepository.findAll();
+        assertThat(allScheduleList).hasSize(0);
+    }
+
+    @Test
+    @DisplayName("로그인된 멤버에 해당하지 않는 스케줄 id를 요청할 경우 예외가 발생한다.")
+    void causeExceptionWhenNotLoggedInMemberScheduleDeleteRequest() {
+        // given
+        Member member = createSimpleMember();
+        Member member2 = createSimpleMember("anotherMember");
+        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 10);
+        scheduleList.addAll(createTestSchedulesAndSaveByCount(member2, 2));
+        ScheduleControllerRequest.DeleteScheduleRequest request = new ScheduleControllerRequest.DeleteScheduleRequest(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()));
+
+        // when & then
+        assertThatThrownBy(() -> scheduleService.deleteScheduleAll(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 사용자가 삭제할 수 없는 스케줄을 포함하고 있습니다. memberId = " + member.getMemberId());
     }
 }
