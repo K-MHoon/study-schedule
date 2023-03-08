@@ -3,6 +3,7 @@ package com.example.studyschedule.exception;
 import com.example.studyschedule.enums.exception.ErrorCode;
 import com.example.studyschedule.enums.exception.common.CommonErrorCode;
 import com.example.studyschedule.model.dto.exception.ErrorResponse;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -22,25 +23,31 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(StudyScheduleException.class)
-    public ResponseEntity<Object> handleCustomException(StudyScheduleException e) {
+    public ResponseEntity<Object> handleStudyScheduleException(StudyScheduleException e) {
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException e) {
-        log.warn("handleIllegalArgument", e);
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e) {
+        log.warn("handleIllegalArgumentException", e);
         ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
+        return handleExceptionInternal(errorCode, e.getMessage());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException e) {
+        log.warn("handleEntityNotFoundException", e);
+        ErrorCode errorCode = CommonErrorCode.NOT_FOUND;
         return handleExceptionInternal(errorCode, e.getMessage());
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        log.warn("handleIllegalArgument", e);
+        log.warn("handleMethodArgumentNotValid", e);
         ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
         return handleExceptionInternal(e, errorCode);
     }
-
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAllException(Exception ex) {
