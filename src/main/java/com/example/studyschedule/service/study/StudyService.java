@@ -2,10 +2,12 @@ package com.example.studyschedule.service.study;
 
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.study.Study;
+import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,6 +32,8 @@ public class StudyService {
     private final MemberCommonService memberCommonService;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final StudyMemberRepository studyMemberRepository;
 
     @Transactional(readOnly = true)
     public Pagination<List<StudyDto>> getPublicStudyList(Pageable pageable) {
@@ -68,6 +72,21 @@ public class StudyService {
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디이거나 비공개 스터디 입니다. id = " + studyId));
 
         return StudyDto.entityToDto(publicStudy);
+    }
+
+    @Transactional
+    public void deleteStudyMemberAll(StudyControllerRequest.DeleteStudyMemberAllRequest request) {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+
+        List<StudyMember> studyMemberList = getRequestStudyMemberList(request, loggedInMember);
+        if(studyMemberList.size() != request.getStudyList().size()) {
+            throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스케줄을 포함하고 있습니다. memberId = " + loggedInMember.getMemberId());
+        }
+        studyMemberRepository.deleteAllInBatch(studyMemberList);
+    }
+
+    private List<StudyMember> getRequestStudyMemberList(StudyControllerRequest.DeleteStudyMemberAllRequest request, Member loggedInMember) {
+        return studyMemberRepository.findAllByStudy_IdInAndMember_Id(request.getStudyList(), loggedInMember.getId());
     }
 }
 

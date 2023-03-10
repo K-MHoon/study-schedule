@@ -3,6 +3,9 @@ package com.example.studyschedule.model.request.study;
 import com.example.studyschedule.enums.IsUse;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StudyControllerRequest {
@@ -27,5 +30,15 @@ public final class StudyControllerRequest {
 
         @NotNull
         private IsUse isUse;
+    }
+
+    @Getter
+    @ToString
+    @AllArgsConstructor
+    public static final class DeleteStudyMemberAllRequest {
+
+        @NotNull
+        @UniqueElements
+        private List<Long> studyList;
     }
 }

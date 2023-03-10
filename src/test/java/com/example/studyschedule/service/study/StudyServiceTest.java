@@ -22,10 +22,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -180,6 +182,44 @@ class StudyServiceTest {
         List<StudyMember> studyMemberList = studyMemberRepository.findAll();
         assertThat(studyMemberList).isEmpty();
     }
+
+    @Test
+    @DisplayName("여러 스터디를 탈퇴하면, StudyMember 관계가 모두 삭제된다.")
+    void deleteStudyMemberAllWhenStudyOut() {
+        // given
+        Study study1 = Study.ofPublic(createMockMember(), "스터디 테스트1", 10L, IsUse.Y);
+        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", 10L, IsUse.Y);
+        studyRepository.save(study1);
+        studyRepository.save(study2);
+        studyMemberRepository.save(new StudyMember(member, study1));
+        studyMemberRepository.save(new StudyMember(member, study2));
+        StudyControllerRequest.DeleteStudyMemberAllRequest request = new StudyControllerRequest.DeleteStudyMemberAllRequest(Arrays.asList(study1.getId(), study2.getId()));
+
+        // when
+        service.deleteStudyMemberAll(request);
+
+        // then
+        List<StudyMember> studyMemberList = studyMemberRepository.findAll();
+        assertThat(studyMemberList).isEmpty();
+    }
+
+    @Test
+    @DisplayName("가입되지 않은 스터디 탈퇴를 요청하는 경우, 예외가 발생한다.")
+    void causeExceptionWhenNotJoinedStudyOutRequest() {
+        // given
+        Study study1 = Study.ofPublic(createMockMember(), "스터디 테스트1", 10L, IsUse.Y);
+        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", 10L, IsUse.Y);
+        studyRepository.save(study1);
+        studyRepository.save(study2);
+        studyMemberRepository.save(new StudyMember(member, study1));
+        StudyControllerRequest.DeleteStudyMemberAllRequest request = new StudyControllerRequest.DeleteStudyMemberAllRequest(Arrays.asList(study1.getId(), study2.getId()));
+
+        // when & then
+        assertThatThrownBy(() -> service.deleteStudyMemberAll(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 사용자가 삭제할 수 없는 스케줄을 포함하고 있습니다. memberId = " + member.getMemberId());
+    }
+
 
     private Member createMockMember() {
         return memberRepository.save(Member.builder()

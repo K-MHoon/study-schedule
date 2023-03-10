@@ -60,4 +60,12 @@ public class StudyController {
 
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteStudyMemberAll(@RequestBody @Validated StudyControllerRequest.DeleteStudyMemberAllRequest request, Principal principal) {
+        log.info("[deleteStudyMemberAll] called by = {}, request IdList = {}", principal.getName(), request.getStudyList());
+
+        studyService.deleteStudyMemberAll(request);
+    }
 }
