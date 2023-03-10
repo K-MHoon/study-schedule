@@ -24,7 +24,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             "where s.id = :id")
     Optional<Schedule> findById(@Param("id") Long id);
 
-    int countAllByIdInAndMember_MemberId(List<Long> scheduleId, String memberId);
+    int countAllByIdInAndMember_Id(List<Long> scheduleIdList, Long memberId);
 
-    int deleteAllByIdInAndMember_MemberId(List<Long> scheduleId, String memberId);
+    int deleteAllByIdInAndMember_Id(List<Long> scheduleIdList, Long memberId);
 }

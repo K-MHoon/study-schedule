@@ -70,11 +70,11 @@ public class ScheduleService {
         if(isNotSameRequestAndDataCount(request, member)) {
             throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스케줄을 포함하고 있습니다. memberId = " + member.getMemberId());
         }
-        scheduleRepository.deleteAllByIdInAndMember_MemberId(request.getScheduleList(), member.getMemberId());
+        scheduleRepository.deleteAllByIdInAndMember_Id(request.getScheduleList(), member.getId());
 
     }
 
     private boolean isNotSameRequestAndDataCount(ScheduleControllerRequest.DeleteScheduleRequest request, Member member) {
-        return scheduleRepository.countAllByIdInAndMember_MemberId(request.getScheduleList(), member.getMemberId()) != request.getScheduleList().size();
+        return scheduleRepository.countAllByIdInAndMember_Id(request.getScheduleList(), member.getId()) != request.getScheduleList().size();
     }
 }
