@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,6 +48,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.warn("handleMethodArgumentNotValid", e);
         ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
         return handleExceptionInternal(e, errorCode);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        log.warn("handleHttpMessageNotReadable", e);
+        ErrorCode errorCode = CommonErrorCode.NOT_READ_HTTP_MESSAGE;
+        return handleExceptionInternal(errorCode);
     }
 
     @ExceptionHandler({Exception.class})

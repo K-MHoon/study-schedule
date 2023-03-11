@@ -12,17 +12,19 @@ public class MemberControllerRequest {
     @AllArgsConstructor
     public static class CreateMemberRequest {
 
-        @NotBlank
+        @NotBlank(message = "회원 아이디는 빈 칸일 수 없습니다.")
         private String memberId;
 
-        @NotBlank
+        @NotBlank(message = "비밀번호는 빈 칸일 수 없습니다.")
         private String password;
 
-        @NotBlank
+        @NotBlank(message = "이름은 빈 칸일 수 없습니다.")
         private String name;
 
-        @Positive
-        @NotNull
+        @Positive(message = "양수 입력만 가능합니다.")
+        @NotNull(message = "해당 값은 널(Null)일 수 없습니다.")
+        @Min(value = 1, message = "최소 1살 이상이어야 합니다.")
+        @Max(value = 100, message = "최소 100살 미만이어야 합니다.")
         private Integer age;
     }
 
