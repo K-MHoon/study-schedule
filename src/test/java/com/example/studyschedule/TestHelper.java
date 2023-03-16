@@ -9,6 +9,8 @@ import com.example.studyschedule.repository.member.MemberRepository;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
 import com.example.studyschedule.repository.schedule.ScheduleTodoRepository;
 import com.example.studyschedule.repository.schedule.TodoRepository;
+import com.example.studyschedule.repository.study.StudyMemberRepository;
+import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import com.example.studyschedule.service.schedule.ScheduleCommonService;
 import com.example.studyschedule.service.schedule.TodoCommonService;
@@ -29,6 +31,12 @@ public class TestHelper {
 
     @Autowired
     protected MemberRepository memberRepository;
+
+    @Autowired
+    protected StudyRepository studyRepository;
+
+    @Autowired
+    protected StudyMemberRepository studyMemberRepository;
 
     @Autowired
     protected TodoRepository todoRepository;

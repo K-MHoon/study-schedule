@@ -1,5 +1,6 @@
 package com.example.studyschedule.service.study;
 
+import com.example.studyschedule.TestHelper;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
@@ -7,20 +8,14 @@ import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
-import com.example.studyschedule.repository.member.MemberRepository;
-import com.example.studyschedule.repository.study.StudyMemberRepository;
-import com.example.studyschedule.repository.study.StudyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,36 +26,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-@Transactional
-@WithMockUser(username = "test", authorities = {"USER"})
-class StudyServiceTest {
+@WithMockUser(username = "testMember", authorities = {"USER"})
+class StudyServiceTest extends TestHelper {
 
     @Autowired
     StudyService service;
-
-    @Autowired
-    StudyRepository studyRepository;
-
-    @Autowired
-    MemberRepository memberRepository;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    StudyMemberRepository studyMemberRepository;
 
     private Member member;
 
     @BeforeEach
     void init() {
-        Member member = Member.builder()
-                .memberId("test")
-                .password("test")
-                .name("test")
-                .build();
-        this.member = memberRepository.save(member);
+        this.member = createSimpleMember();
     }
 
     @Test
@@ -96,6 +72,32 @@ class StudyServiceTest {
         assertAll(
                 () -> assertThat(studyList).hasSize(1),
                 () -> assertThat(studyList.get(0).getName()).isEqualTo(studyName)
+        );
+    }
+
+    @Test
+    @DisplayName("공개 스터디 생성에 성공하면 스터디 장이므로 자동으로 가입된다.")
+    void joinNewStudyWhenCreatePublicStudySuccess() {
+        // given
+        String studyName = "스터디 테스트";
+        Boolean secret = false;
+        String password = "";
+        Long fullCount = 10L;
+        IsUse isUse = IsUse.Y;
+        StudyControllerRequest.CreateStudyRequest request
+                = new StudyControllerRequest.CreateStudyRequest(studyName, secret, password, fullCount, isUse);
+
+        // when
+        service.createPublicStudy(request);
+        entityManagerFlushAndClear();
+
+        // then
+        List<Study> studyList = studyRepository.findAll();
+        assertAll(
+                () -> assertThat(studyList).hasSize(1),
+                () -> assertThat(studyList.get(0).getLeader().getMemberId()).isEqualTo("testMember"),
+                () -> assertThat(studyList.get(0).getStudyMemberList()).hasSize(1),
+                () -> assertThat(studyList.get(0).getStudyMemberList().get(0).getMember().getMemberId()).isEqualTo("testMember")
         );
     }
 
