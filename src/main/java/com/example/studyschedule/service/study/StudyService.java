@@ -55,7 +55,8 @@ public class StudyService {
             newStudy.changeToPrivate(passwordEncoder.encode(request.getPassword()));
         }
 
-        studyRepository.save(newStudy);
+        Study savedStudy = studyRepository.save(newStudy);
+        studyMemberRepository.save(new StudyMember(memberCommonService.getLoggedInMember(), savedStudy));
     }
 
     @Transactional
