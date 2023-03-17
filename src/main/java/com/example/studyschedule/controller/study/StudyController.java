@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,44 +20,39 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/study")
 public class StudyController {
-
     private final StudyService studyService;
 
     @GetMapping
-    public ResponseEntity<Pagination> getPublicStudyList(@PageableDefault Pageable pageable) {
+    @ResponseStatus(HttpStatus.OK)
+    public Pagination<List<StudyDto>> getPublicStudyList(@PageableDefault Pageable pageable) {
         log.info("[getPublicStudyList] call ");
 
-        Pagination<List<StudyDto>> response = studyService.getPublicStudyList(pageable);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return studyService.getPublicStudyList(pageable);
     }
 
     @GetMapping("/{study_id}")
-    public ResponseEntity<StudyDto> getPublicStudyDetail(@PathVariable("study_id") Long studyId) {
+    @ResponseStatus(HttpStatus.OK)
+    public StudyDto getPublicStudyDetail(@PathVariable("study_id") Long studyId) {
         log.info("[getStudyDetail] call, studyId ={}", studyId);
 
-        StudyDto response = studyService.getPublicStudyDetail(studyId);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return studyService.getPublicStudyDetail(studyId);
     }
 
     @PostMapping
-    public ResponseEntity createPublicStudy(@RequestBody @Validated StudyControllerRequest.CreateStudyRequest request,
+    @ResponseStatus(HttpStatus.OK)
+    public void createPublicStudy(@RequestBody @Validated StudyControllerRequest.CreateStudyRequest request,
                                             Principal principal) {
         log.info("[createPublicStudyList] called by = {}", principal.getName());
 
         studyService.createPublicStudy(request);
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @DeleteMapping("/{study_id}")
-    public ResponseEntity deleteStudy(@PathVariable("study_id") Long studyId, Principal principal) {
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteStudy(@PathVariable("study_id") Long studyId, Principal principal) {
         log.info("[deleteStudy] called by = {}", principal.getName());
 
         studyService.deleteStudy(studyId);
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @DeleteMapping

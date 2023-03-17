@@ -38,9 +38,11 @@ public class StudyService {
     @Transactional(readOnly = true)
     public Pagination<List<StudyDto>> getPublicStudyList(Pageable pageable) {
         Page<Study> studyPage = studyRepository.findAllBySecretAndIsUse(false, IsUse.Y, pageable);
+
         List<StudyDto> data = studyPage.getContent().stream()
                 .map(StudyDto::entityToDto)
                 .collect(Collectors.toList());
+
         return new Pagination<>(studyPage, data);
     }
 
@@ -62,8 +64,10 @@ public class StudyService {
     @Transactional
     public void deleteStudy(Long studyId) {
         Member member = memberCommonService.getLoggedInMember();
+
         Study study = studyRepository.findByIdAndLeaderAndIsUse(studyId, member, IsUse.Y)
-                .orElseThrow(() -> new EntityNotFoundException("로그인 계정에 해당하는 study가 존재하지 않습니다. id = " + studyId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 Study는 삭제할 수 없습니다. id = " + studyId));
+
         studyRepository.delete(study);
     }
 
@@ -78,12 +82,17 @@ public class StudyService {
     @Transactional
     public void deleteStudyMemberAll(StudyControllerRequest.DeleteStudyMemberAllRequest request) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
-
         List<StudyMember> studyMemberList = getRequestStudyMemberList(request, loggedInMember);
-        if(studyMemberList.size() != request.getStudyList().size()) {
-            throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스케줄을 포함하고 있습니다. memberId = " + loggedInMember.getMemberId());
+
+        if(sizeNotEqual(request, studyMemberList)) {
+            throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스터디를 포함하고 있습니다. memberId = " + loggedInMember.getMemberId());
         }
+
         studyMemberRepository.deleteAllInBatch(studyMemberList);
+    }
+
+    private boolean sizeNotEqual(StudyControllerRequest.DeleteStudyMemberAllRequest request, List<StudyMember> studyMemberList) {
+        return studyMemberList.size() != request.getStudyList().size();
     }
 
     private List<StudyMember> getRequestStudyMemberList(StudyControllerRequest.DeleteStudyMemberAllRequest request, Member loggedInMember) {
