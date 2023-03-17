@@ -12,6 +12,7 @@ public final class StudyControllerRequest {
 
     @Getter
     @ToString
+    @NoArgsConstructor
     @AllArgsConstructor
     public static final class CreateStudyRequest {
 
@@ -34,6 +35,7 @@ public final class StudyControllerRequest {
 
     @Getter
     @ToString
+    @NoArgsConstructor
     @AllArgsConstructor
     public static final class DeleteStudyMemberAllRequest {
 

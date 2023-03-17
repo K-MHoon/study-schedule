@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/token/check", "/api/login", "/api/register").permitAll()
                         .requestMatchers("/api/member/**", "/api/members").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/api/study").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/study").hasRole("USER")
                         .anyRequest().permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
