@@ -9,4 +9,8 @@ import java.util.List;
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     List<Todo> findAllByMember(Member member);
+
+    int countAllByIdInAndMember_Id(List<Long> todoIdList, Long memberId);
+
+    int deleteAllByIdInAndMember_Id(List<Long> todoIdList, Long memberId);
 }

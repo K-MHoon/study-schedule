@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -46,5 +48,14 @@ public class TodoController {
         todoService.createTodo(memberId, request);
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTodoAll(@RequestBody @Validated TodoControllerRequest.DeleteTodoRequest request,
+                                  Principal principal) {
+        log.info("[deleteTodoAll] called by memberId = {}, todo List = {}", principal.getName(), request.getTodoList());
+
+        todoService.deleteTodoAll(request);
     }
 }
