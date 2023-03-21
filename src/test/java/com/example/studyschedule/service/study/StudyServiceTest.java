@@ -219,7 +219,7 @@ class StudyServiceTest extends TestHelper {
         // when & then
         assertThatThrownBy(() -> service.deleteStudyMemberAll(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("해당 사용자가 삭제할 수 없는 스케줄을 포함하고 있습니다. memberId = " + member.getMemberId());
+                .hasMessage("해당 사용자가 삭제할 수 없는 스터디를 포함하고 있습니다. memberId = " + member.getMemberId());
     }
 
 

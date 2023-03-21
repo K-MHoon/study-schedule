@@ -27,9 +27,10 @@ public class ScheduleService {
     private final ScheduleCommonService scheduleCommonService;
 
     @Transactional(readOnly = true)
-    public List<ScheduleDto> getMemberScheduleList(Long memberId) {
-        memberCommonService.validateExistedMemberById(memberId);
-        return scheduleRepository.findAllByMember_Id(memberId).stream()
+    public List<ScheduleDto> getMemberScheduleList() {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+
+        return scheduleRepository.findAllByMember_Id(loggedInMember.getId()).stream()
                 .map(ScheduleDto::entityToDto)
                 .collect(Collectors.toList());
     }
@@ -41,15 +42,18 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Schedule createSchedule(Long memberId, ScheduleControllerRequest.CreateScheduleRequest request) {
-        Member member = memberCommonService.validateExistedMemberById(memberId);
+    public Schedule createSchedule(ScheduleControllerRequest.CreateScheduleRequest request) {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+
         if (request.getStartDate().isAfter(request.getEndDate())) {
             throw new IllegalArgumentException("시작 일자가 종료 일자보다 뒤에 있을 수 없습니다.");
         }
-        Schedule newSchedule = new Schedule(member, request.getStartDate(), request.getEndDate(), request.getIsUse(), request.getName());
+
+        Schedule newSchedule = new Schedule(loggedInMember, request.getStartDate(), request.getEndDate(), request.getIsUse(), request.getName());
+
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
         if(!request.getTodoList().isEmpty()) {
-            createScheduleTodo(request.getTodoList(), member, savedSchedule);
+            createScheduleTodo(request.getTodoList(), loggedInMember, savedSchedule);
         }
 
         return savedSchedule;

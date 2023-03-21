@@ -7,6 +7,7 @@ import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,24 +28,29 @@ class ScheduleServiceTest extends TestHelper {
     @Autowired
     ScheduleService scheduleService;
 
+    private Member member;
+
+    @BeforeEach
+    void setup() {
+        member = createSimpleMember();
+    }
+
     @Test
     @DisplayName("회원 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
     void getMemberScheduleList() {
-        List<Member> memberList = createTestMembersAndSaveByCount(2);
-        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(memberList.get(0), 2);
+        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2);
 
-        List<ScheduleDto> result = scheduleService.getMemberScheduleList(memberList.get(0).getId());
+        List<ScheduleDto> result = scheduleService.getMemberScheduleList();
 
         assertAll(() -> assertThat(result).hasSize(2),
                 () -> assertThat(result).extracting("id").containsExactlyInAnyOrder(scheduleList.get(0).getId(), scheduleList.get(1).getId()),
-                () -> assertThat(result).extracting("memberId").containsOnly(memberList.get(0).getId()));
+                () -> assertThat(result).extracting("memberId").containsOnly(member.getId()));
 
     }
 
     @Test
     @DisplayName("스케줄 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
     void getSchedule() {
-        Member member = createSimpleMember();
         List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2);
 
         ScheduleDto result = scheduleService.getSchedule(scheduleList.get(0).getId());
@@ -65,7 +71,6 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("스케줄이 정상적으로 생성된다.")
     void createSchedule() {
         // given
-        Member member = createSimpleMember();
         LocalDateTime startDate = LocalDateTime.now();
         LocalDateTime endDate = startDate.plusDays(10);
         IsUse isUse = IsUse.Y;
@@ -74,7 +79,7 @@ class ScheduleServiceTest extends TestHelper {
         ScheduleControllerRequest.CreateScheduleRequest request = new ScheduleControllerRequest.CreateScheduleRequest(name, startDate, endDate, isUse, Collections.emptyList());
 
         // when
-        Schedule schedule = scheduleService.createSchedule(member.getId(), request);
+        Schedule schedule = scheduleService.createSchedule(request);
 
         // then
         assertAll(() -> assertThat(schedule.getMember()).isEqualTo(member),
@@ -88,7 +93,6 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("요청된 스케줄 전체를 정상적으로 삭제한다.")
     void deleteScheduleAllSuccess() {
         // given
-        Member member = createSimpleMember();
         List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 10);
         ScheduleControllerRequest.DeleteScheduleRequest request = new ScheduleControllerRequest.DeleteScheduleRequest(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()));
 
@@ -104,7 +108,6 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("로그인된 멤버에 해당하지 않는 스케줄 id를 요청할 경우 예외가 발생한다.")
     void causeExceptionWhenNotLoggedInMemberScheduleDeleteRequest() {
         // given
-        Member member = createSimpleMember();
         Member member2 = createSimpleMember("anotherMember");
         List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 10);
         scheduleList.addAll(createTestSchedulesAndSaveByCount(member2, 2));

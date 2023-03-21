@@ -21,32 +21,28 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @GetMapping("/member/{member_id}")
-    public ResponseEntity<List<ScheduleDto>> getMemberScheduleList(@PathVariable(name = "member_id") Long memberId) {
-        log.info("[getMemberSchedule] call, memberId = {}", memberId);
+    @GetMapping("/member")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ScheduleDto> getMemberScheduleList(Principal principal) {
+        log.info("[getMemberSchedule] called by {}", principal.getName());
 
-        List<ScheduleDto> response = scheduleService.getMemberScheduleList(memberId);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return scheduleService.getMemberScheduleList();
     }
 
     @GetMapping("/{schedule_id}")
-    public ResponseEntity<ScheduleDto> getSchedule(@PathVariable(name = "schedule_id") Long scheduleId) {
-        log.info("[getSchedule] call, scheduleId = {}", scheduleId);
+    @ResponseStatus(HttpStatus.OK)
+    public ScheduleDto getSchedule(Principal principal, @PathVariable(name = "schedule_id") Long scheduleId) {
+        log.info("[getSchedule] called by {}, schedule Id = {}", principal.getName(), scheduleId);
 
-        ScheduleDto response = scheduleService.getSchedule(scheduleId);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return scheduleService.getSchedule(scheduleId);
     }
 
-    @PostMapping("/member/{member_id}")
-    public ResponseEntity createSchedule(@PathVariable(name = "member_id") Long memberId,
-                                         @RequestBody @Validated ScheduleControllerRequest.CreateScheduleRequest request) {
-        log.info("[createSchedule] call, memberId = {}", memberId);
+    @PostMapping("/member")
+    @ResponseStatus(HttpStatus.OK)
+    public void createSchedule(Principal principal, @RequestBody @Validated ScheduleControllerRequest.CreateScheduleRequest request) {
+        log.info("[createSchedule] called by {}, body = {}", principal.getName(), request);
 
-        scheduleService.createSchedule(memberId, request);
-
-        return new ResponseEntity(HttpStatus.OK);
+        scheduleService.createSchedule(request);
     }
 
     @DeleteMapping
