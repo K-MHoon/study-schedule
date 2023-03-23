@@ -30,21 +30,19 @@ public class MemberController {
      * @return 스터디 전체 회원 정보
      */
     @GetMapping("/members")
-    public ResponseEntity<List<MemberDto>> getMemberList() {
+    @ResponseStatus(HttpStatus.OK)
+    public List<MemberDto> getMemberList() {
         log.info("[getMemberList] call");
 
-        List<MemberDto> response = memberService.getMemberList();
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return memberService.getMemberList();
     }
 
     @GetMapping("/member/profile")
-    public ResponseEntity<MemberDto> getMemberProfile(Principal principal) {
-        log.info("[getMemberProfile] called by = {}", principal.getName());
+    @ResponseStatus(HttpStatus.OK)
+    public MemberDto getMemberProfile(Principal principal) {
+        log.info("[getMemberProfile] called by {}", principal.getName());
 
-        MemberDto response = memberService.getMemberProfile();
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return memberService.getMemberProfile();
     }
 
     /**
@@ -54,12 +52,11 @@ public class MemberController {
      * @return 스터디 회원 정보
      */
     @GetMapping("/member/{id}")
-    public ResponseEntity<MemberDto> getMemberById(@PathVariable(name = "id") Long id, Principal principal) {
-        log.info("[getMemberById] called by = {}", principal.getName());
+    @ResponseStatus(HttpStatus.OK)
+    public MemberDto getMemberById(@PathVariable(name = "id") Long id, Principal principal) {
+        log.info("[getMemberById] called by {}", principal.getName());
 
-        MemberDto response = memberService.getMemberById(id);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return memberService.getMemberById(id);
     }
 
     /**
@@ -69,12 +66,11 @@ public class MemberController {
      * @return 정상적으로 생성된 경우 OK
      */
     @PostMapping("/register")
-    public ResponseEntity createMember(@RequestBody @Valid MemberControllerRequest.CreateMemberRequest request) {
+    @ResponseStatus(HttpStatus.OK)
+    public void createMember(@RequestBody @Valid MemberControllerRequest.CreateMemberRequest request) {
         log.info("[createMember] ID = {}, name = {}, age = {}", request.getMemberId(), request.getName(), request.getAge());
 
         memberService.createMember(request);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -84,12 +80,11 @@ public class MemberController {
      * @return {@link TokenInfo 로그인 토큰 정보}
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenInfo> login(@RequestBody @Valid MemberControllerRequest.LoginRequest request) {
+    @ResponseStatus(HttpStatus.OK)
+    public TokenInfo login(@RequestBody @Valid MemberControllerRequest.LoginRequest request) {
         log.info("[login] Id = {}", request.getMemberId());
 
-        TokenInfo response = memberService.login(request.getMemberId(), request.getPassword());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return memberService.login(request.getMemberId(), request.getPassword());
     }
 
     @PostMapping("/token/check")
