@@ -19,6 +19,7 @@ public class StudyDto {
     private Long id;
     private String leaderName;
     private String studyName;
+    private String content;
     private Long remainCount;
     private Long fullCount;
     private IsUse isUse;
@@ -29,6 +30,7 @@ public class StudyDto {
                 .id(study.getId())
                 .leaderName(study.getLeaderName())
                 .studyName(study.getName())
+                .content(study.getContent())
                 .remainCount(study.getRemainCount())
                 .fullCount(study.getFullCount())
                 .isUse(study.getIsUse())

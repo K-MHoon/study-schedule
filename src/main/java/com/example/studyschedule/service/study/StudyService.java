@@ -50,6 +50,7 @@ public class StudyService {
     public void createPublicStudy(StudyControllerRequest.CreateStudyRequest request) {
         Study newStudy = Study.ofPublic(memberCommonService.getLoggedInMember(),
                 request.getStudyName(),
+                request.getContent(),
                 request.getFullCount(),
                 request.getIsUse());
 

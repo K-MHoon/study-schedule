@@ -32,6 +32,8 @@ public final class Study extends BaseEntity {
 
     private String name; // 스터디 이름
 
+    private String content; // 스터디 소개
+
     private Boolean secret; // 비공개 여부
 
     private String password; // 비밀번호
@@ -41,10 +43,11 @@ public final class Study extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IsUse isUse; // 스터디 사용 여부
 
-    public static Study ofPublic(Member leader, String name, Long fullCount, IsUse isUse) {
+    public static Study ofPublic(Member leader, String name, String content, Long fullCount, IsUse isUse) {
         return Study.builder()
                 .leader(leader)
                 .name(name)
+                .content(content)
                 .secret(false)
                 .fullCount(fullCount)
                 .isUse(isUse)

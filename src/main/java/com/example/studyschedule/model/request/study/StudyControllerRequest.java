@@ -19,6 +19,9 @@ public final class StudyControllerRequest {
         @NotEmpty
         private String studyName;
 
+        @NotEmpty
+        private String content;
+
         @NotNull
         private Boolean secret;
 

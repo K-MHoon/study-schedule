@@ -42,7 +42,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("현재 사용 가능하고 공개된 스터디가 조회된다.")
     void getPublicStudyListTest() {
-        studyRepository.save(Study.ofPublic(member, "Study Test", 10L, IsUse.Y));
+        studyRepository.save(Study.ofPublic(member, "Study Test", "스터디", 10L, IsUse.Y));
         Pageable pageRequest = PageRequest.of(0, 10);
 
         Pagination<List<StudyDto>> response = service.getPublicStudyList(pageRequest);
@@ -57,12 +57,13 @@ class StudyServiceTest extends TestHelper {
     void createPublicStudy() {
         // given
         String studyName = "스터디 테스트";
+        String content = "공부 스터디 입니다.";
         Boolean secret = false;
         String password = null;
         Long fullCount = 10L;
         IsUse isUse = IsUse.Y;
         StudyControllerRequest.CreateStudyRequest request
-                = new StudyControllerRequest.CreateStudyRequest(studyName, secret, password, fullCount, isUse);
+                = new StudyControllerRequest.CreateStudyRequest(studyName, content, secret, password, fullCount, isUse);
 
         // when
         service.createPublicStudy(request);
@@ -80,12 +81,13 @@ class StudyServiceTest extends TestHelper {
     void joinNewStudyWhenCreatePublicStudySuccess() {
         // given
         String studyName = "스터디 테스트";
+        String content = "공부 스터디 입니다.";
         Boolean secret = false;
         String password = "";
         Long fullCount = 10L;
         IsUse isUse = IsUse.Y;
         StudyControllerRequest.CreateStudyRequest request
-                = new StudyControllerRequest.CreateStudyRequest(studyName, secret, password, fullCount, isUse);
+                = new StudyControllerRequest.CreateStudyRequest(studyName, content, secret, password, fullCount, isUse);
 
         // when
         service.createPublicStudy(request);
@@ -105,7 +107,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("단일 공개 스터디를 정상 조회한다.")
     void getPublicStudyDetail() {
         // given
-        Study study = Study.ofPublic(member, "스터디 테스트", 10L, IsUse.Y);
+        Study study = getStudyFixture();
         Study mockStudy = studyRepository.save(study);
         mockStudy.addStudyMember(createMockMember());
         mockStudy.addStudyMember(createMockMember());
@@ -117,11 +119,15 @@ class StudyServiceTest extends TestHelper {
         assertThat(studyDetail.getId()).isEqualTo(mockStudy.getId());
     }
 
+    private Study getStudyFixture() {
+        return Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
+    }
+
     @Test
     @DisplayName("비공개 스터디는 공개 스터디로 조회되지 않는다.")
     void doNotFindStudyIfStudyIsSecret() {
         // given
-        Study study = Study.ofPublic(member, "스터디 테스트", 10L, IsUse.Y);
+        Study study = getStudyFixture();
         study.changeToPrivate("test");
         Study mockStudy = studyRepository.save(study);
         mockStudy.addStudyMember(createMockMember());
@@ -137,12 +143,13 @@ class StudyServiceTest extends TestHelper {
     void createPrivateStudy() {
         // given
         String studyName = "스터디 테스트";
+        String content = "공부 스터디 입니다.";
         Boolean secret = true;
         String password = "test";
         Long fullCount = 10L;
         IsUse isUse = IsUse.Y;
         StudyControllerRequest.CreateStudyRequest request
-                = new StudyControllerRequest.CreateStudyRequest(studyName, secret, password, fullCount, isUse);
+                = new StudyControllerRequest.CreateStudyRequest(studyName, content,  secret, password, fullCount, isUse);
 
         // when
         service.createPublicStudy(request);
@@ -160,7 +167,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("스터디 삭제에 성공한다.")
     void deleteStudy() {
-        Study study = Study.ofPublic(member, "스터디 테스트", 10L, IsUse.Y);
+        Study study = getStudyFixture();
         Study mockStudy = studyRepository.save(study);
         mockStudy.addStudyMember(createMockMember());
         mockStudy.addStudyMember(createMockMember());
@@ -174,7 +181,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("스터디가 삭제될 때, 관련된 StudyMember가 모두 삭제 된다.")
     void deleteAllLinkedStudyMembersWhenDeleteStudy() {
-        Study study = Study.ofPublic(member, "스터디 테스트", 10L, IsUse.Y);
+        Study study = getStudyFixture();
         Study mockStudy = studyRepository.save(study);
         mockStudy.addStudyMember(createMockMember());
         mockStudy.addStudyMember(createMockMember());
@@ -189,8 +196,8 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("여러 스터디를 탈퇴하면, StudyMember 관계가 모두 삭제된다.")
     void deleteStudyMemberAllWhenStudyOut() {
         // given
-        Study study1 = Study.ofPublic(createMockMember(), "스터디 테스트1", 10L, IsUse.Y);
-        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", 10L, IsUse.Y);
+        Study study1 = Study.ofPublic(createMockMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", "스터디 설명", 10L, IsUse.Y);
         studyRepository.save(study1);
         studyRepository.save(study2);
         studyMemberRepository.save(new StudyMember(member, study1));
@@ -209,8 +216,8 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("가입되지 않은 스터디 탈퇴를 요청하는 경우, 예외가 발생한다.")
     void causeExceptionWhenNotJoinedStudyOutRequest() {
         // given
-        Study study1 = Study.ofPublic(createMockMember(), "스터디 테스트1", 10L, IsUse.Y);
-        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", 10L, IsUse.Y);
+        Study study1 = Study.ofPublic(createMockMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", "스터디 설명", 10L, IsUse.Y);
         studyRepository.save(study1);
         studyRepository.save(study2);
         studyMemberRepository.save(new StudyMember(member, study1));
