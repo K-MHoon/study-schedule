@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @WithMockUser(username = "testMember")
@@ -71,4 +72,38 @@ class TodoServiceTest extends TestHelper {
                 () -> assertThat(result.getContent()).isEqualTo(content));
     }
 
+    @Test
+    @DisplayName("할 일 목록을 삭제한다.")
+    void deleteTodoAll() {
+        List<Todo> testTodoList = createTestTodosAndSaveByCount(member, 3);
+        List<Long> testTodoIdList = testTodoList.stream().map(Todo::getId).collect(Collectors.toList());
+        TodoControllerRequest.DeleteTodoRequest deleteTodoRequest = new TodoControllerRequest.DeleteTodoRequest(testTodoIdList);
+
+        todoService.deleteTodoAll(deleteTodoRequest);
+
+        List<Todo> todoList = todoRepository.findAll();
+        assertThat(todoList).hasSize(0);
+    }
+
+    @Test
+    @DisplayName("멤버에 해당되지 않는 할 일 목록 삭제를 요청할 경우 예외가 발생한다.")
+    void doNotDeleteWhenDeleteRequestOtherMemberTodo() {
+        // given
+        Member otherMember = createSimpleMember("testMember2");
+        List<Todo> otherMemberTodoList = createTestTodosAndSaveByCount(otherMember, 1);
+        List<Long> otherMemberTodoIdList = otherMemberTodoList.stream().map(Todo::getId).collect(Collectors.toList());
+
+        List<Todo> testTodoList = createTestTodosAndSaveByCount(member, 3);
+        List<Long> testTodoIdList = testTodoList.stream().map(Todo::getId).collect(Collectors.toList());
+
+        testTodoIdList.addAll(otherMemberTodoIdList);
+
+        TodoControllerRequest.DeleteTodoRequest deleteTodoRequest = new TodoControllerRequest.DeleteTodoRequest(testTodoIdList);
+
+        // when & then
+        assertThatThrownBy(() -> todoService.deleteTodoAll(deleteTodoRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 사용자가 삭제할 수 없는 할 일을 포함하고 있습니다. memberId = testMember");
+
+    }
 }

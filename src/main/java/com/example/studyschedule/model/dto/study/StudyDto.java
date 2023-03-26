@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
-@JsonInclude(value = JsonInclude.Include.NON_NULL)
 @ToString
 public class StudyDto {
 
