@@ -3,6 +3,7 @@ package com.example.studyschedule.model.dto.schedule;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.enums.IsUse;
+import com.example.studyschedule.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.example.studyschedule.utils.DateUtils.localDateTimeToString;
+
 @Builder(access = AccessLevel.PRIVATE)
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 @Getter
@@ -24,11 +27,11 @@ public class ScheduleDto {
     private Long memberId;
     private String name;
     private List<TodoDto> todoList;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private String startDate;
+    private String endDate;
     private IsUse isUse;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
 
     public static ScheduleDto entityToDtoWithTodo(Schedule schedule) {
         return ScheduleDto.builder()
@@ -36,11 +39,11 @@ public class ScheduleDto {
                 .name(schedule.getName())
                 .memberId(getMemberId(schedule))
                 .todoList(getTodoList(schedule))
-                .startDate(schedule.getStartDate())
-                .endDate(schedule.getEndDate())
+                .startDate(localDateTimeToString(schedule.getStartDate()))
+                .endDate(localDateTimeToString(schedule.getEndDate()))
                 .isUse(schedule.getIsUse())
-                .createdAt(schedule.getCreatedAt())
-                .updatedAt(schedule.getUpdatedAt())
+                .createdAt(localDateTimeToString(schedule.getCreatedAt()))
+                .updatedAt(localDateTimeToString(schedule.getUpdatedAt()))
                 .build();
     }
 
@@ -49,11 +52,11 @@ public class ScheduleDto {
                 .id(schedule.getId())
                 .name(schedule.getName())
                 .memberId(getMemberId(schedule))
-                .startDate(schedule.getStartDate())
-                .endDate(schedule.getEndDate())
+                .startDate(localDateTimeToString(schedule.getStartDate()))
+                .endDate(localDateTimeToString(schedule.getEndDate()))
                 .isUse(schedule.getIsUse())
-                .createdAt(schedule.getCreatedAt())
-                .updatedAt(schedule.getUpdatedAt())
+                .createdAt(localDateTimeToString(schedule.getCreatedAt()))
+                .updatedAt(localDateTimeToString(schedule.getUpdatedAt()))
                 .build();
     }
 

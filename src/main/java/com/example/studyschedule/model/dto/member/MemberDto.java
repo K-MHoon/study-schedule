@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.studyschedule.utils.DateUtils.localDateTimeToString;
+
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
@@ -33,8 +35,8 @@ public class MemberDto {
     private List<StudyMemberDto> joinedStudyList;
     private List<ScheduleDto> scheduleList;
     private List<TodoDto> todoList;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
 
     // TODO N+1 문제 발생, QueryDsl로 개선 예정
     public static MemberDto entityToDto(Member member) {
@@ -47,8 +49,8 @@ public class MemberDto {
                 .joinedStudyList(toStudyMemberDtoList(member.getStudyMemberList()))
                 .scheduleList(toScheduleDtoList(member.getScheduleList()))
                 .todoList(toTodoDtoList(member.getTodoList()))
-                .createdAt(member.getCreatedAt())
-                .updatedAt(member.getUpdatedAt())
+                .createdAt(localDateTimeToString(member.getCreatedAt()))
+                .updatedAt(localDateTimeToString(member.getUpdatedAt()))
                 .build();
     }
 

@@ -2,6 +2,7 @@ package com.example.studyschedule.model.dto.study;
 
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
+import com.example.studyschedule.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,8 +20,8 @@ public class StudyMemberDto {
     private Long id;
     private Long studyId;
     private String studyName;
-    private LocalDateTime studyCreatedBy;
-    private LocalDateTime joinedBy;
+    private String studyCreatedBy;
+    private String joinedBy;
 
     public static StudyMemberDto entityToDto(StudyMember studyMember) {
         Study study = studyMember.getStudy();
@@ -29,8 +30,8 @@ public class StudyMemberDto {
                 .id(studyMember.getId())
                 .studyId(study.getId())
                 .studyName(study.getName())
-                .studyCreatedBy(study.getCreatedAt())
-                .joinedBy(studyMember.getCreatedAt())
+                .studyCreatedBy(DateUtils.localDateTimeToString(study.getCreatedAt()))
+                .joinedBy(DateUtils.localDateTimeToString(studyMember.getCreatedAt()))
                 .build();
     }
 }
