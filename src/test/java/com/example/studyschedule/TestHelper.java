@@ -10,6 +10,7 @@ import com.example.studyschedule.repository.schedule.ScheduleRepository;
 import com.example.studyschedule.repository.schedule.ScheduleTodoRepository;
 import com.example.studyschedule.repository.schedule.TodoRepository;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
+import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import com.example.studyschedule.service.schedule.ScheduleCommonService;
@@ -61,6 +62,9 @@ public class TestHelper {
 
     @Autowired
     protected ScheduleCommonService scheduleCommonService;
+
+    @Autowired
+    protected StudyRegisterRepository studyRegisterRepository;
 
     protected List<Member> createTestMembersAndSaveByCount(int count) {
         return IntStream.range(0, count)
