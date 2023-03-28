@@ -30,7 +30,7 @@ public class StudyRegister extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_member_id")
-    private Member reuqestMember;
+    private Member requestMember;
 
     private String goal; // 가입 목적
 
@@ -47,9 +47,9 @@ public class StudyRegister extends BaseEntity {
     private Member approvalBy; // 승인 또는 거절한 사람
 
     @Builder
-    public StudyRegister(Study requestStudy, Member reuqestMember, String goal, String objective, String comment, RegisterState state, LocalDateTime approvalAt, Member approvalBy) {
+    public StudyRegister(Study requestStudy, Member requestMember, String goal, String objective, String comment, RegisterState state, LocalDateTime approvalAt, Member approvalBy) {
         this.requestStudy = requestStudy;
-        this.reuqestMember = reuqestMember;
+        this.requestMember = requestMember;
         this.goal = goal;
         this.objective = objective;
         this.comment = comment;

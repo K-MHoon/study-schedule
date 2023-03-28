@@ -72,6 +72,6 @@ public class StudyController {
 
         log.info("[createStudyRegister] called by = {}, study Id = {}, request = {}", principal.getName(), studyId, request);
 
-
+        studyService.createStudyRegister(studyId, request);
     }
 }

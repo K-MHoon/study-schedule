@@ -3,11 +3,16 @@ package com.example.studyschedule.service.study;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
+import com.example.studyschedule.entity.study.StudyRegister;
 import com.example.studyschedule.enums.IsUse;
+import com.example.studyschedule.enums.RegisterState;
+import com.example.studyschedule.enums.exception.common.CommonErrorCode;
+import com.example.studyschedule.exception.StudyScheduleException;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
+import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,6 +39,8 @@ public class StudyService {
     private final PasswordEncoder passwordEncoder;
 
     private final StudyMemberRepository studyMemberRepository;
+
+    private final StudyRegisterRepository studyRegisterRepository;
 
     @Transactional(readOnly = true)
     public Pagination<List<StudyDto>> getPublicStudyList(Pageable pageable) {
@@ -98,6 +105,34 @@ public class StudyService {
 
     private List<StudyMember> getRequestStudyMemberList(StudyControllerRequest.DeleteStudyMemberAllRequest request, Member loggedInMember) {
         return studyMemberRepository.findAllByStudy_IdInAndMember_Id(request.getStudyList(), loggedInMember.getId());
+    }
+
+    @Transactional
+    public void createStudyRegister(Long studyId, StudyControllerRequest.CreateStudyRegisterRequest request) {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+        checkAlreadyJoinedStudy(studyId, loggedInMember);
+
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new StudyScheduleException(CommonErrorCode.NOT_FOUND));
+        if(study.isFull()) {
+            throw new IllegalArgumentException("스터디 정원이 가득 찼습니다.");
+        }
+
+        StudyRegister register = StudyRegister.builder()
+                .goal(request.getGoal())
+                .objective(request.getObjective())
+                .comment(request.getComment())
+                .state(RegisterState.NO_READ)
+                .requestStudy(study)
+                .requestMember(loggedInMember)
+                .build();
+
+        studyRegisterRepository.save(register);
+    }
+
+    private void checkAlreadyJoinedStudy(Long studyId, Member loggedInMember) {
+        if(studyMemberRepository.existsStudyMemberByStudy_IdAndMember_Id(studyId, loggedInMember.getId())) {
+            throw new IllegalArgumentException("이미 스터디에 가입되어 있습니다.");
+        }
     }
 }
 
