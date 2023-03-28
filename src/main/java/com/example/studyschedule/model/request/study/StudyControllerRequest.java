@@ -1,6 +1,7 @@
 package com.example.studyschedule.model.request.study;
 
 import com.example.studyschedule.enums.IsUse;
+import com.example.studyschedule.enums.RegisterState;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
@@ -45,5 +46,20 @@ public final class StudyControllerRequest {
         @NotNull
         @UniqueElements
         private List<Long> studyList;
+    }
+
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static final class CreateStudyRegisterRequest {
+
+        @NotEmpty
+        private String goal;
+
+        @NotEmpty
+        private String objective;
+
+        private String comment;
     }
 }

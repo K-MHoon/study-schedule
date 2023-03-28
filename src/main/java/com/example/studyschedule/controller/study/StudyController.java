@@ -62,4 +62,16 @@ public class StudyController {
 
         studyService.deleteStudyMemberAll(request);
     }
+
+    @PostMapping("/register/{study_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void createStudyRegister(
+            @PathVariable("study_id") Long studyId,
+            @RequestBody @Validated StudyControllerRequest.CreateStudyRegisterRequest request,
+            Principal principal) {
+
+        log.info("[createStudyRegister] called by = {}, study Id = {}, request = {}", principal.getName(), studyId, request);
+
+
+    }
 }
