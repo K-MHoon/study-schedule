@@ -293,6 +293,26 @@ class StudyServiceTest extends TestHelper {
                 .hasMessage("스터디 정원이 가득 찼습니다.");
     }
 
+    @Test
+    @DisplayName("로그인한 계정과 연관된 스터디 정보만 가지고 온다.")
+    void successGetMyStudyList() {
+        Study study1 = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        studyMemberRepository.save(new StudyMember(member, study1));
+        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", "스터디 설명", 11L, IsUse.Y);
+        studyMemberRepository.save(new StudyMember(member, study2));
+        Study study3 = Study.ofPublic(createMockMember(), "스터디 테스트3", "스터디 설명", 12L, IsUse.Y);
+        studyMemberRepository.save(new StudyMember(member, study3));
+        studyRepository.saveAll(Arrays.asList(study1, study2, study3));
+        entityManagerFlushAndClear();
+
+        List<StudyDto> result = service.getMyStudy();
+
+        assertThat(result).hasSize(3);
+        assertThat(result).extracting("id").containsExactlyInAnyOrder(study1.getId(), study2.getId(), study3.getId());
+        assertThat(result).filteredOn(StudyDto::isMine).hasSize(1);
+        assertThat(result).filteredOn(StudyDto::isMine).singleElement().extracting("id").isEqualTo(study1.getId());
+    }
+
 
     private Member createMockMember() {
         return memberRepository.save(Member.builder()
