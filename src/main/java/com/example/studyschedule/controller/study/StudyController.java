@@ -33,7 +33,7 @@ public class StudyController {
     @GetMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
     public StudyDto getPublicStudyDetail(@PathVariable("study_id") Long studyId) {
-        log.info("[getStudyDetail] call, studyId ={}", studyId);
+        log.info("[getStudyDetail] call, studyId = {}", studyId);
 
         return studyService.getPublicStudyDetail(studyId);
     }
@@ -42,7 +42,7 @@ public class StudyController {
     @ResponseStatus(HttpStatus.OK)
     public void createPublicStudy(@RequestBody @Validated StudyControllerRequest.CreateStudyRequest request,
                                             Principal principal) {
-        log.info("[createPublicStudyList] called by = {}", principal.getName());
+        log.info("[createPublicStudyList] called by {}", principal.getName());
 
         studyService.createPublicStudy(request);
     }
@@ -50,7 +50,7 @@ public class StudyController {
     @DeleteMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteStudy(@PathVariable("study_id") Long studyId, Principal principal) {
-        log.info("[deleteStudy] called by = {}", principal.getName());
+        log.info("[deleteStudy] called by {}", principal.getName());
 
         studyService.deleteStudy(studyId);
     }
@@ -58,7 +58,7 @@ public class StudyController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
     public void deleteStudyMemberAll(@RequestBody @Validated StudyControllerRequest.DeleteStudyMemberAllRequest request, Principal principal) {
-        log.info("[deleteStudyMemberAll] called by = {}, request IdList = {}", principal.getName(), request.getStudyList());
+        log.info("[deleteStudyMemberAll] called by {}, request IdList = {}", principal.getName(), request.getStudyList());
 
         studyService.deleteStudyMemberAll(request);
     }
@@ -70,8 +70,16 @@ public class StudyController {
             @RequestBody @Validated StudyControllerRequest.CreateStudyRegisterRequest request,
             Principal principal) {
 
-        log.info("[createStudyRegister] called by = {}, study Id = {}, request = {}", principal.getName(), studyId, request);
+        log.info("[createStudyRegister] called by {}, study Id = {}, request = {}", principal.getName(), studyId, request);
 
         studyService.createStudyRegister(studyId, request);
+    }
+
+    @GetMapping("/my")
+    @ResponseStatus(HttpStatus.OK)
+    public List<StudyDto> getMyStudy(Principal principal) {
+        log.info("[getMyStudy] called by {}", principal.getName());
+
+        return studyService.getMyStudy();
     }
 }

@@ -70,6 +70,10 @@ public final class Study extends BaseEntity {
         return Long.valueOf(this.studyMemberList.size());
     }
 
+    public Boolean isLeader(Member member) {
+        return this.getLeader().getId().equals(member.getId());
+    }
+
     public boolean isFull() {
         return this.getFullCount() - this.getRemainCount() <= 0;
     }

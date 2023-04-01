@@ -3,14 +3,10 @@ package com.example.studyschedule.model.dto.study;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.utils.DateUtils;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
@@ -25,6 +21,7 @@ public class StudyDto {
     private Long fullCount;
     private IsUse isUse;
     private String createdBy;
+    private boolean isMine;
 
     public static StudyDto entityToDto(Study study) {
         return StudyDto.builder()
@@ -36,6 +33,11 @@ public class StudyDto {
                 .fullCount(study.getFullCount())
                 .isUse(study.getIsUse())
                 .createdBy(DateUtils.localDateTimeToString(study.getCreatedAt()))
+                .isMine(false)
                 .build();
+    }
+
+    public void isMineTrue() {
+        this.isMine = true;
     }
 }

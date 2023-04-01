@@ -134,5 +134,20 @@ public class StudyService {
             throw new IllegalArgumentException("이미 스터디에 가입되어 있습니다.");
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<StudyDto> getMyStudy() {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+        return loggedInMember.getMatchedStudyList()
+                .stream()
+                .map(study -> {
+                    StudyDto studyDto = StudyDto.entityToDto(study);
+                    if(study.isLeader(loggedInMember)) {
+                        studyDto.isMineTrue();
+                    }
+                    return studyDto;
+                })
+                .collect(Collectors.toList());
+    }
 }
 
