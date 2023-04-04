@@ -138,15 +138,9 @@ public class StudyService {
     @Transactional(readOnly = true)
     public List<StudyDto> getMyStudy() {
         Member loggedInMember = memberCommonService.getLoggedInMember();
-        return loggedInMember.getMatchedStudyList()
+        return loggedInMember.getStudyMemberList()
                 .stream()
-                .map(study -> {
-                    StudyDto studyDto = StudyDto.entityToDto(study);
-                    if(study.isLeader(loggedInMember)) {
-                        studyDto.isMineTrue();
-                    }
-                    return studyDto;
-                })
+                .map(StudyDto::entityToDto)
                 .collect(Collectors.toList());
     }
 }
