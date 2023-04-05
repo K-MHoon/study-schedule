@@ -21,8 +21,6 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -32,10 +30,10 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/api/token/check", "/api/login", "/api/register").permitAll()
-                        .requestMatchers("/api/member/**", "/api/members").hasRole("USER")
+                        .requestMatchers("/api/member/**", "/api/members", "/api/study/my", "api/study/register/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/api/study").hasRole("USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/study").hasRole("USER")
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

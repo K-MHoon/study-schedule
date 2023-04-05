@@ -82,4 +82,12 @@ public class StudyController {
 
         return studyService.getMyStudy();
     }
+
+    @GetMapping("/my/{studyId}")
+    @ResponseStatus(HttpStatus.OK)
+    public StudyDto getMyStudyDetail(@PathVariable Long studyId, Principal principal) {
+        log.info("[getMyStudyDetail] called by {}", principal.getName());
+
+        return studyService.getMyStudyDetail(studyId);
+    }
 }
