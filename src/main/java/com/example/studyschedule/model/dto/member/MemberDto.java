@@ -54,6 +54,15 @@ public class MemberDto {
                 .build();
     }
 
+    public static MemberDto entityToDtoSimple(Member member) {
+        return MemberDto.builder()
+                .id(member.getId())
+                .memberId(member.getMemberId())
+                .name(member.getName())
+                .age(member.getAge())
+                .build();
+    }
+
     private static List<StudyMemberDto> toStudyMemberDtoList(List<StudyMember> studyMemberList) {
         return studyMemberList.stream()
                 .map(StudyMemberDto::entityToDto)

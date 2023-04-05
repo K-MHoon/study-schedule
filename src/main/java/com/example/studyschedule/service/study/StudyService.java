@@ -143,5 +143,13 @@ public class StudyService {
                 .map(StudyDto::entityToDto)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public StudyDto getMyStudyDetail(Long studyId) {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+        StudyMember studyMember = studyMemberRepository.findByStudy_IdInAndMember_Id(studyId, loggedInMember.getId())
+                .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않거나 접근할 수 없는 스터디 입니다."));
+        return StudyDto.entityToDtoDetail(studyMember);
+    }
 }
 

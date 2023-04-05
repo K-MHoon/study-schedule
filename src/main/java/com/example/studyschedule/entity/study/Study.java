@@ -26,6 +26,10 @@ public final class Study extends BaseEntity {
     @Builder.Default
     private List<StudyMember> studyMemberList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "requestStudy", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<StudyRegister> studyRegisterList = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id")
     private Member leader; // 스터디 방장
