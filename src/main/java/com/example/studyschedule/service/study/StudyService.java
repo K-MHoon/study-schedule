@@ -147,8 +147,11 @@ public class StudyService {
     @Transactional(readOnly = true)
     public StudyDto getMyStudyDetail(Long studyId) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
-        StudyMember studyMember = studyMemberRepository.findByStudy_IdInAndMember_Id(studyId, loggedInMember.getId())
-                .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않거나 접근할 수 없는 스터디 입니다."));
+        StudyMember studyMember = studyMemberRepository.findByStudy_IdAndMember_Id(studyId, loggedInMember.getId())
+                .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않거나 가입되지 않은 스터디 입니다."));
+        if(!studyMember.getStudy().getLeader().equals(loggedInMember)) {
+            throw new IllegalArgumentException("본인의 스터디가 아닙니다.");
+        }
         return StudyDto.entityToDtoDetail(studyMember);
     }
 }
