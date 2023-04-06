@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Entity
@@ -106,5 +107,18 @@ public class Member extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return Objects.equals(id, member.id) && Objects.equals(memberId, member.memberId) && Objects.equals(password, member.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, memberId, password);
     }
 }

@@ -24,6 +24,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -309,8 +310,81 @@ class StudyServiceTest extends TestHelper {
 
         assertThat(result).hasSize(3);
         assertThat(result).extracting("id").containsExactlyInAnyOrder(study1.getId(), study2.getId(), study3.getId());
-        assertThat(result).filteredOn(StudyDto::isMine).hasSize(1);
-        assertThat(result).filteredOn(StudyDto::isMine).singleElement().extracting("id").isEqualTo(study1.getId());
+        assertThat(result).filteredOn(StudyDto::getIsMine).hasSize(1);
+        assertThat(result).filteredOn(StudyDto::getIsMine).singleElement().extracting("id").isEqualTo(study1.getId());
+    }
+
+    @Test
+    @DisplayName("내 스터디 세부 정보를 가지고 온다.")
+    void successGetMeyStudyDetail() {
+        // given
+        Study study = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        studyMemberRepository.save(new StudyMember(member, study));
+        Study savedStudy = studyRepository.save(study);
+
+        List<Member> memberList = createTestMembersAndSaveByCount(5);
+        createStudyMember(savedStudy, memberList);
+
+        List<Member> studyRegisterMemberList = createTestMembersAndSaveByCount(5, 9);
+        createStudyRegister(savedStudy, studyRegisterMemberList);
+
+        entityManagerFlushAndClear();
+
+        // when
+        StudyDto result = service.getMyStudyDetail(savedStudy.getId());
+        // then
+        assertThat(result.getId()).isEqualTo(savedStudy.getId());
+        assertThat(result.getStudyName()).isEqualTo("스터디 테스트1");
+        assertThat(result.getRegisteredMemberList()).hasSize(6);
+        assertThat(result.getRegisterRequestList()).hasSize(4);
+    }
+
+    @Test
+    @DisplayName("접근할 수 없는 스터디라면 예외가 발생한다.")
+    void rejectWhenNotAccessStudy() {
+        // given
+        Study study = Study.ofPublic(createMockMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        Study savedStudy = studyRepository.save(study);
+
+        // when & then
+        assertThatThrownBy(() -> service.getMyStudyDetail(savedStudy.getId()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("스터디가 존재하지 않거나 가입되지 않은 스터디 입니다.");
+    }
+
+    @Test
+    @DisplayName("본인이 방장이 아닌 스터디에 접근하면 예외가 발생한다.")
+    void rejectWhenNotLeader() {
+        // given
+        Study study = Study.ofPublic(createMockMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        StudyMember studyMember = new StudyMember(member, study);
+        studyMemberRepository.save(studyMember);
+        Study savedStudy = studyRepository.save(study);
+
+        // when & then
+        assertThatThrownBy(() -> service.getMyStudyDetail(savedStudy.getId()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("본인의 스터디가 아닙니다.");
+    }
+
+    private void createStudyRegister(Study savedStudy, List<Member> memberList) {
+        List<StudyRegister> studyRegisterList = memberList
+                .stream()
+                .map(m -> StudyRegister.builder()
+                        .requestStudy(savedStudy)
+                        .requestMember(m)
+                        .goal("테스트")
+                        .objective("테스트")
+                        .comment("테스트").build())
+                .collect(Collectors.toList());
+        studyRegisterRepository.saveAll(studyRegisterList);
+    }
+
+    private void createStudyMember(Study savedStudy, List<Member> memberList) {
+        List<StudyMember> studyMemberList = memberList.stream()
+                .map(m -> new StudyMember(m, savedStudy))
+                .collect(Collectors.toList());
+        studyMemberRepository.saveAll(studyMemberList);
     }
 
 

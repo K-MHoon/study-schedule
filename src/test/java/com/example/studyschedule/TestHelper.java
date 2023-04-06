@@ -67,7 +67,11 @@ public class TestHelper {
     protected StudyRegisterRepository studyRegisterRepository;
 
     protected List<Member> createTestMembersAndSaveByCount(int count) {
-        return IntStream.range(0, count)
+        return createTestMembersAndSaveByCount(0, count);
+    }
+
+    protected List<Member> createTestMembersAndSaveByCount(int start, int count) {
+        return IntStream.range(start, count)
                 .mapToObj(c -> {
                     Member member = Member.builder().memberId("testMember" + c).password("testPassword").build();
                     return memberRepository.save(member);
