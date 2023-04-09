@@ -3,7 +3,7 @@ package com.example.studyschedule.entity.study;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.enums.RegisterState;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
