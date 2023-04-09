@@ -5,7 +5,7 @@ import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

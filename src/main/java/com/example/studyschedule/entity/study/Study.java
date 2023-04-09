@@ -4,7 +4,7 @@ import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.enums.IsUse;
 import io.micrometer.common.util.StringUtils;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;

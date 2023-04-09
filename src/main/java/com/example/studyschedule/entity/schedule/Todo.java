@@ -2,7 +2,7 @@ package com.example.studyschedule.entity.schedule;
 
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
