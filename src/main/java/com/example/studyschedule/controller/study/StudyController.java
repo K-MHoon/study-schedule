@@ -1,5 +1,6 @@
 package com.example.studyschedule.controller.study;
 
+import com.example.studyschedule.enums.RegisterState;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
@@ -89,5 +90,13 @@ public class StudyController {
         log.info("[getMyStudyDetail] called by {}", principal.getName());
 
         return studyService.getMyStudyDetail(studyId);
+    }
+
+    @PutMapping("/my/{studyId}/state/{registerId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateStudyState(@PathVariable Long studyId, @PathVariable Long registerId, @RequestParam RegisterState state, Principal principal) {
+        log.info("[updateStudyReadState] called by {} state = {}", principal.getName(), state);
+
+        studyService.updateStudyState(studyId, registerId, state);
     }
 }

@@ -157,7 +157,15 @@ public class StudyService {
         if(!studyMember.getStudy().getLeader().equals(loggedInMember)) {
             throw new IllegalArgumentException("본인의 스터디가 아닙니다.");
         }
-        return StudyDto.entityToDtoDetail(studyMember);
+        return studyMember;
+    }
+
+    @Transactional
+    public void updateStudyState(Long studyId, Long registerId, RegisterState state) {
+        getMyStudyMember(studyId);
+        StudyRegister studyRegister = studyRegisterRepository.findByIdAndRequestStudy_Id(registerId, studyId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 스터디에 가입 요청이 존재하지 않습니다. study Id = " + studyId + " register Id = " + registerId));
+        studyRegister.updateRegisterState(state);
     }
 }
 

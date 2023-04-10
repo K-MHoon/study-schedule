@@ -57,4 +57,17 @@ public class StudyRegister extends BaseEntity {
         this.approvalAt = approvalAt;
         this.approvalBy = approvalBy;
     }
+
+    public void updateRegisterState(RegisterState registerState) {
+        assert registerState != null;
+        if(isAlreadyRejectOrPass(registerState)) {
+            return;
+        }
+        this.state = registerState;
+    }
+
+    private boolean isAlreadyRejectOrPass(RegisterState registerState) {
+        return registerState == RegisterState.READ
+                && (this.state == RegisterState.REJECT || this.state == RegisterState.PASS);
+    }
 }
