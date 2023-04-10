@@ -161,11 +161,11 @@ public class StudyService {
     }
 
     @Transactional
-    public void updateStudyState(Long studyId, Long registerId, RegisterState state) {
+    public void updateStudyState(Long studyId, Long registerId, StudyControllerRequest.UpdateStudyStateRequest request) {
         getMyStudyMember(studyId);
         StudyRegister studyRegister = studyRegisterRepository.findByIdAndRequestStudy_Id(registerId, studyId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 스터디에 가입 요청이 존재하지 않습니다. study Id = " + studyId + " register Id = " + registerId));
-        studyRegister.updateRegisterState(state);
+        studyRegister.updateRegisterState(RegisterState.convertStringToRegisterState(request.getState()));
     }
 }
 

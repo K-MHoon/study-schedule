@@ -7,4 +7,14 @@ public enum RegisterState {
     REJECT, // 거절
     PASS; // 가입 성공
 
+
+    public static RegisterState convertStringToRegisterState(String value) {
+        assert value != null;
+        for (RegisterState registerState : RegisterState.values()) {
+            if(registerState.name().toLowerCase().equals(value)) {
+                return registerState;
+            }
+        }
+        return NO_READ;
+    }
 }

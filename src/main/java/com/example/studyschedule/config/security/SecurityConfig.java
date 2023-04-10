@@ -1,4 +1,4 @@
-package com.example.studyschedule.security.config;
+package com.example.studyschedule.config.security;
 
 import com.example.studyschedule.security.filter.JwtAuthenticationFilter;
 import com.example.studyschedule.security.provider.JwtTokenProvider;

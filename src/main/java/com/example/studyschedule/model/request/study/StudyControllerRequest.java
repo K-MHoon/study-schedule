@@ -62,4 +62,14 @@ public final class StudyControllerRequest {
 
         private String comment;
     }
+
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static final class UpdateStudyStateRequest {
+
+        @NotEmpty
+        private String state;
+    }
 }

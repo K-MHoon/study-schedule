@@ -92,9 +92,12 @@ public class StudyController {
         return studyService.getMyStudyDetail(studyId);
     }
 
-    @PutMapping("/my/{studyId}/state/{registerId}")
+    @PostMapping("/my/{studyId}/state/{registerId}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateStudyState(@PathVariable Long studyId, @PathVariable Long registerId, @RequestParam RegisterState state, Principal principal) {
+    public void updateStudyState(@PathVariable Long studyId,
+                                 @PathVariable Long registerId,
+                                 @RequestBody StudyControllerRequest.UpdateStudyStateRequest state,
+                                 Principal principal) {
         log.info("[updateStudyReadState] called by {} state = {}", principal.getName(), state);
 
         studyService.updateStudyState(studyId, registerId, state);
