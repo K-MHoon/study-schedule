@@ -16,6 +16,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -367,7 +371,32 @@ class StudyServiceTest extends TestHelper {
                 .hasMessage("본인의 스터디가 아닙니다.");
     }
 
-    private void createStudyRegister(Study savedStudy, List<Member> memberList) {
+    @ParameterizedTest
+    @MethodSource("changeUpdateState")
+    @DisplayName("스터디 상태를 업데이트 한다.")
+    void updateStudyState(String state, RegisterState registerState) {
+        Study study = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        StudyMember studyMember = new StudyMember(member, study);
+        studyMemberRepository.save(studyMember);
+        Study savedStudy = studyRepository.save(study);
+        List<Member> memberList = Arrays.asList(createMockMember());
+        List<StudyRegister> studyRegister = createStudyRegister(savedStudy, memberList);
+
+        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), new StudyControllerRequest.UpdateStudyStateRequest(state));
+
+        List<StudyRegister> result = studyRegisterRepository.findAll();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getState()).isEqualTo(registerState);
+    }
+
+    static Stream<Arguments> changeUpdateState() {
+        return Stream.of(
+                Arguments.arguments("read", RegisterState.READ),
+                Arguments.arguments("pass", RegisterState.PASS),
+                Arguments.arguments("reject", RegisterState.REJECT));
+    }
+
+    private List<StudyRegister> createStudyRegister(Study savedStudy, List<Member> memberList) {
         List<StudyRegister> studyRegisterList = memberList
                 .stream()
                 .map(m -> StudyRegister.builder()
@@ -377,7 +406,7 @@ class StudyServiceTest extends TestHelper {
                         .objective("테스트")
                         .comment("테스트").build())
                 .collect(Collectors.toList());
-        studyRegisterRepository.saveAll(studyRegisterList);
+        return studyRegisterRepository.saveAll(studyRegisterList);
     }
 
     private void createStudyMember(Study savedStudy, List<Member> memberList) {
