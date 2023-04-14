@@ -4,6 +4,7 @@ import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.enums.IsUse;
+import com.example.studyschedule.enums.RegisterState;
 import com.example.studyschedule.model.dto.member.MemberDto;
 import com.example.studyschedule.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -90,7 +91,10 @@ public class StudyDto {
     }
 
     private static List<StudyRegisterDto> getStudyRegisterDtoList(Study study) {
-        return study.getStudyRegisterList().stream().map(StudyRegisterDto::entityToDto).collect(Collectors.toList());
+        return study.getStudyRegisterList().stream()
+                .filter(studyRegister -> studyRegister.getState() == RegisterState.NO_READ || studyRegister.getState() == RegisterState.READ)
+                .map(StudyRegisterDto::entityToDto)
+                .collect(Collectors.toList());
     }
 
     private static List<MemberDto> getRegisteredMemberDtoList(Study study) {
