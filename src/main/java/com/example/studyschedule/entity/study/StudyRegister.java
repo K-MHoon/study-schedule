@@ -3,7 +3,9 @@ package com.example.studyschedule.entity.study;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.enums.RegisterState;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,13 +60,18 @@ public class StudyRegister extends BaseEntity {
         this.approvalBy = approvalBy;
     }
 
-    public void updateRegisterState(RegisterState registerState) {
-        assert registerState != null;
+    public void updateRegisterState(@NotNull RegisterState registerState) {
         if(isAlreadyRejectOrPass(registerState)) {
             return;
         }
         this.state = registerState;
     }
+
+    public void updateApproval(Member approvalBy) {
+        this.approvalBy = approvalBy;
+        this.approvalAt = LocalDateTime.now();
+    }
+
 
     private boolean isAlreadyRejectOrPass(RegisterState registerState) {
         return registerState == RegisterState.READ

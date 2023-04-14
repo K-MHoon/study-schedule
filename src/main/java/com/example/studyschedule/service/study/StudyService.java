@@ -162,10 +162,17 @@ public class StudyService {
 
     @Transactional
     public void updateStudyState(Long studyId, Long registerId, StudyControllerRequest.UpdateStudyStateRequest request) {
-        getMyStudyMember(studyId);
+        StudyMember myStudyMember = getMyStudyMember(studyId);
         StudyRegister studyRegister = studyRegisterRepository.findByIdAndRequestStudy_Id(registerId, studyId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 스터디에 가입 요청이 존재하지 않습니다. study Id = " + studyId + " register Id = " + registerId));
+
+        RegisterState asIsState = studyRegister.getState();
         studyRegister.updateRegisterState(RegisterState.convertStringToRegisterState(request.getState()));
+        RegisterState tobeState = studyRegister.getState();
+
+        if(asIsState == RegisterState.READ && (tobeState == RegisterState.PASS || tobeState == RegisterState.REJECT)) {
+            studyRegister.updateApproval(myStudyMember.getMember());
+        }
     }
 }
 
