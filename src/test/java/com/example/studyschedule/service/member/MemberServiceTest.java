@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 import java.util.UUID;
@@ -86,5 +87,18 @@ class MemberServiceTest extends TestHelper {
                 .isInstanceOf(IllegalArgumentException.class)
                         .extracting("message")
                                 .isEqualTo("동일한 멤버가 존재합니다. ID = " + memberId);
+    }
+
+    @Test
+    @DisplayName("회원정보 이름, 나이를 변경한다.")
+    @WithMockUser(username = "testMember")
+    void updateUserNameAndAge() {
+        Member member = createSimpleMember();
+        MemberControllerRequest.UpdateMemberProfileRequest request = new MemberControllerRequest.UpdateMemberProfileRequest("홍길동", 33);
+
+        memberService.updateMemberProfile(request);
+
+        assertThat(member.getName()).isEqualTo("홍길동");
+        assertThat(member.getAge()).isEqualTo(33);
     }
 }
