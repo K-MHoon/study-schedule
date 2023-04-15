@@ -121,4 +121,12 @@ public class Member extends BaseEntity implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, memberId, password);
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateAge(Integer age) {
+        this.age = age;
+    }
 }

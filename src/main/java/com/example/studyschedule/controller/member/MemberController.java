@@ -87,6 +87,15 @@ public class MemberController {
         return memberService.login(request.getMemberId(), request.getPassword());
     }
 
+    @PostMapping("/member/profile")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateMemberProfile(@RequestBody MemberControllerRequest.UpdateMemberProfileRequest request,
+                                    Principal principal) {
+        log.info("[updateMemberProfile] called by {}, request = {}", principal.getName(), request);
+
+        memberService.updateMemberProfile(request);
+    }
+
     @PostMapping("/token/check")
     public ResponseEntity<TokenInfo> tokenCheck(HttpServletRequest request) {
         log.info("[tokenCheck] = request");

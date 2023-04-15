@@ -115,6 +115,13 @@ public class MemberService {
         return MemberDto.entityToDto(loggedInMember);
     }
 
+    @Transactional
+    public void updateMemberProfile(MemberControllerRequest.UpdateMemberProfileRequest request) {
+        Member loggedInMember = commonService.getLoggedInMember();
+        loggedInMember.updateName(request.getName());
+        loggedInMember.updateAge(request.getAge());
+    }
+
     @Getter
     public static class ClientAuthInfo {
 

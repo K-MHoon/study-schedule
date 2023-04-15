@@ -29,11 +29,10 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/token/check", "/api/login", "/api/register").permitAll()
                         .requestMatchers("/api/member/**", "/api/members", "/api/study/my", "api/study/register/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/api/study").hasRole("USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/study").hasRole("USER")
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
