@@ -170,7 +170,10 @@ public class StudyService {
         studyRegister.updateRegisterState(RegisterState.convertStringToRegisterState(request.getState()));
         RegisterState tobeState = studyRegister.getState();
 
-        if(asIsState == RegisterState.READ && (tobeState == RegisterState.PASS || tobeState == RegisterState.REJECT)) {
+        if(asIsState == RegisterState.READ && asIsState != tobeState) {
+            if(tobeState == RegisterState.PASS) {
+                studyMemberRepository.save(new StudyMember(studyRegister.getRequestMember(), myStudyMember.getStudy()));
+            }
             studyRegister.updateApproval(myStudyMember.getMember());
         }
     }
