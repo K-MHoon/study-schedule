@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -67,7 +68,7 @@ public class MemberController {
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public void createMember(@RequestBody @Valid MemberControllerRequest.CreateMemberRequest request) {
+    public void createMember(@RequestBody @Validated MemberControllerRequest.CreateMemberRequest request) {
         log.info("[createMember] ID = {}, name = {}, age = {}", request.getMemberId(), request.getName(), request.getAge());
 
         memberService.createMember(request);
@@ -81,7 +82,7 @@ public class MemberController {
      */
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public TokenInfo login(@RequestBody @Valid MemberControllerRequest.LoginRequest request) {
+    public TokenInfo login(@RequestBody @Validated MemberControllerRequest.LoginRequest request) {
         log.info("[login] Id = {}", request.getMemberId());
 
         return memberService.login(request.getMemberId(), request.getPassword());
@@ -89,7 +90,7 @@ public class MemberController {
 
     @PostMapping("/member/profile")
     @ResponseStatus(HttpStatus.OK)
-    public void updateMemberProfile(@RequestBody MemberControllerRequest.UpdateMemberProfileRequest request,
+    public void updateMemberProfile(@RequestBody @Validated MemberControllerRequest.UpdateMemberProfileRequest request,
                                     Principal principal) {
         log.info("[updateMemberProfile] called by {}, request = {}", principal.getName(), request);
 

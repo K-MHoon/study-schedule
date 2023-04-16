@@ -96,7 +96,7 @@ public class StudyController {
     @ResponseStatus(HttpStatus.OK)
     public void updateStudyState(@PathVariable Long studyId,
                                  @PathVariable Long registerId,
-                                 @RequestBody StudyControllerRequest.UpdateStudyStateRequest state,
+                                 @RequestBody @Validated StudyControllerRequest.UpdateStudyStateRequest state,
                                  Principal principal) {
         log.info("[updateStudyReadState] called by {} state = {}", principal.getName(), state);
 
