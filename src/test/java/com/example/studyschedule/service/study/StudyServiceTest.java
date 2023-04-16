@@ -26,6 +26,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -360,10 +361,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("본인이 방장이 아닌 스터디에 접근하면 예외가 발생한다.")
     void rejectWhenNotLeader() {
         // given
-        Study study = Study.ofPublic(createMockMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
-        StudyMember studyMember = new StudyMember(member, study);
-        studyMemberRepository.save(studyMember);
-        Study savedStudy = studyRepository.save(study);
+        Study savedStudy = createMemberWithStudyMember(createMockMember());
 
         // when & then
         assertThatThrownBy(() -> service.getMyStudyDetail(savedStudy.getId()))
@@ -375,10 +373,7 @@ class StudyServiceTest extends TestHelper {
     @MethodSource("changeUpdateState")
     @DisplayName("스터디 상태를 업데이트 한다.")
     void updateStudyState(String state, RegisterState registerState) {
-        Study study = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
-        StudyMember studyMember = new StudyMember(member, study);
-        studyMemberRepository.save(studyMember);
-        Study savedStudy = studyRepository.save(study);
+        Study savedStudy = createMemberWithStudyMember(member);
         List<Member> memberList = Arrays.asList(createMockMember());
         List<StudyRegister> studyRegister = createStudyRegister(savedStudy, memberList);
 
@@ -397,6 +392,10 @@ class StudyServiceTest extends TestHelper {
     }
 
     private List<StudyRegister> createStudyRegister(Study savedStudy, List<Member> memberList) {
+        return createStudyRegister(savedStudy, memberList, RegisterState.NO_READ);
+    }
+
+    private List<StudyRegister> createStudyRegister(Study savedStudy, List<Member> memberList, RegisterState registerState) {
         List<StudyRegister> studyRegisterList = memberList
                 .stream()
                 .map(m -> StudyRegister.builder()
@@ -404,9 +403,67 @@ class StudyServiceTest extends TestHelper {
                         .requestMember(m)
                         .goal("테스트")
                         .objective("테스트")
+                        .state(registerState)
                         .comment("테스트").build())
                 .collect(Collectors.toList());
         return studyRegisterRepository.saveAll(studyRegisterList);
+    }
+
+    @Test
+    @DisplayName("스터디 가입 상태가 Pass가 되면 스터디 가입이 완료된다.")
+    void addStudyMemberWhenUpdateStudyStatePass() {
+        // given
+        Study savedStudy = createMemberWithStudyMember(member);
+        List<Member> memberList = Arrays.asList(createMockMember());
+        List<StudyRegister> studyRegister = createStudyRegister(savedStudy, memberList, RegisterState.READ);
+
+        // when
+        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), new StudyControllerRequest.UpdateStudyStateRequest("pass"));
+
+        // then
+        assertStudyRegister(RegisterState.PASS);
+        assertHasStduyMember(savedStudy, memberList);
+    }
+
+    private void assertHasStduyMember(Study savedStudy, List<Member> memberList) {
+        Optional<StudyMember> registeredStudyMember = studyMemberRepository.findByStudy_IdAndMember_Id(savedStudy.getId(), memberList.get(0).getId());
+        assertThat(registeredStudyMember).isNotNull();
+    }
+
+    private void assertStudyRegister(RegisterState pass) {
+        List<StudyRegister> result = studyRegisterRepository.findAll();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getState()).isEqualTo(pass);
+        assertThat(result.get(0).getApprovalBy()).isEqualTo(member);
+    }
+
+    private Study createMemberWithStudyMember(Member member) {
+        Study study = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        StudyMember studyMember = new StudyMember(member, study);
+        studyMemberRepository.save(studyMember);
+        Study savedStudy = studyRepository.save(study);
+        return savedStudy;
+    }
+
+    @Test
+    @DisplayName("스터디 가입 상태가 Reject되면 스터디 가입이 되지 않는다.")
+    void addStudyMemberWhenUpdateStudyStateReject() {
+        // given
+        Study savedStudy = createMemberWithStudyMember(member);
+        List<Member> memberList = Arrays.asList(createMockMember());
+        List<StudyRegister> studyRegister = createStudyRegister(savedStudy, memberList, RegisterState.READ);
+
+        // when
+        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), new StudyControllerRequest.UpdateStudyStateRequest("reject"));
+
+        // then
+        assertStudyRegister(RegisterState.REJECT);
+        assertStudyMemberIsEmpty(savedStudy, memberList);
+    }
+
+    private void assertStudyMemberIsEmpty(Study savedStudy, List<Member> memberList) {
+        Optional<StudyMember> registeredStudyMember = studyMemberRepository.findByStudy_IdAndMember_Id(savedStudy.getId(), memberList.get(0).getId());
+        assertThat(registeredStudyMember).isEmpty();
     }
 
     private void createStudyMember(Study savedStudy, List<Member> memberList) {
