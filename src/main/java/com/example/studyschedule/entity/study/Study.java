@@ -85,4 +85,8 @@ public final class Study extends BaseEntity {
     public String getLeaderName() {
         return this.leader.getName();
     }
+
+    public String getLeaderId() {
+        return this.leader.getMemberId();
+    }
 }

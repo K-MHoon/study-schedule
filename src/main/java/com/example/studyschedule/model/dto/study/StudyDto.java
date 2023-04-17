@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class StudyDto {
 
     private Long id;
-    private String leaderName;
+    private String leaderId;
     private String studyName;
     private String content;
     private Long remainCount;
@@ -40,7 +40,7 @@ public class StudyDto {
     public static StudyDto entityToDto(Study study) {
         return StudyDto.builder()
                 .id(study.getId())
-                .leaderName(study.getLeaderName())
+                .leaderId(study.getLeaderId())
                 .studyName(study.getName())
                 .content(study.getContent())
                 .remainCount(study.getRemainCount())
@@ -57,7 +57,7 @@ public class StudyDto {
 
         return StudyDto.builder()
                 .id(study.getId())
-                .leaderName(study.getLeaderName())
+                .leaderId(study.getLeaderId())
                 .studyName(study.getName())
                 .content(study.getContent())
                 .remainCount(study.getRemainCount())
@@ -76,7 +76,7 @@ public class StudyDto {
 
         return StudyDto.builder()
                 .id(study.getId())
-                .leaderName(study.getLeaderName())
+                .leaderId(study.getLeaderId())
                 .studyName(study.getName())
                 .content(study.getContent())
                 .remainCount(study.getRemainCount())
