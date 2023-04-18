@@ -59,7 +59,7 @@ class StudyServiceTest extends TestHelper {
 
         assertAll(() -> assertThat(response.getData()).hasSize(1),
                 () -> assertThat(response.getData().get(0).getStudyName()).isEqualTo("Study Test"),
-                () -> assertThat(response.getData().get(0).getLeaderName()).isEqualTo(member.getName()));
+                () -> assertThat(response.getData().get(0).getLeaderId()).isEqualTo(member.getMemberId()));
     }
 
     @Test
@@ -362,6 +362,8 @@ class StudyServiceTest extends TestHelper {
     void rejectWhenNotLeader() {
         // given
         Study savedStudy = createMemberWithStudyMember(createMockMember());
+        StudyMember studyMember = new StudyMember(member, savedStudy);
+        studyMemberRepository.save(studyMember);
 
         // when & then
         assertThatThrownBy(() -> service.getMyStudyDetail(savedStudy.getId()))
@@ -471,6 +473,61 @@ class StudyServiceTest extends TestHelper {
                 .map(m -> new StudyMember(m, savedStudy))
                 .collect(Collectors.toList());
         studyMemberRepository.saveAll(studyMemberList);
+    }
+
+    @Test
+    @DisplayName("스터디 강퇴에 성공한다.")
+    void kickOffStudyMember() {
+        // given
+        Member simpleMember = createSimpleMember("kickOffTest");
+        Study study = Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
+        Study savedStudy = studyRepository.save(study);
+        studyMemberRepository.save(new StudyMember(member, savedStudy));
+        studyMemberRepository.save(new StudyMember(simpleMember, savedStudy));
+
+        // when
+        service.kickOutStudyMember(savedStudy.getId(), simpleMember.getId());
+        entityManagerFlushAndClear();
+
+        // then
+        List<Study> studyList = studyRepository.findAll();
+        assertThat(studyList.get(0).getStudyMemberList()).hasSize(1);
+        assertThat(studyList.get(0).getStudyMemberList().get(0).getMember()).isEqualTo(member);
+    }
+
+    @Test
+    @DisplayName("본인 강퇴 요청은 거절한다.")
+    void rejectKickOffStudyMemberSelf() {
+        // given
+        Member simpleMember = createSimpleMember("kickOffTest");
+        Study study = Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
+        Study savedStudy = studyRepository.save(study);
+        studyMemberRepository.save(new StudyMember(member, savedStudy));
+        studyMemberRepository.save(new StudyMember(simpleMember, savedStudy));
+
+        // when
+        assertThatThrownBy(() -> service.kickOutStudyMember(savedStudy.getId(), member.getId()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("자신은 강퇴할 수 없습니다.");
+
+    }
+
+    @Test
+    @DisplayName("스터디에 가입되지 않은 회원 강퇴를 요청할 경우 예외가 발생한다.")
+    void rejectKickOffOtherStudyMember() {
+        // given
+        Member simpleMember = createSimpleMember("kickOffTest");
+        Member otherMember = createSimpleMember("otherMember");
+        Study study = Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
+        Study savedStudy = studyRepository.save(study);
+        studyMemberRepository.save(new StudyMember(member, savedStudy));
+        studyMemberRepository.save(new StudyMember(simpleMember, savedStudy));
+
+        // when
+        assertThatThrownBy(() -> service.kickOutStudyMember(savedStudy.getId(), otherMember.getId()))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("해당하는 스터디 회원이 존재하지 않습니다. studyId = " + savedStudy.getId() + " memberId = " + otherMember.getId());
+
     }
 
 
