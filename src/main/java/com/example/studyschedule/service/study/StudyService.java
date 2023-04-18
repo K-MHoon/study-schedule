@@ -177,5 +177,16 @@ public class StudyService {
             studyRegister.updateApproval(myStudyMember.getMember());
         }
     }
+
+    @Transactional
+    public void kickOutStudyMember(Long studyId, Long memberId) {
+        StudyMember myStudyMember = getMyStudyMember(studyId);
+        if(myStudyMember.getMember().getId().equals(memberId)) {
+            throw new IllegalArgumentException("자신은 강퇴할 수 없습니다.");
+        }
+        StudyMember studyMember = studyMemberRepository.findByStudy_IdAndMember_Id(studyId, memberId)
+                .orElseThrow(() -> new EntityNotFoundException("해당하는 스터디 회원이 존재하지 않습니다. studyId = " + studyId + " memberId = " + memberId));
+        studyMemberRepository.delete(studyMember);
+    }
 }
 

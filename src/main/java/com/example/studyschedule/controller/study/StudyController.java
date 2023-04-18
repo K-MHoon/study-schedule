@@ -102,4 +102,13 @@ public class StudyController {
 
         studyService.updateStudyState(studyId, registerId, state);
     }
+
+    @PostMapping("/my/{studyId}/member/{memberId}/out")
+    @ResponseStatus(HttpStatus.OK)
+    public void kickOutStudyMember(@PathVariable Long studyId, @PathVariable Long memberId,
+                              Principal principal) {
+        log.info("[kickOutStudyMember] called by {}, studyId = {}, memberId = {}", principal.getName(), studyId, memberId);
+
+        studyService.kickOutStudyMember(studyId, memberId);
+    }
 }
