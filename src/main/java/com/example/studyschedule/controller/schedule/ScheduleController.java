@@ -21,7 +21,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @GetMapping("/member")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<ScheduleDto> getMemberScheduleList(Principal principal) {
         log.info("[getMemberSchedule] called by {}", principal.getName());
@@ -37,7 +37,7 @@ public class ScheduleController {
         return scheduleService.getSchedule(scheduleId);
     }
 
-    @PostMapping("/member")
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public void createSchedule(Principal principal, @RequestBody @Validated ScheduleControllerRequest.CreateScheduleRequest request) {
         log.info("[createSchedule] called by {}, body = {}", principal.getName(), request);
