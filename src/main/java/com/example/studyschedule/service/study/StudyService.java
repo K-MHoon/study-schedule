@@ -10,6 +10,7 @@ import com.example.studyschedule.enums.exception.common.CommonErrorCode;
 import com.example.studyschedule.exception.StudyScheduleException;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
+import com.example.studyschedule.model.dto.study.StudyRegisterDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRegisterRepository;
@@ -187,6 +188,15 @@ public class StudyService {
         StudyMember studyMember = studyMemberRepository.findByStudy_IdAndMember_Id(studyId, memberId)
                 .orElseThrow(() -> new EntityNotFoundException("해당하는 스터디 회원이 존재하지 않습니다. studyId = " + studyId + " memberId = " + memberId));
         studyMemberRepository.delete(studyMember);
+    }
+
+    @Transactional(readOnly = true)
+    public List<StudyRegisterDto> getMyStudyRegisterRequestList() {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+
+        return studyRegisterRepository.findAllByRequestMember_Id(loggedInMember.getId())
+                .stream().map(StudyRegisterDto::entityToDto)
+                .collect(Collectors.toList());
     }
 }
 

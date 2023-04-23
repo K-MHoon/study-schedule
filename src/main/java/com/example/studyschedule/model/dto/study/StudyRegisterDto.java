@@ -1,6 +1,7 @@
 package com.example.studyschedule.model.dto.study;
 
 import com.example.studyschedule.entity.study.StudyRegister;
+import com.example.studyschedule.enums.RegisterState;
 import com.example.studyschedule.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
@@ -32,6 +33,10 @@ public class StudyRegisterDto {
 
     private String requestMemberId;
 
+    private StudyDto study;
+
+    private RegisterState state;
+
     public static StudyRegisterDto entityToDto(StudyRegister studyRegister) {
         Objects.requireNonNull(studyRegister);
         String approvalBy = studyRegister.getApprovalBy() == null ? null : studyRegister.getApprovalBy().getMemberId();
@@ -43,6 +48,8 @@ public class StudyRegisterDto {
                 .objective(studyRegister.getObjective())
                 .comment(studyRegister.getComment())
                 .requestMemberId(studyRegister.getRequestMember().getMemberId())
+                .study(StudyDto.simpleDto(studyRegister.getRequestStudy()))
+                .state(studyRegister.getState())
                 .createdAt(DateUtils.localDateTimeToString(studyRegister.getCreatedAt()))
                 .approvalAt(approvalAt)
                 .approvalBy(approvalBy)

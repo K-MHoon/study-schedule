@@ -36,6 +36,13 @@ public class StudyDto {
     private List<MemberDto> registeredMemberList;
     private List<StudyRegisterDto> registerRequestList;
 
+    public static StudyDto simpleDto(Study study) {
+        return StudyDto.builder()
+                .id(study.getId())
+                .studyName(study.getName())
+                .build();
+    }
+
     public static StudyDto entityToDto(Study study) {
         return StudyDto.builder()
                 .id(study.getId())

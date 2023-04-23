@@ -1,8 +1,8 @@
 package com.example.studyschedule.controller.study;
 
-import com.example.studyschedule.enums.RegisterState;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
+import com.example.studyschedule.model.dto.study.StudyRegisterDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.service.study.StudyService;
 import lombok.RequiredArgsConstructor;
@@ -110,5 +110,13 @@ public class StudyController {
         log.info("[kickOutStudyMember] called by {}, studyId = {}, memberId = {}", principal.getName(), studyId, memberId);
 
         studyService.kickOutStudyMember(studyId, memberId);
+    }
+
+    @GetMapping("/my/study-register")
+    @ResponseStatus(HttpStatus.OK)
+    public List<StudyRegisterDto> getMyStudyRegisterRequestList(Principal principal) {
+        log.info("[getMyStudyRegisterRequestList] called by {}", principal.getName());
+
+        return studyService.getMyStudyRegisterRequestList();
     }
 }
