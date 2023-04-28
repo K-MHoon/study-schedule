@@ -32,13 +32,9 @@ public class MemberDto {
     private String name;
     private Integer age;
     private List<String> roles;
-    private List<StudyMemberDto> joinedStudyList;
-    private List<ScheduleDto> scheduleList;
-    private List<TodoDto> todoList;
     private String createdAt;
     private String updatedAt;
 
-    // TODO N+1 문제 발생, QueryDsl로 개선 예정
     public static MemberDto entityToDto(Member member) {
         return MemberDto.builder()
                 .id(member.getId())
@@ -46,9 +42,6 @@ public class MemberDto {
                 .name(member.getName())
                 .age(member.getAge())
                 .roles(member.getRoles())
-                .joinedStudyList(toStudyMemberDtoList(member.getStudyMemberList()))
-                .scheduleList(toScheduleDtoList(member.getScheduleList()))
-                .todoList(toTodoDtoList(member.getTodoList()))
                 .createdAt(localDateTimeToString(member.getCreatedAt()))
                 .updatedAt(localDateTimeToString(member.getUpdatedAt()))
                 .build();
@@ -61,23 +54,5 @@ public class MemberDto {
                 .name(member.getName())
                 .age(member.getAge())
                 .build();
-    }
-
-    private static List<StudyMemberDto> toStudyMemberDtoList(List<StudyMember> studyMemberList) {
-        return studyMemberList.stream()
-                .map(StudyMemberDto::entityToDto)
-                .collect(Collectors.toList());
-    }
-
-    private static List<ScheduleDto> toScheduleDtoList(List<Schedule> scheduleList) {
-        return scheduleList.stream()
-                .map(ScheduleDto::entityToDto)
-                .collect(Collectors.toList());
-    }
-
-    private static List<TodoDto> toTodoDtoList(List<Todo> todoList) {
-        return todoList.stream()
-                .map(TodoDto::entityToDto)
-                .collect(Collectors.toList());
     }
 }
