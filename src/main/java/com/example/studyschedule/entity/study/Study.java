@@ -2,6 +2,8 @@ package com.example.studyschedule.entity.study;
 
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
+import com.example.studyschedule.entity.schedule.Schedule;
+import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.enums.IsUse;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
@@ -29,6 +31,9 @@ public final class Study extends BaseEntity {
     @OneToMany(mappedBy = "requestStudy", cascade = CascadeType.ALL)
     @Builder.Default
     private List<StudyRegister> studyRegisterList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "study")
+    private List<Schedule> scheduleList = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id")

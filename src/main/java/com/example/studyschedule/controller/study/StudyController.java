@@ -112,7 +112,7 @@ public class StudyController {
         studyService.kickOutStudyMember(studyId, memberId);
     }
 
-    @GetMapping("/my/study-register")
+    @GetMapping("/my/register")
     @ResponseStatus(HttpStatus.OK)
     public List<StudyRegisterDto> getMyStudyRegisterRequestList(Principal principal) {
         log.info("[getMyStudyRegisterRequestList] called by {}", principal.getName());

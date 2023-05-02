@@ -2,6 +2,8 @@ package com.example.studyschedule.entity.schedule;
 
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
+import com.example.studyschedule.entity.study.Study;
+import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.enums.IsUse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -28,6 +30,10 @@ public class Schedule extends BaseEntity {
     private List<ScheduleTodo> scheduleTodoList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_id")
+    private Study study;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -35,11 +41,16 @@ public class Schedule extends BaseEntity {
     private LocalDateTime endDate;
 
     public Schedule(Member member, LocalDateTime startDate, LocalDateTime endDate, IsUse isUse, String name) {
+        this(member, startDate, endDate, isUse, name, null);
+    }
+
+    public Schedule(Member member, LocalDateTime startDate, LocalDateTime endDate, IsUse isUse, String name, Study study) {
         this.member = member;
         this.startDate = startDate;
         this.endDate = endDate;
         this.isUse = isUse;
         this.name = name;
+        this.study = study;
     }
 
     /**
