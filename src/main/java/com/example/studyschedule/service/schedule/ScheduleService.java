@@ -34,7 +34,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public List<ScheduleDto> getMemberScheduleList(Long studyId) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
-        Study study = studyRepository.findByIdAndLeaderAndIsUse(studyId, loggedInMember, IsUse.Y)
+        Study study = studyRepository.findByIdAndIsUse(studyId, IsUse.Y)
                 .orElseThrow(() -> new EntityNotFoundException("해당하는 스터디를 찾을 수 없습니다."));
 
         return scheduleRepository.findAllByMemberAndStudy(loggedInMember, study).stream()

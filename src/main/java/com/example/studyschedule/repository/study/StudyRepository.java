@@ -14,6 +14,8 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     Page<Study> findAllBySecretAndIsUse(Boolean secret, IsUse isUse, Pageable pageable);
 
+    Optional<Study> findByIdAndIsUse(Long studyId, IsUse isUse);
+
     Optional<Study> findByIdAndLeaderAndIsUse(Long studyId, Member leader, IsUse isUse);
 
     Optional<Study> findByIdAndSecretAndIsUse(Long studyId, Boolean secret, IsUse isUse);
