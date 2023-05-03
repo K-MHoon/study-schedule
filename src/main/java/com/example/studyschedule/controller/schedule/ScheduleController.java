@@ -23,10 +23,10 @@ public class ScheduleController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ScheduleDto> getMemberScheduleList(Principal principal) {
-        log.info("[getMemberSchedule] called by {}", principal.getName());
+    public List<ScheduleDto> getMemberScheduleList(Principal principal, @RequestParam(value = "study_id", required = true) Long studyId) {
+        log.info("[getMemberSchedule] called by {}, studyId = {}", principal.getName(), studyId);
 
-        return scheduleService.getMemberScheduleList();
+        return scheduleService.getMemberScheduleList(studyId);
     }
 
     @GetMapping("/{schedule_id}")

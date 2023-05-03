@@ -3,6 +3,7 @@ package com.example.studyschedule.service.schedule;
 import com.example.studyschedule.TestHelper;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
+import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
@@ -38,9 +39,10 @@ class ScheduleServiceTest extends TestHelper {
     @Test
     @DisplayName("회원 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
     void getMemberScheduleList() {
-        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2);
+        Study testStudy = studyRepository.save(getStudyFixture(member));
+        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2, testStudy);
 
-        List<ScheduleDto> result = scheduleService.getMemberScheduleList();
+        List<ScheduleDto> result = scheduleService.getMemberScheduleList(testStudy.getId());
 
         assertAll(() -> assertThat(result).hasSize(2),
                 () -> assertThat(result).extracting("id").containsExactlyInAnyOrder(scheduleList.get(0).getId(), scheduleList.get(1).getId()),

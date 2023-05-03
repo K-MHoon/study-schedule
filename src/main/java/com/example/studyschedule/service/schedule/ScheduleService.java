@@ -3,10 +3,14 @@ package com.example.studyschedule.service.schedule;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.entity.study.Study;
+import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
+import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,12 +29,15 @@ public class ScheduleService {
     private final TodoCommonService todoCommonService;
     private final ScheduleTodoService scheduleTodoService;
     private final ScheduleCommonService scheduleCommonService;
+    private final StudyRepository studyRepository;
 
     @Transactional(readOnly = true)
-    public List<ScheduleDto> getMemberScheduleList() {
+    public List<ScheduleDto> getMemberScheduleList(Long studyId) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
+        Study study = studyRepository.findByIdAndLeaderAndIsUse(studyId, loggedInMember, IsUse.Y)
+                .orElseThrow(() -> new EntityNotFoundException("해당하는 스터디를 찾을 수 없습니다."));
 
-        return scheduleRepository.findAllByMember_Id(loggedInMember.getId()).stream()
+        return scheduleRepository.findAllByMemberAndStudy(loggedInMember, study).stream()
                 .map(ScheduleDto::entityToDto)
                 .collect(Collectors.toList());
     }

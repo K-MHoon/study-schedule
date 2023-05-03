@@ -1,6 +1,9 @@
 package com.example.studyschedule.repository.schedule;
 
+import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
+import com.example.studyschedule.entity.study.Study;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +19,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             "where s.member.id = :memberId")
     List<Schedule> findAllByMember_IdByJPQL(@Param("memberId") Long memberId);
 
-    List<Schedule> findAllByMember_Id(Long memberId);
+    @EntityGraph(attributePaths = {"member", "study"})
+    List<Schedule> findAllByMemberAndStudy(Member member, Study study);
 
     @Query("select s from Schedule s " +
             "left join fetch s.scheduleTodoList stl " +
