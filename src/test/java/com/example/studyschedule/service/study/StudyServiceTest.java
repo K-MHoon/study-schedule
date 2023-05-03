@@ -117,7 +117,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("단일 공개 스터디를 정상 조회한다.")
     void getPublicStudyDetail() {
         // given
-        Study study = getStudyFixture();
+        Study study = getStudyFixture(member);
         Study mockStudy = studyRepository.save(study);
         mockStudy.addStudyMember(createMockMember());
         mockStudy.addStudyMember(createMockMember());
@@ -129,15 +129,11 @@ class StudyServiceTest extends TestHelper {
         assertThat(studyDetail.getId()).isEqualTo(mockStudy.getId());
     }
 
-    private Study getStudyFixture() {
-        return Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
-    }
-
     @Test
     @DisplayName("비공개 스터디는 공개 스터디로 조회되지 않는다.")
     void doNotFindStudyIfStudyIsSecret() {
         // given
-        Study study = getStudyFixture();
+        Study study = getStudyFixture(member);
         study.changeToPrivate("test");
         Study mockStudy = studyRepository.save(study);
         mockStudy.addStudyMember(createMockMember());
@@ -177,7 +173,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("스터디 삭제에 성공한다.")
     void deleteStudy() {
-        Study study = getStudyFixture();
+        Study study = getStudyFixture(member);
         Study mockStudy = studyRepository.save(study);
         mockStudy.addStudyMember(createMockMember());
         mockStudy.addStudyMember(createMockMember());
@@ -191,7 +187,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("스터디가 삭제될 때, 관련된 StudyMember가 모두 삭제 된다.")
     void deleteAllLinkedStudyMembersWhenDeleteStudy() {
-        Study study = getStudyFixture();
+        Study study = getStudyFixture(member);
         Study mockStudy = studyRepository.save(study);
         mockStudy.addStudyMember(createMockMember());
         mockStudy.addStudyMember(createMockMember());
@@ -242,7 +238,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("스터디 가입 요청에 성공한다.")
     void successCreateStudyRegister() {
-        Study study = studyRepository.save(getStudyFixture());
+        Study study = studyRepository.save(getStudyFixture(member));
         StudyControllerRequest.CreateStudyRegisterRequest request = new StudyControllerRequest.CreateStudyRegisterRequest("목표 테스트", "목적 테스트", "주석 테스트");
 
         service.createStudyRegister(study.getId(), request);
@@ -261,7 +257,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("이미 가입된 스터디의 경우 예외가 발생한다.")
     void rejectWhenRequestAlreadyJoinedStudy() {
-        Study study = getStudyFixture();
+        Study study = getStudyFixture(member);
         StudyMember savedStudyMember = studyMemberRepository.save(new StudyMember(member, study));
         study.getStudyMemberList().add(savedStudyMember);
         Study savedStudy = studyRepository.save(study);

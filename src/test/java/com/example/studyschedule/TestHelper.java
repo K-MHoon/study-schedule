@@ -4,6 +4,7 @@ import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.repository.member.MemberRepository;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
@@ -88,6 +89,15 @@ public class TestHelper {
                 .collect(Collectors.toList());
     }
 
+    protected List<Schedule> createTestSchedulesAndSaveByCount(Member member, int count, Study study) {
+        return IntStream.range(0, count)
+                .mapToObj(c -> {
+                    Schedule schedule = new Schedule(member, LocalDateTime.now(), LocalDateTime.now().plusDays(10), IsUse.Y, "testSchedule" + c, study);
+                    return scheduleRepository.save(schedule);
+                })
+                .collect(Collectors.toList());
+    }
+
     protected List<Todo> createTestTodosAndSaveByCount(Member member, int count) {
         return IntStream.range(0, count)
                 .mapToObj(c -> {
@@ -105,6 +115,10 @@ public class TestHelper {
     protected Member createSimpleMember(String memberId) {
         Member member = Member.builder().memberId(memberId).password("testPassword").build();
         return memberRepository.save(member);
+    }
+
+    protected Study getStudyFixture(Member member) {
+        return Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
     }
 
     protected List<ScheduleTodo> connectScheduleTodoList(Schedule schedule, List<Todo> todoList) {

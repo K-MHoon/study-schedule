@@ -37,7 +37,7 @@ class ScheduleServiceTest extends TestHelper {
     }
 
     @Test
-    @DisplayName("회원 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
+    @DisplayName("특정 스터디에 연결된 회원의 스케줄 정보를 가지고 온다.")
     void getMemberScheduleList() {
         Study testStudy = studyRepository.save(getStudyFixture(member));
         List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2, testStudy);
@@ -63,10 +63,10 @@ class ScheduleServiceTest extends TestHelper {
     @Test
     @DisplayName("스케줄 id가 존재하지 않는 경우 예외가 발생한다.")
     void causeExceptionWhenHasNotScheduleId() {
-        assertThatThrownBy(() -> scheduleService.getSchedule(1_000_000L))
+        assertThatThrownBy(() -> scheduleService.getSchedule(Long.MAX_VALUE))
                 .isInstanceOf(EntityNotFoundException.class)
                 .extracting("message")
-                .isEqualTo("ID에 해당하는 스케줄을 찾을 수 없습니다. id = 1000000");
+                .isEqualTo("ID에 해당하는 스케줄을 찾을 수 없습니다. id = " + Long.MAX_VALUE);
     }
 
     @Test
