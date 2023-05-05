@@ -2,15 +2,15 @@ package com.example.studyschedule.model.dto.schedule;
 
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.ScheduleTodo;
+import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.enums.IsClear;
 import com.example.studyschedule.enums.IsUse;
-import com.example.studyschedule.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -25,6 +25,7 @@ public class ScheduleDto {
 
     private Long id;
     private Long memberId;
+    private Long studyId;
     private String name;
     private List<TodoDto> todoList;
     private String startDate;
@@ -32,11 +33,13 @@ public class ScheduleDto {
     private IsUse isUse;
     private String createdAt;
     private String updatedAt;
+    private Double successRate;
 
     public static ScheduleDto entityToDtoWithTodo(Schedule schedule) {
         return ScheduleDto.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
+                .studyId(schedule.getStudy().getId())
                 .memberId(getMemberId(schedule))
                 .todoList(getTodoList(schedule))
                 .startDate(localDateTimeToString(schedule.getStartDate()))
@@ -70,6 +73,15 @@ public class ScheduleDto {
 
         return schedule.getScheduleTodoList().stream()
                 .map(ScheduleTodo::getTodo)
+                .map(TodoDto::entityToDto)
+                .collect(Collectors.toList());
+    }
+
+    public void updateTodoList(List<ScheduleTodo> scheduleTodoList) {
+        this.successRate = (scheduleTodoList.stream()
+                .filter(scheduleTodo -> scheduleTodo.getIsClear() == IsClear.Y)
+                .count() / (double)scheduleTodoList.size()) * 100;
+        this.todoList = scheduleTodoList.stream()
                 .map(TodoDto::entityToDto)
                 .collect(Collectors.toList());
     }

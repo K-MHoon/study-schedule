@@ -2,6 +2,7 @@ package com.example.studyschedule.service.schedule;
 
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
+import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsUse;
@@ -16,8 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 @Slf4j
@@ -34,11 +39,22 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public List<ScheduleDto> getMemberScheduleList(Long studyId) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
+
         Study study = studyRepository.findByIdAndIsUse(studyId, IsUse.Y)
                 .orElseThrow(() -> new EntityNotFoundException("해당하는 스터디를 찾을 수 없습니다."));
 
-        return scheduleRepository.findAllByMemberAndStudy(loggedInMember, study).stream()
-                .map(ScheduleDto::entityToDto)
+        List<Schedule> scheduleList = scheduleRepository.findAllByMemberAndStudy(loggedInMember, study);
+
+        Map<Schedule, List<ScheduleTodo>> groupingByScheduleToScheduleTodoListMap = scheduleTodoService.getScheduleTodoList(scheduleList)
+                .stream()
+                .collect(groupingBy(scheduleTodo -> scheduleTodo.getSchedule()));
+
+        return scheduleList.stream()
+                .map(schedule -> {
+                    ScheduleDto scheduleDto = ScheduleDto.entityToDto(schedule);
+                    scheduleDto.updateTodoList(groupingByScheduleToScheduleTodoListMap.getOrDefault(schedule, Collections.emptyList()));
+                    return scheduleDto;
+                })
                 .collect(Collectors.toList());
     }
 

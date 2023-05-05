@@ -1,6 +1,5 @@
 package com.example.studyschedule.service.schedule;
 
-import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.entity.schedule.Todo;
@@ -24,5 +23,10 @@ public class ScheduleTodoService {
     public void createScheduleTodo(Schedule schedule, List<Todo> todoList) {
         List<ScheduleTodo> newScheduleTodoList = todoList.stream().map(todo -> new ScheduleTodo(schedule, todo)).collect(Collectors.toList());
         scheduleTodoRepository.saveAll(newScheduleTodoList);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ScheduleTodo> getScheduleTodoList(List<Schedule> scheduleList) {
+        return scheduleTodoRepository.findAllByScheduleIn(scheduleList);
     }
 }
