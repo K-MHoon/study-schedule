@@ -1,8 +1,10 @@
 package com.example.studyschedule.repository.study;
 
+import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.studyschedule.entity.member.QMember.member;
@@ -30,5 +32,17 @@ public class StudyMemberRepositorySupportImpl extends QuerydslRepositorySupport 
                 .fetchOne();
 
         return Optional.ofNullable(sm);
+    }
+
+    @Override
+    public List<Study> findAllMyStudy(Long memberId) {
+        return from(studyMember)
+                .select(studyMember.study)
+                .leftJoin(studyMember.member, member)
+                .fetchJoin()
+                .leftJoin(studyMember.study, study)
+                .fetchJoin()
+                .where(studyMember.member.id.eq(memberId))
+                .fetch();
     }
 }
