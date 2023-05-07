@@ -39,9 +39,7 @@ public class StudyMemberRepositorySupportImpl extends QuerydslRepositorySupport 
         return from(studyMember)
                 .select(studyMember.study)
                 .leftJoin(studyMember.member, member)
-                .fetchJoin()
                 .leftJoin(studyMember.study, study)
-                .fetchJoin()
                 .where(studyMember.member.id.eq(memberId))
                 .fetch();
     }
