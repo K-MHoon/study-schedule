@@ -9,6 +9,7 @@ import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
+import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ public class ScheduleService {
     private final ScheduleTodoService scheduleTodoService;
     private final ScheduleCommonService scheduleCommonService;
     private final StudyRepository studyRepository;
+    private final StudyMemberRepository studyMemberRepository;
 
     @Transactional(readOnly = true)
     public List<ScheduleDto> getMemberScheduleList(Long studyId) {
@@ -103,5 +106,28 @@ public class ScheduleService {
 
     private boolean isNotSameRequestAndDataCount(ScheduleControllerRequest.DeleteScheduleRequest request, Member member) {
         return scheduleRepository.countAllByIdInAndMember_Id(request.getScheduleList(), member.getId()) != request.getScheduleList().size();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ScheduleDto> getTodayScheduleList() {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+
+        List<Study> studyList = studyMemberRepository.findAllMyStudy(loggedInMember.getId());
+
+        List<Schedule> todayScheduleList = scheduleRepository.findAllTodayMySchedule(loggedInMember, studyList, LocalDateTime.now(), IsUse.Y);
+
+        Map<Schedule, List<ScheduleTodo>> groupingByScheduleToScheduleTodoListMap = scheduleTodoService.getScheduleTodoList(todayScheduleList)
+                .stream()
+                .collect(groupingBy(scheduleTodo -> scheduleTodo.getSchedule()));
+
+        return todayScheduleList.stream()
+                .map(schedule -> {
+                    ScheduleDto scheduleDto = ScheduleDto.entityToDto(schedule);
+                    scheduleDto.updateStudy(schedule.getStudy());
+                    scheduleDto.updateTodoList(groupingByScheduleToScheduleTodoListMap.getOrDefault(schedule, Collections.emptyList()));
+                    return scheduleDto;
+                })
+                .collect(Collectors.toList());
+
     }
 }

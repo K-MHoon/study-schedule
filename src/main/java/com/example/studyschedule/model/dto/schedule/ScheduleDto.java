@@ -3,6 +3,7 @@ package com.example.studyschedule.model.dto.schedule;
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsClear;
 import com.example.studyschedule.enums.IsUse;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,6 +27,7 @@ public class ScheduleDto {
     private Long id;
     private Long memberId;
     private Long studyId;
+    private String studyName;
     private String name;
     private List<TodoDto> todoList;
     private String startDate;
@@ -75,6 +77,11 @@ public class ScheduleDto {
                 .map(ScheduleTodo::getTodo)
                 .map(TodoDto::entityToDto)
                 .collect(Collectors.toList());
+    }
+
+    public void updateStudy(Study study) {
+        this.studyId = study.getId();
+        this.studyName = study.getName();
     }
 
     public void updateTodoList(List<ScheduleTodo> scheduleTodoList) {

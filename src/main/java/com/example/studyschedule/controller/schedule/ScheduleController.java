@@ -29,6 +29,14 @@ public class ScheduleController {
         return scheduleService.getMemberScheduleList(studyId);
     }
 
+    @GetMapping("/today")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ScheduleDto> getTodayScheduleList(Principal principal) {
+        log.info("[getTodayScheduleList] called by {}, studyId = {}", principal.getName());
+
+        return scheduleService.getTodayScheduleList();
+    }
+
     @GetMapping("/{schedule_id}")
     @ResponseStatus(HttpStatus.OK)
     public ScheduleDto getSchedule(Principal principal, @PathVariable(name = "schedule_id") Long scheduleId) {
