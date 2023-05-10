@@ -1,15 +1,31 @@
 package com.example.studyschedule.model.request.study;
 
 import com.example.studyschedule.enums.IsUse;
-import com.example.studyschedule.enums.RegisterState;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StudyControllerRequest {
+
+
+    @Getter
+    @ToString
+    @AllArgsConstructor
+    @Builder
+    public static final class GetPublicStudyListRequest {
+
+        private String name;
+        private String leaderId;
+
+        private Pageable pageable;
+    }
 
     @Getter
     @ToString

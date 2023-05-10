@@ -25,10 +25,19 @@ public class StudyController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Pagination<List<StudyDto>> getPublicStudyList(@PageableDefault Pageable pageable) {
+    public Pagination<List<StudyDto>> getPublicStudyList(@PageableDefault Pageable pageable,
+                                                         @RequestParam(value = "name", required = false) String name,
+                                                         @RequestParam(value = "leader", required = false) String leader) {
         log.info("[getPublicStudyList] call ");
 
-        return studyService.getPublicStudyList(pageable);
+        StudyControllerRequest.GetPublicStudyListRequest request = StudyControllerRequest
+                .GetPublicStudyListRequest.builder()
+                .name(name)
+                .leaderId(leader)
+                .pageable(pageable)
+                .build();
+
+        return studyService.getPublicStudyList(request);
     }
 
     @GetMapping("/{study_id}")
