@@ -52,11 +52,20 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("현재 사용 가능하고 공개된 스터디가 조회된다.")
     void getPublicStudyListTest() {
+        // given
         studyRepository.save(Study.ofPublic(member, "Study Test", "스터디", 10L, IsUse.Y));
         Pageable pageRequest = PageRequest.of(0, 10);
 
-        Pagination<List<StudyDto>> response = service.getPublicStudyList(pageRequest);
+        StudyControllerRequest.GetPublicStudyListRequest request = StudyControllerRequest
+                .GetPublicStudyListRequest
+                .builder()
+                .pageable(pageRequest)
+                .build();
 
+        // when
+        Pagination<List<StudyDto>> response = service.getPublicStudyList(request);
+
+        // then
         assertAll(() -> assertThat(response.getData()).hasSize(1),
                 () -> assertThat(response.getData().get(0).getStudyName()).isEqualTo("Study Test"),
                 () -> assertThat(response.getData().get(0).getLeaderId()).isEqualTo(member.getMemberId()));
