@@ -61,7 +61,7 @@ public class StudyService {
                 request.getFullCount(),
                 request.getIsUse());
 
-        if(request.getSecret()) {
+        if (request.getSecret()) {
             newStudy.changeToPrivate(passwordEncoder.encode(request.getPassword()));
         }
 
@@ -92,7 +92,7 @@ public class StudyService {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         List<StudyMember> studyMemberList = getRequestStudyMemberList(request, loggedInMember);
 
-        if(sizeNotEqual(request, studyMemberList)) {
+        if (sizeNotEqual(request, studyMemberList)) {
             throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스터디를 포함하고 있습니다. memberId = " + loggedInMember.getMemberId());
         }
 
@@ -113,7 +113,7 @@ public class StudyService {
         checkAlreadyJoinedStudy(studyId, loggedInMember);
 
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new StudyScheduleException(CommonErrorCode.NOT_FOUND));
-        if(study.isFull()) {
+        if (study.isFull()) {
             throw new IllegalArgumentException("스터디 정원이 가득 찼습니다.");
         }
 
@@ -130,7 +130,7 @@ public class StudyService {
     }
 
     private void checkAlreadyJoinedStudy(Long studyId, Member loggedInMember) {
-        if(studyMemberRepository.existsStudyMemberByStudy_IdAndMember_Id(studyId, loggedInMember.getId())) {
+        if (studyMemberRepository.existsStudyMemberByStudy_IdAndMember_Id(studyId, loggedInMember.getId())) {
             throw new IllegalArgumentException("이미 스터디에 가입되어 있습니다.");
         }
     }
@@ -154,7 +154,7 @@ public class StudyService {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         StudyMember studyMember = studyMemberRepository.findMyStudyMember(studyId, loggedInMember.getId())
                 .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않거나 가입되지 않은 스터디 입니다."));
-        if(!studyMember.getStudy().getLeader().equals(loggedInMember)) {
+        if (!studyMember.getStudy().getLeader().equals(loggedInMember)) {
             throw new IllegalArgumentException("본인의 스터디가 아닙니다.");
         }
         return studyMember;
@@ -170,8 +170,8 @@ public class StudyService {
         studyRegister.updateRegisterState(RegisterState.convertStringToRegisterState(request.getState()));
         RegisterState tobeState = studyRegister.getState();
 
-        if(asIsState == RegisterState.READ && asIsState != tobeState) {
-            if(tobeState == RegisterState.PASS) {
+        if (asIsState == RegisterState.READ && asIsState != tobeState) {
+            if (tobeState == RegisterState.PASS) {
                 studyMemberRepository.save(new StudyMember(studyRegister.getRequestMember(), myStudyMember.getStudy()));
             }
             studyRegister.updateApproval(myStudyMember.getMember());
@@ -181,7 +181,7 @@ public class StudyService {
     @Transactional
     public void kickOutStudyMember(Long studyId, Long memberId) {
         StudyMember myStudyMember = getMyStudyMember(studyId);
-        if(myStudyMember.getMember().getId().equals(memberId)) {
+        if (myStudyMember.getMember().getId().equals(memberId)) {
             throw new IllegalArgumentException("자신은 강퇴할 수 없습니다.");
         }
         StudyMember studyMember = studyMemberRepository.findByStudy_IdAndMember_Id(studyId, memberId)
@@ -196,6 +196,19 @@ public class StudyService {
         return studyRegisterRepository.findAllByRequestMember_Id(loggedInMember.getId())
                 .stream().map(StudyRegisterDto::entityToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public int cancelStudyRegisterAll(StudyControllerRequest.CancelStudyRegisterRequest request) {
+        Member member = memberCommonService.getLoggedInMember();
+        if (isNotSameRequestAndDataCount(request, member)) {
+            throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스터디 가입 요청을 포함하고 있습니다. memberId = " + member.getMemberId());
+        }
+        return studyRegisterRepository.updateAllCancelStudyRegister(RegisterState.CANCEL, request.getStudyRegisterList(), member.getId());
+    }
+
+    private boolean isNotSameRequestAndDataCount(StudyControllerRequest.CancelStudyRegisterRequest request, Member member) {
+        return studyRegisterRepository.countAllByIdInAndRequestMember_Id(request.getStudyRegisterList(), member.getId()) != request.getStudyRegisterList().size();
     }
 }
 

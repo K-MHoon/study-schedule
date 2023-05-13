@@ -88,4 +88,15 @@ public final class StudyControllerRequest {
         @NotEmpty
         private String state;
     }
+
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CancelStudyRegisterRequest {
+
+        @UniqueElements
+        @NotNull
+        private List<Long> studyRegisterList;
+    }
 }

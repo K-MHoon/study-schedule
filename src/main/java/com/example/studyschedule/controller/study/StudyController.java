@@ -85,6 +85,15 @@ public class StudyController {
         studyService.createStudyRegister(studyId, request);
     }
 
+    @PostMapping("/register/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    public void cancelStudyRegisterAll(@RequestBody @Validated StudyControllerRequest.CancelStudyRegisterRequest request,
+                              Principal principal) {
+        log.info("[cancelStudyRegisterAll] called by {}, studyRegister List = {}", principal.getName(), request.getStudyRegisterList());
+
+        studyService.cancelStudyRegisterAll(request);
+    }
+
     @GetMapping("/my")
     @ResponseStatus(HttpStatus.OK)
     public List<StudyDto> getMyStudy(Principal principal) {
