@@ -6,6 +6,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberControllerRequest {
     @Getter
+    @Builder
     @AllArgsConstructor
     public static class CreateMemberRequest {
 

@@ -6,7 +6,6 @@ import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsUse;
-import com.example.studyschedule.repository.member.MemberRepository;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
 import com.example.studyschedule.repository.schedule.ScheduleTodoRepository;
 import com.example.studyschedule.repository.schedule.TodoRepository;
@@ -16,10 +15,13 @@ import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import com.example.studyschedule.service.schedule.ScheduleCommonService;
 import com.example.studyschedule.service.schedule.TodoCommonService;
+import com.example.studyschedule.support.MemberHelper;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -29,10 +31,11 @@ import java.util.stream.IntStream;
 
 @SpringBootTest
 @Transactional
+@WithMockUser(username = "testMember", authorities = {"USER"})
 public class TestHelper {
 
     @Autowired
-    protected MemberRepository memberRepository;
+    protected MemberHelper memberHelper;
 
     @Autowired
     protected StudyRepository studyRepository;
@@ -67,17 +70,11 @@ public class TestHelper {
     @Autowired
     protected StudyRegisterRepository studyRegisterRepository;
 
-    protected List<Member> createTestMembersAndSaveByCount(int count) {
-        return createTestMembersAndSaveByCount(0, count);
-    }
+    protected Member member;
 
-    protected List<Member> createTestMembersAndSaveByCount(int start, int count) {
-        return IntStream.range(start, count)
-                .mapToObj(c -> {
-                    Member member = Member.builder().memberId("testMember" + c).password("testPassword").build();
-                    return memberRepository.save(member);
-                })
-                .collect(Collectors.toList());
+    @BeforeEach
+    void setup() {
+        member = memberHelper.createSimpleMember();
     }
 
     protected List<Schedule> createTestSchedulesAndSaveByCount(Member member, int count) {
@@ -105,16 +102,6 @@ public class TestHelper {
                     return todoRepository.save(todo);
                 })
                 .collect(Collectors.toList());
-    }
-
-    protected Member createSimpleMember() {
-        Member member = Member.builder().memberId("testMember").password("testPassword").build();
-        return memberRepository.save(member);
-    }
-
-    protected Member createSimpleMember(String memberId) {
-        Member member = Member.builder().memberId(memberId).password("testPassword").build();
-        return memberRepository.save(member);
     }
 
     protected Study getStudyFixture(Member member) {

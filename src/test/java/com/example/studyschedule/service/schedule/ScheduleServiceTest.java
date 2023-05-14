@@ -23,18 +23,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@WithMockUser(username = "testMember")
 class ScheduleServiceTest extends TestHelper {
 
     @Autowired
     ScheduleService scheduleService;
-
-    private Member member;
-
-    @BeforeEach
-    void setup() {
-        member = createSimpleMember();
-    }
 
     @Test
     @DisplayName("특정 스터디에 연결된 회원의 스케줄 정보를 가지고 온다.")
@@ -53,7 +45,8 @@ class ScheduleServiceTest extends TestHelper {
     @Test
     @DisplayName("스케줄 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
     void getSchedule() {
-        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2);
+        Study study = studyRepository.save(getStudyFixture(member));
+        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2, study);
 
         ScheduleDto result = scheduleService.getSchedule(scheduleList.get(0).getId());
 
@@ -110,7 +103,7 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("로그인된 멤버에 해당하지 않는 스케줄 id를 요청할 경우 예외가 발생한다.")
     void causeExceptionWhenNotLoggedInMemberScheduleDeleteRequest() {
         // given
-        Member member2 = createSimpleMember("anotherMember");
+        Member member2 = memberHelper.createSimpleMember("anotherMember");
         List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 10);
         scheduleList.addAll(createTestSchedulesAndSaveByCount(member2, 2));
         ScheduleControllerRequest.DeleteScheduleRequest request = new ScheduleControllerRequest.DeleteScheduleRequest(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()));

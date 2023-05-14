@@ -25,18 +25,20 @@ class MemberServiceTest extends TestHelper {
     @Test
     @DisplayName("회원 전체 목록을 조회한다.")
     void getMemberList() {
-        createTestMembersAndSaveByCount(2);
+        memberHelper.createTestMembersAndSaveByCount(2);
 
-        List<MemberDto> response = memberService.getMemberList();
+        List<MemberDto> result = memberService.getMemberList();
 
-        assertAll(() -> assertThat(response).hasSize(2),
-                () -> assertThat(response).extracting("memberId").containsExactlyInAnyOrder("testMember0", "testMember1"));
+        assertAll(() -> assertThat(result).hasSize(3),
+                () -> assertThat(result)
+                        .extracting("memberId")
+                        .containsExactlyInAnyOrder("testMember", "testMember0", "testMember1"));
     }
 
     @Test
     @DisplayName("회원 단일 정보를 조회한다.")
     void getMember() {
-        List<Member> memberList = createTestMembersAndSaveByCount(3);
+        List<Member> memberList = memberHelper.createTestMembersAndSaveByCount(3);
 
         MemberDto member = memberService.getMemberById(memberList.get(0).getId());
 
@@ -55,45 +57,46 @@ class MemberServiceTest extends TestHelper {
     @Test
     @DisplayName("새로운 스터디 회원을 생성한다.")
     void createMember() {
-        String memberId = UUID.randomUUID().toString();
-        String password = UUID.randomUUID().toString();
-        String name = "흑시바";
-        Integer age = 10;
-        MemberControllerRequest.CreateMemberRequest request = new MemberControllerRequest.CreateMemberRequest(memberId, password, name, age);
+        // given
+        MemberControllerRequest.CreateMemberRequest request = createSimpleMemberRequest();
 
+        // then
         memberService.createMember(request);
-        entityManager.clear();
 
-        Member findMember = memberRepository.findByMemberId(memberId).get();
-
-        assertAll(() -> assertThat(findMember.getMemberId()).isEqualTo(memberId),
-                () -> assertThat(passwordEncoder.matches(password, findMember.getPassword())).isTrue()
+        Member findMember = memberHelper.find(request.getMemberId());
+        assertAll(() -> assertThat(findMember.getMemberId()).isEqualTo(request.getMemberId()),
+                () -> assertThat(passwordEncoder.matches(request.getPassword(), findMember.getPassword())).isTrue()
         );
     }
 
     @Test
     @DisplayName("기존에 있는 MemberId 생성을 요청하면 예외가 발생한다.")
     void causeExceptionWhenRequestAlreadyExistedMemberIdCreate() {
-        String memberId = UUID.randomUUID().toString();
-        String password = UUID.randomUUID().toString();
-        String name = "흑시바";
-        Integer age = 10;
-        MemberControllerRequest.CreateMemberRequest request = new MemberControllerRequest.CreateMemberRequest(memberId, password, name, age);
+        // given
+        MemberControllerRequest.CreateMemberRequest request = createSimpleMemberRequest();
 
+        // when
         memberService.createMember(request);
-        entityManager.clear();
 
+        // then
         assertThatThrownBy(() -> memberService.createMember(request))
                 .isInstanceOf(IllegalArgumentException.class)
                         .extracting("message")
-                                .isEqualTo("동일한 멤버가 존재합니다. ID = " + memberId);
+                                .isEqualTo("동일한 멤버가 존재합니다. ID = " + request.getMemberId());
+    }
+
+    private MemberControllerRequest.CreateMemberRequest createSimpleMemberRequest() {
+        return MemberControllerRequest.CreateMemberRequest.builder()
+                .memberId(UUID.randomUUID().toString())
+                .password(UUID.randomUUID().toString())
+                .name("흑시바")
+                .age(10)
+                .build();
     }
 
     @Test
     @DisplayName("회원정보 이름, 나이를 변경한다.")
-    @WithMockUser(username = "testMember")
     void updateUserNameAndAge() {
-        Member member = createSimpleMember();
         MemberControllerRequest.UpdateMemberProfileRequest request = new MemberControllerRequest.UpdateMemberProfileRequest("홍길동", 33);
 
         memberService.updateMemberProfile(request);

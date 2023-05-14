@@ -19,18 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@WithMockUser(username = "testMember")
 class TodoServiceTest extends TestHelper {
 
     @Autowired
     TodoService todoService;
-
-    private Member member;
-
-    @BeforeEach
-    void setUp() {
-        member = createSimpleMember();
-    }
 
     @Test
     @DisplayName("스터디 회원과 연결된 Todo 정보를 가지고 온다.")
@@ -89,7 +81,7 @@ class TodoServiceTest extends TestHelper {
     @DisplayName("멤버에 해당되지 않는 할 일 목록 삭제를 요청할 경우 예외가 발생한다.")
     void doNotDeleteWhenDeleteRequestOtherMemberTodo() {
         // given
-        Member otherMember = createSimpleMember("testMember2");
+        Member otherMember = memberHelper.createSimpleMember("testMember2");
         List<Todo> otherMemberTodoList = createTestTodosAndSaveByCount(otherMember, 1);
         List<Long> otherMemberTodoIdList = otherMemberTodoList.stream().map(Todo::getId).collect(Collectors.toList());
 

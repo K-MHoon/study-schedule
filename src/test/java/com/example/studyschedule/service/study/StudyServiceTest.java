@@ -36,19 +36,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@WithMockUser(username = "testMember", authorities = {"USER"})
 class StudyServiceTest extends TestHelper {
 
     @Autowired
     StudyService service;
-
-    private Member member;
-
-    @BeforeEach
-    void init() {
-        this.member = createSimpleMember();
-    }
-
+    
     @Test
     @DisplayName("현재 사용 가능하고 공개된 스터디가 조회된다.")
     void getPublicStudyListTest() {
@@ -128,8 +120,8 @@ class StudyServiceTest extends TestHelper {
         // given
         Study study = getStudyFixture(member);
         Study mockStudy = studyRepository.save(study);
-        mockStudy.addStudyMember(createMockMember());
-        mockStudy.addStudyMember(createMockMember());
+        mockStudy.addStudyMember(memberHelper.getUnknownMember());
+        mockStudy.addStudyMember(memberHelper.getUnknownMember());
 
         // when
         StudyDto studyDetail = service.getPublicStudyDetail(mockStudy.getId());
@@ -145,8 +137,8 @@ class StudyServiceTest extends TestHelper {
         Study study = getStudyFixture(member);
         study.changeToPrivate("test");
         Study mockStudy = studyRepository.save(study);
-        mockStudy.addStudyMember(createMockMember());
-        mockStudy.addStudyMember(createMockMember());
+        mockStudy.addStudyMember(memberHelper.getUnknownMember());
+        mockStudy.addStudyMember(memberHelper.getUnknownMember());
 
         // when & then
         assertThrows(EntityNotFoundException.class
@@ -184,8 +176,8 @@ class StudyServiceTest extends TestHelper {
     void deleteStudy() {
         Study study = getStudyFixture(member);
         Study mockStudy = studyRepository.save(study);
-        mockStudy.addStudyMember(createMockMember());
-        mockStudy.addStudyMember(createMockMember());
+        mockStudy.addStudyMember(memberHelper.getUnknownMember());
+        mockStudy.addStudyMember(memberHelper.getUnknownMember());
 
         service.deleteStudy(mockStudy.getId());
 
@@ -198,8 +190,8 @@ class StudyServiceTest extends TestHelper {
     void deleteAllLinkedStudyMembersWhenDeleteStudy() {
         Study study = getStudyFixture(member);
         Study mockStudy = studyRepository.save(study);
-        mockStudy.addStudyMember(createMockMember());
-        mockStudy.addStudyMember(createMockMember());
+        mockStudy.addStudyMember(memberHelper.getUnknownMember());
+        mockStudy.addStudyMember(memberHelper.getUnknownMember());
 
         service.deleteStudy(mockStudy.getId());
 
@@ -211,8 +203,8 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("여러 스터디를 탈퇴하면, StudyMember 관계가 모두 삭제된다.")
     void deleteStudyMemberAllWhenStudyOut() {
         // given
-        Study study1 = Study.ofPublic(createMockMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
-        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", "스터디 설명", 10L, IsUse.Y);
+        Study study1 = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        Study study2 = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트2", "스터디 설명", 10L, IsUse.Y);
         studyRepository.save(study1);
         studyRepository.save(study2);
         studyMemberRepository.save(new StudyMember(member, study1));
@@ -231,8 +223,8 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("가입되지 않은 스터디 탈퇴를 요청하는 경우, 예외가 발생한다.")
     void causeExceptionWhenNotJoinedStudyOutRequest() {
         // given
-        Study study1 = Study.ofPublic(createMockMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
-        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", "스터디 설명", 10L, IsUse.Y);
+        Study study1 = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        Study study2 = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트2", "스터디 설명", 10L, IsUse.Y);
         studyRepository.save(study1);
         studyRepository.save(study2);
         studyMemberRepository.save(new StudyMember(member, study1));
@@ -293,7 +285,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("스터디 정원이 가득 찬 경우 예외가 발생한다.")
     void rejectWhenStudyIsFull() {
         Study study = Study.ofPublic(member, "스터디 테스트", "스터디 설명", 1L, IsUse.Y);
-        StudyMember savedStudyMember = studyMemberRepository.save(new StudyMember(createMockMember(), study));
+        StudyMember savedStudyMember = studyMemberRepository.save(new StudyMember(memberHelper.getUnknownMember(), study));
         study.getStudyMemberList().add(savedStudyMember);
         Study savedStudy = studyRepository.save(study);
 
@@ -309,9 +301,9 @@ class StudyServiceTest extends TestHelper {
     void successGetMyStudyList() {
         Study study1 = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
         studyMemberRepository.save(new StudyMember(member, study1));
-        Study study2 = Study.ofPublic(createMockMember(), "스터디 테스트2", "스터디 설명", 11L, IsUse.Y);
+        Study study2 = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트2", "스터디 설명", 11L, IsUse.Y);
         studyMemberRepository.save(new StudyMember(member, study2));
-        Study study3 = Study.ofPublic(createMockMember(), "스터디 테스트3", "스터디 설명", 12L, IsUse.Y);
+        Study study3 = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트3", "스터디 설명", 12L, IsUse.Y);
         studyMemberRepository.save(new StudyMember(member, study3));
         studyRepository.saveAll(Arrays.asList(study1, study2, study3));
         entityManagerFlushAndClear();
@@ -332,10 +324,10 @@ class StudyServiceTest extends TestHelper {
         studyMemberRepository.save(new StudyMember(member, study));
         Study savedStudy = studyRepository.save(study);
 
-        List<Member> memberList = createTestMembersAndSaveByCount(5);
+        List<Member> memberList = memberHelper.createTestMembersAndSaveByCount(5);
         createStudyMember(savedStudy, memberList);
 
-        List<Member> studyRegisterMemberList = createTestMembersAndSaveByCount(5, 9);
+        List<Member> studyRegisterMemberList = memberHelper.createTestMembersAndSaveByCount(5, 9);
         createStudyRegister(savedStudy, studyRegisterMemberList);
 
         entityManagerFlushAndClear();
@@ -353,7 +345,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("접근할 수 없는 스터디라면 예외가 발생한다.")
     void rejectWhenNotAccessStudy() {
         // given
-        Study study = Study.ofPublic(createMockMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        Study study = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
         Study savedStudy = studyRepository.save(study);
 
         // when & then
@@ -366,7 +358,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("본인이 방장이 아닌 스터디에 접근하면 예외가 발생한다.")
     void rejectWhenNotLeader() {
         // given
-        Study savedStudy = createMemberWithStudyMember(createMockMember());
+        Study savedStudy = createMemberWithStudyMember(memberHelper.getUnknownMember());
         StudyMember studyMember = new StudyMember(member, savedStudy);
         studyMemberRepository.save(studyMember);
 
@@ -381,7 +373,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("스터디 상태를 업데이트 한다.")
     void updateStudyState(String state, RegisterState registerState) {
         Study savedStudy = createMemberWithStudyMember(member);
-        List<Member> memberList = Arrays.asList(createMockMember());
+        List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = createStudyRegister(savedStudy, memberList);
 
         service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), new StudyControllerRequest.UpdateStudyStateRequest(state));
@@ -421,7 +413,7 @@ class StudyServiceTest extends TestHelper {
     void addStudyMemberWhenUpdateStudyStatePass() {
         // given
         Study savedStudy = createMemberWithStudyMember(member);
-        List<Member> memberList = Arrays.asList(createMockMember());
+        List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = createStudyRegister(savedStudy, memberList, RegisterState.READ);
 
         // when
@@ -457,7 +449,7 @@ class StudyServiceTest extends TestHelper {
     void addStudyMemberWhenUpdateStudyStateReject() {
         // given
         Study savedStudy = createMemberWithStudyMember(member);
-        List<Member> memberList = Arrays.asList(createMockMember());
+        List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = createStudyRegister(savedStudy, memberList, RegisterState.READ);
 
         // when
@@ -484,7 +476,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("스터디 강퇴에 성공한다.")
     void kickOffStudyMember() {
         // given
-        Member simpleMember = createSimpleMember("kickOffTest");
+        Member simpleMember = memberHelper.createSimpleMember("kickOffTest");
         Study study = Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
         Study savedStudy = studyRepository.save(study);
         studyMemberRepository.save(new StudyMember(member, savedStudy));
@@ -504,7 +496,7 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("본인 강퇴 요청은 거절한다.")
     void rejectKickOffStudyMemberSelf() {
         // given
-        Member simpleMember = createSimpleMember("kickOffTest");
+        Member simpleMember = memberHelper.createSimpleMember("kickOffTest");
         Study study = Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
         Study savedStudy = studyRepository.save(study);
         studyMemberRepository.save(new StudyMember(member, savedStudy));
@@ -521,8 +513,8 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("스터디에 가입되지 않은 회원 강퇴를 요청할 경우 예외가 발생한다.")
     void rejectKickOffOtherStudyMember() {
         // given
-        Member simpleMember = createSimpleMember("kickOffTest");
-        Member otherMember = createSimpleMember("otherMember");
+        Member simpleMember = memberHelper.createSimpleMember("kickOffTest");
+        Member otherMember = memberHelper.createSimpleMember("otherMember");
         Study study = Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
         Study savedStudy = studyRepository.save(study);
         studyMemberRepository.save(new StudyMember(member, savedStudy));
@@ -533,14 +525,6 @@ class StudyServiceTest extends TestHelper {
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("해당하는 스터디 회원이 존재하지 않습니다. studyId = " + savedStudy.getId() + " memberId = " + otherMember.getId());
 
-    }
-
-
-    private Member createMockMember() {
-        return memberRepository.save(Member.builder()
-                        .memberId(UUID.randomUUID().toString())
-                        .password(UUID.randomUUID().toString())
-                        .build());
     }
 
 }
