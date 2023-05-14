@@ -39,7 +39,7 @@ class TodoServiceTest extends TestHelper {
     @Test
     @DisplayName("스케줄과 연결된 Todo 정보를 가지고 온다.")
     void getTodoDtoListLinkedSchedule() {
-        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 1);
+        List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 1);
         List<Todo> todoList = createTestTodosAndSaveByCount(member, 3);
         connectScheduleTodoList(scheduleList.get(0), todoList);
         entityManagerFlushAndClear();

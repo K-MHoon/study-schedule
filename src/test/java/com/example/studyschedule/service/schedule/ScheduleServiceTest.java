@@ -7,6 +7,7 @@ import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
+import com.example.studyschedule.repository.schedule.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,11 +29,14 @@ class ScheduleServiceTest extends TestHelper {
     @Autowired
     ScheduleService scheduleService;
 
+    @Autowired
+    ScheduleRepository scheduleRepository;
+
     @Test
     @DisplayName("특정 스터디에 연결된 회원의 스케줄 정보를 가지고 온다.")
     void getMemberScheduleList() {
         Study testStudy = studyRepository.save(getStudyFixture(member));
-        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2, testStudy);
+        List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 2, testStudy);
 
         List<ScheduleDto> result = scheduleService.getMemberScheduleList(testStudy.getId());
 
@@ -46,7 +50,7 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("스케줄 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
     void getSchedule() {
         Study study = studyRepository.save(getStudyFixture(member));
-        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 2, study);
+        List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 2, study);
 
         ScheduleDto result = scheduleService.getSchedule(scheduleList.get(0).getId());
 
@@ -88,7 +92,7 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("요청된 스케줄 전체를 정상적으로 삭제한다.")
     void deleteScheduleAllSuccess() {
         // given
-        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 10);
+        List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 10);
         ScheduleControllerRequest.DeleteScheduleRequest request = new ScheduleControllerRequest.DeleteScheduleRequest(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()));
 
         // when
@@ -104,8 +108,8 @@ class ScheduleServiceTest extends TestHelper {
     void causeExceptionWhenNotLoggedInMemberScheduleDeleteRequest() {
         // given
         Member member2 = memberHelper.createSimpleMember("anotherMember");
-        List<Schedule> scheduleList = createTestSchedulesAndSaveByCount(member, 10);
-        scheduleList.addAll(createTestSchedulesAndSaveByCount(member2, 2));
+        List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 10);
+        scheduleList.addAll(scheduleHelper.createTestSchedulesAndSaveByCount(member2, 2));
         ScheduleControllerRequest.DeleteScheduleRequest request = new ScheduleControllerRequest.DeleteScheduleRequest(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()));
 
         // when & then

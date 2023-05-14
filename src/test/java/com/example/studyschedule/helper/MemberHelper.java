@@ -1,4 +1,4 @@
-package com.example.studyschedule.support;
+package com.example.studyschedule.helper;
 
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.repository.member.MemberRepository;
