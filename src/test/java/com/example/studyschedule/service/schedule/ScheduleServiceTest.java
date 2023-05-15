@@ -9,11 +9,9 @@ import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -35,7 +33,7 @@ class ScheduleServiceTest extends TestHelper {
     @Test
     @DisplayName("특정 스터디에 연결된 회원의 스케줄 정보를 가지고 온다.")
     void getMemberScheduleList() {
-        Study testStudy = studyRepository.save(getStudyFixture(member));
+        Study testStudy = studyHelper.createSimpleStudy(member);
         List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 2, testStudy);
 
         List<ScheduleDto> result = scheduleService.getMemberScheduleList(testStudy.getId());
@@ -49,7 +47,7 @@ class ScheduleServiceTest extends TestHelper {
     @Test
     @DisplayName("스케줄 id에 해당하는 스케줄 정보를 정상적으로 가져온다.")
     void getSchedule() {
-        Study study = studyRepository.save(getStudyFixture(member));
+        Study study = studyHelper.createSimpleStudy(member);
         List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 2, study);
 
         ScheduleDto result = scheduleService.getSchedule(scheduleList.get(0).getId());

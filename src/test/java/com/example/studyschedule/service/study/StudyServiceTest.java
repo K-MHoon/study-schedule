@@ -12,8 +12,10 @@ import com.example.studyschedule.exception.StudyScheduleException;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.repository.study.StudyMemberRepository;
+import com.example.studyschedule.repository.study.StudyRegisterRepository;
+import com.example.studyschedule.repository.study.StudyRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,12 +24,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,6 +40,15 @@ class StudyServiceTest extends TestHelper {
 
     @Autowired
     StudyService service;
+
+    @Autowired
+    StudyRepository studyRepository;
+
+    @Autowired
+    StudyMemberRepository studyMemberRepository;
+
+    @Autowired
+    StudyRegisterRepository studyRegisterRepository;
     
     @Test
     @DisplayName("현재 사용 가능하고 공개된 스터디가 조회된다.")
@@ -118,31 +127,29 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("단일 공개 스터디를 정상 조회한다.")
     void getPublicStudyDetail() {
         // given
-        Study study = getStudyFixture(member);
-        Study mockStudy = studyRepository.save(study);
-        mockStudy.addStudyMember(memberHelper.getUnknownMember());
-        mockStudy.addStudyMember(memberHelper.getUnknownMember());
+        Study study = studyHelper.createSimpleStudy(member);
+        study.addStudyMember(memberHelper.getUnknownMember());
+        study.addStudyMember(memberHelper.getUnknownMember());
 
         // when
-        StudyDto studyDetail = service.getPublicStudyDetail(mockStudy.getId());
+        StudyDto studyDetail = service.getPublicStudyDetail(study.getId());
 
         // then
-        assertThat(studyDetail.getId()).isEqualTo(mockStudy.getId());
+        assertThat(studyDetail.getId()).isEqualTo(study.getId());
     }
 
     @Test
     @DisplayName("비공개 스터디는 공개 스터디로 조회되지 않는다.")
     void doNotFindStudyIfStudyIsSecret() {
         // given
-        Study study = getStudyFixture(member);
+        Study study = studyHelper.createSimpleStudy(member);
         study.changeToPrivate("test");
-        Study mockStudy = studyRepository.save(study);
-        mockStudy.addStudyMember(memberHelper.getUnknownMember());
-        mockStudy.addStudyMember(memberHelper.getUnknownMember());
+        study.addStudyMember(memberHelper.getUnknownMember());
+        study.addStudyMember(memberHelper.getUnknownMember());
 
         // when & then
         assertThrows(EntityNotFoundException.class
-                , () -> service.getPublicStudyDetail(mockStudy.getId()));
+                , () -> service.getPublicStudyDetail(study.getId()));
     }
 
     @Test
@@ -174,12 +181,11 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("스터디 삭제에 성공한다.")
     void deleteStudy() {
-        Study study = getStudyFixture(member);
-        Study mockStudy = studyRepository.save(study);
-        mockStudy.addStudyMember(memberHelper.getUnknownMember());
-        mockStudy.addStudyMember(memberHelper.getUnknownMember());
+        Study study = studyHelper.createSimpleStudy(member);
+        study.addStudyMember(memberHelper.getUnknownMember());
+        study.addStudyMember(memberHelper.getUnknownMember());
 
-        service.deleteStudy(mockStudy.getId());
+        service.deleteStudy(study.getId());
 
         List<Study> studyList = studyRepository.findAll();
         assertThat(studyList).isEmpty();
@@ -188,12 +194,11 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("스터디가 삭제될 때, 관련된 StudyMember가 모두 삭제 된다.")
     void deleteAllLinkedStudyMembersWhenDeleteStudy() {
-        Study study = getStudyFixture(member);
-        Study mockStudy = studyRepository.save(study);
-        mockStudy.addStudyMember(memberHelper.getUnknownMember());
-        mockStudy.addStudyMember(memberHelper.getUnknownMember());
+        Study study = studyHelper.createSimpleStudy(member);
+        study.addStudyMember(memberHelper.getUnknownMember());
+        study.addStudyMember(memberHelper.getUnknownMember());
 
-        service.deleteStudy(mockStudy.getId());
+        service.deleteStudy(study.getId());
 
         List<StudyMember> studyMemberList = studyMemberRepository.findAll();
         assertThat(studyMemberList).isEmpty();
@@ -239,7 +244,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("스터디 가입 요청에 성공한다.")
     void successCreateStudyRegister() {
-        Study study = studyRepository.save(getStudyFixture(member));
+        Study study = studyHelper.createSimpleStudy(member);
         StudyControllerRequest.CreateStudyRegisterRequest request = new StudyControllerRequest.CreateStudyRegisterRequest("목표 테스트", "목적 테스트", "주석 테스트");
 
         service.createStudyRegister(study.getId(), request);
@@ -258,7 +263,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("이미 가입된 스터디의 경우 예외가 발생한다.")
     void rejectWhenRequestAlreadyJoinedStudy() {
-        Study study = getStudyFixture(member);
+        Study study = studyHelper.createSimpleStudy(member);
         StudyMember savedStudyMember = studyMemberRepository.save(new StudyMember(member, study));
         study.getStudyMemberList().add(savedStudyMember);
         Study savedStudy = studyRepository.save(study);
@@ -524,7 +529,6 @@ class StudyServiceTest extends TestHelper {
         assertThatThrownBy(() -> service.kickOutStudyMember(savedStudy.getId(), otherMember.getId()))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("해당하는 스터디 회원이 존재하지 않습니다. studyId = " + savedStudy.getId() + " memberId = " + otherMember.getId());
-
     }
 
 }

@@ -1,21 +1,7 @@
 package com.example.studyschedule;
 
 import com.example.studyschedule.entity.member.Member;
-import com.example.studyschedule.entity.schedule.Schedule;
-import com.example.studyschedule.entity.schedule.ScheduleTodo;
-import com.example.studyschedule.entity.schedule.Todo;
-import com.example.studyschedule.entity.study.Study;
-import com.example.studyschedule.enums.IsUse;
-import com.example.studyschedule.helper.MemberHelper;
-import com.example.studyschedule.helper.ScheduleHelper;
-import com.example.studyschedule.repository.schedule.ScheduleTodoRepository;
-import com.example.studyschedule.repository.schedule.TodoRepository;
-import com.example.studyschedule.repository.study.StudyMemberRepository;
-import com.example.studyschedule.repository.study.StudyRegisterRepository;
-import com.example.studyschedule.repository.study.StudyRepository;
-import com.example.studyschedule.service.member.MemberCommonService;
-import com.example.studyschedule.service.schedule.ScheduleCommonService;
-import com.example.studyschedule.service.schedule.TodoCommonService;
+import com.example.studyschedule.helper.*;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @SpringBootTest
 @Transactional
@@ -40,61 +22,25 @@ public class TestHelper {
     protected ScheduleHelper scheduleHelper;
 
     @Autowired
-    protected StudyRepository studyRepository;
+    protected TodoHelper todoHelper;
 
     @Autowired
-    protected StudyMemberRepository studyMemberRepository;
+    protected StudyHelper studyHelper;
 
     @Autowired
-    protected TodoRepository todoRepository;
+    protected ScheduleTodoHelper scheduleTodoHelper;
 
     @Autowired
-    protected ScheduleTodoRepository scheduleTodoRepository;
-
-    @Autowired
-    protected EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Autowired
     protected PasswordEncoder passwordEncoder;
-
-    @Autowired
-    protected TodoCommonService todoCommonService;
-
-    @Autowired
-    protected MemberCommonService memberCommonService;
-
-    @Autowired
-    protected ScheduleCommonService scheduleCommonService;
-
-    @Autowired
-    protected StudyRegisterRepository studyRegisterRepository;
 
     protected Member member;
 
     @BeforeEach
     void setup() {
         member = memberHelper.createSimpleMember();
-    }
-
-    protected List<Todo> createTestTodosAndSaveByCount(Member member, int count) {
-        return IntStream.range(0, count)
-                .mapToObj(c -> {
-                    Todo todo = new Todo("test Title " + c, "test Content " + c, member);
-                    return todoRepository.save(todo);
-                })
-                .collect(Collectors.toList());
-    }
-
-    protected Study getStudyFixture(Member member) {
-        return Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y);
-    }
-
-    protected List<ScheduleTodo> connectScheduleTodoList(Schedule schedule, List<Todo> todoList) {
-        return todoList.stream().map(todo -> {
-                    ScheduleTodo scheduleTodo = new ScheduleTodo(schedule, todo);
-                    return scheduleTodoRepository.save(scheduleTodo);
-                })
-                .collect(Collectors.toList());
     }
 
     protected void entityManagerFlushAndClear() {

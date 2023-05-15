@@ -6,6 +6,7 @@ import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.model.dto.schedule.TodoDto;
 import com.example.studyschedule.model.request.schedule.TodoControllerRequest;
+import com.example.studyschedule.repository.schedule.TodoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,11 +24,13 @@ class TodoServiceTest extends TestHelper {
 
     @Autowired
     TodoService todoService;
+    @Autowired
+    TodoRepository todoRepository;
 
     @Test
     @DisplayName("스터디 회원과 연결된 Todo 정보를 가지고 온다.")
     void getTodoDtoListLinkedMember() {
-        List<Todo> todoList = createTestTodosAndSaveByCount(member, 3);
+        List<Todo> todoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
 
         List<TodoDto> result = todoService.getTodoDtoListLinkedMember();
 
@@ -40,8 +43,8 @@ class TodoServiceTest extends TestHelper {
     @DisplayName("스케줄과 연결된 Todo 정보를 가지고 온다.")
     void getTodoDtoListLinkedSchedule() {
         List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 1);
-        List<Todo> todoList = createTestTodosAndSaveByCount(member, 3);
-        connectScheduleTodoList(scheduleList.get(0), todoList);
+        List<Todo> todoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
+        scheduleTodoHelper.connectScheduleTodoList(scheduleList.get(0), todoList);
         entityManagerFlushAndClear();
 
         List<TodoDto> result = todoService.getTodoDtoListLinkedSchedule(scheduleList.get(0).getId());
@@ -67,7 +70,7 @@ class TodoServiceTest extends TestHelper {
     @Test
     @DisplayName("할 일 목록을 삭제한다.")
     void deleteTodoAll() {
-        List<Todo> testTodoList = createTestTodosAndSaveByCount(member, 3);
+        List<Todo> testTodoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
         List<Long> testTodoIdList = testTodoList.stream().map(Todo::getId).collect(Collectors.toList());
         TodoControllerRequest.DeleteTodoRequest deleteTodoRequest = new TodoControllerRequest.DeleteTodoRequest(testTodoIdList);
 
@@ -82,10 +85,10 @@ class TodoServiceTest extends TestHelper {
     void doNotDeleteWhenDeleteRequestOtherMemberTodo() {
         // given
         Member otherMember = memberHelper.createSimpleMember("testMember2");
-        List<Todo> otherMemberTodoList = createTestTodosAndSaveByCount(otherMember, 1);
+        List<Todo> otherMemberTodoList = todoHelper.createTestTodosAndSaveByCount(otherMember, 1);
         List<Long> otherMemberTodoIdList = otherMemberTodoList.stream().map(Todo::getId).collect(Collectors.toList());
 
-        List<Todo> testTodoList = createTestTodosAndSaveByCount(member, 3);
+        List<Todo> testTodoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
         List<Long> testTodoIdList = testTodoList.stream().map(Todo::getId).collect(Collectors.toList());
 
         testTodoIdList.addAll(otherMemberTodoIdList);
