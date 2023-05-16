@@ -531,4 +531,44 @@ class StudyServiceTest extends TestHelper {
                 .hasMessage("해당하는 스터디 회원이 존재하지 않습니다. studyId = " + savedStudy.getId() + " memberId = " + otherMember.getId());
     }
 
+    @Test
+    @DisplayName("스터디 가입 요청을 취소로 변경한다.")
+    void cancelStudyRegisterAll() {
+        // given
+        Study savedStudy = createMemberWithStudyMember(member);
+        List<Member> memberList = Arrays.asList(member);
+        List<Long> studyRegisterIdList = createStudyRegister(savedStudy, memberList, RegisterState.READ)
+                .stream()
+                .map(studyRegister -> studyRegister.getId())
+                .collect(Collectors.toList());
+
+        StudyControllerRequest.CancelStudyRegisterRequest request = new StudyControllerRequest.CancelStudyRegisterRequest(studyRegisterIdList);
+        // when
+        service.cancelStudyRegisterAll(request);
+
+        // then
+        List<StudyRegister> result = studyRegisterRepository.findAll();
+        assertThat(result).hasSize(studyRegisterIdList.size());
+        assertThat(result).extracting("state").isEqualTo(RegisterState.CANCEL);
+    }
+
+
+    @Test
+    @DisplayName("다른 사용자의 스터디 가입 요청을 취소 요청하는 경우 예외가 발생한다.")
+    void rejectWhenStudyRegisterCancel() {
+        // given
+        Study savedStudy = createMemberWithStudyMember(member);
+        List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
+        List<Long> studyRegisterIdList = createStudyRegister(savedStudy, memberList, RegisterState.READ)
+                .stream()
+                .map(studyRegister -> studyRegister.getId())
+                .collect(Collectors.toList());
+
+        StudyControllerRequest.CancelStudyRegisterRequest request = new StudyControllerRequest.CancelStudyRegisterRequest(studyRegisterIdList);
+
+        // when & then
+        assertThatThrownBy(() -> service.cancelStudyRegisterAll(request))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("해당 사용자가 삭제할 수 없는 스터디 가입 요청을 포함하고 있습니다. memberId = " + member.getMemberId());
+    }
 }
