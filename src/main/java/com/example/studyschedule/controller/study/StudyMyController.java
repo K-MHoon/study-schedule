@@ -3,7 +3,7 @@ package com.example.studyschedule.controller.study;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.dto.study.StudyRegisterDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
-import com.example.studyschedule.service.study.StudyService;
+import com.example.studyschedule.service.study.StudyMyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,14 +19,14 @@ import java.util.List;
 @RequestMapping("/api/study/my")
 public class StudyMyController {
 
-    private final StudyService studyService;
+    private final StudyMyService studyMyService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<StudyDto> getMyStudy(Principal principal) {
         log.info("[getMyStudy] called by {}", principal.getName());
 
-        return studyService.getMyStudy();
+        return studyMyService.getMyStudy();
     }
 
     @GetMapping("/{studyId}")
@@ -34,7 +34,7 @@ public class StudyMyController {
     public StudyDto getMyStudyDetail(@PathVariable Long studyId, Principal principal) {
         log.info("[getMyStudyDetail] called by {}", principal.getName());
 
-        return studyService.getMyStudyDetail(studyId);
+        return studyMyService.getMyStudyDetail(studyId);
     }
 
     @PostMapping("/{studyId}/state/{registerId}")
@@ -45,7 +45,7 @@ public class StudyMyController {
                                  Principal principal) {
         log.info("[updateStudyReadState] called by {} state = {}", principal.getName(), state);
 
-        studyService.updateStudyState(studyId, registerId, state);
+        studyMyService.updateStudyState(studyId, registerId, state);
     }
 
     @PostMapping("/{studyId}/member/{memberId}/out")
@@ -54,7 +54,7 @@ public class StudyMyController {
                                    Principal principal) {
         log.info("[kickOutStudyMember] called by {}, studyId = {}, memberId = {}", principal.getName(), studyId, memberId);
 
-        studyService.kickOutStudyMember(studyId, memberId);
+        studyMyService.kickOutStudyMember(studyId, memberId);
     }
 
     @GetMapping("/register")
@@ -62,6 +62,6 @@ public class StudyMyController {
     public List<StudyRegisterDto> getMyStudyRegisterRequestList(Principal principal) {
         log.info("[getMyStudyRegisterRequestList] called by {}", principal.getName());
 
-        return studyService.getMyStudyRegisterRequestList();
+        return studyMyService.getMyStudyRegisterRequestList();
     }
 }

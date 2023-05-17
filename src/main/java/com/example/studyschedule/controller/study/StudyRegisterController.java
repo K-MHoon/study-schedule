@@ -1,7 +1,7 @@
 package com.example.studyschedule.controller.study;
 
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
-import com.example.studyschedule.service.study.StudyService;
+import com.example.studyschedule.service.study.StudyRegisterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import java.security.Principal;
 @RequestMapping("/api/study/register")
 public class StudyRegisterController {
 
-    private final StudyService studyService;
+    private final StudyRegisterService studyService;
 
     @PostMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
