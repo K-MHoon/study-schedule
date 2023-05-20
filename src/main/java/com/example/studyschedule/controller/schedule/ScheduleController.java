@@ -32,9 +32,17 @@ public class ScheduleController {
     @GetMapping("/today")
     @ResponseStatus(HttpStatus.OK)
     public List<ScheduleDto> getTodayScheduleList(Principal principal) {
-        log.info("[getTodayScheduleList] called by {}, studyId = {}", principal.getName());
+        log.info("[getTodayScheduleList] called by {}", principal.getName());
 
         return scheduleService.getTodayScheduleList();
+    }
+
+    @PostMapping("/today")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateTodayScheduleList(Principal principal, @RequestBody @Validated ScheduleControllerRequest.UpdateTodayScheduleRequest request) {
+        log.info("[updateTodayScheduleList] called by {}", principal.getName());
+
+        scheduleService.updateTodayScheduleList(request);
     }
 
     @GetMapping("/{schedule_id}")
@@ -57,7 +65,7 @@ public class ScheduleController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteScheduleAll(@RequestBody @Validated ScheduleControllerRequest.DeleteScheduleRequest request,
                                   Principal principal) {
-        log.info("[deleteScheduleAll] called by memberId = {}, schedule List = {}", principal.getName(), request.getScheduleList());
+        log.info("[deleteScheduleAll] called by memberId = {}, scheduleList = {}", principal.getName(), request.getScheduleList());
 
         scheduleService.deleteScheduleAll(request);
     }

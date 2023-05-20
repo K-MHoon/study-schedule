@@ -1,18 +1,37 @@
 package com.example.studyschedule.model.request.schedule;
 
 import com.example.studyschedule.enums.IsUse;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ScheduleControllerRequest {
+
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateTodayScheduleRequest {
+
+        @NotNull
+        private List<Element> clearScheduleTodoList;
+    }
+
+
+    @Getter
+    public static class Element {
+
+        @NotNull
+        private Long scheduleId;
+
+        @NotNull
+        private List<Long> clearTodoIdList;
+    }
 
     @Getter
     @AllArgsConstructor

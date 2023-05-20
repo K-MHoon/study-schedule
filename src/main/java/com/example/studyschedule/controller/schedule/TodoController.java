@@ -3,7 +3,6 @@ package com.example.studyschedule.controller.schedule;
 import com.example.studyschedule.model.dto.schedule.TodoDto;
 import com.example.studyschedule.model.request.schedule.TodoControllerRequest;
 import com.example.studyschedule.service.schedule.TodoService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,7 +39,7 @@ public class TodoController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public void createTodo(Principal principal,
-    @RequestBody @Valid TodoControllerRequest.CreateTodoRequest request) {
+    @RequestBody @Validated TodoControllerRequest.CreateTodoRequest request) {
         log.info("[createTodo] called by {} ", principal.getName());
 
         todoService.createTodo(request);

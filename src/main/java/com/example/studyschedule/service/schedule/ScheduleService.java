@@ -5,6 +5,7 @@ import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
+import com.example.studyschedule.enums.IsClear;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
@@ -78,7 +80,7 @@ public class ScheduleService {
         Schedule newSchedule = new Schedule(loggedInMember, request.getStartDate(), request.getEndDate(), request.getIsUse(), request.getName());
 
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
-        if(!request.getTodoList().isEmpty()) {
+        if (!request.getTodoList().isEmpty()) {
             createScheduleTodo(request.getTodoList(), loggedInMember, savedSchedule);
         }
 
@@ -89,7 +91,7 @@ public class ScheduleService {
         List<Todo> target = todoCommonService.getTodoListByIdList(targetIdList);
         List<Todo> todoListLinkedMember = todoCommonService.getTodoListLinkedMember(member);
 
-        if(todoCommonService.checkTargetTodoListInNormalTodoList(target, todoListLinkedMember)) {
+        if (todoCommonService.checkTargetTodoListInNormalTodoList(target, todoListLinkedMember)) {
             scheduleTodoService.createScheduleTodo(newSchedule, target);
         }
     }
@@ -97,7 +99,7 @@ public class ScheduleService {
     @Transactional
     public void deleteScheduleAll(ScheduleControllerRequest.DeleteScheduleRequest request) {
         Member member = memberCommonService.getLoggedInMember();
-        if(isNotSameRequestAndDataCount(request, member)) {
+        if (isNotSameRequestAndDataCount(request, member)) {
             throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스케줄을 포함하고 있습니다. memberId = " + member.getMemberId());
         }
         scheduleRepository.deleteAllByIdInAndMember_Id(request.getScheduleList(), member.getId());
@@ -110,12 +112,7 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     public List<ScheduleDto> getTodayScheduleList() {
-        Member loggedInMember = memberCommonService.getLoggedInMember();
-
-        List<Study> studyList = studyMemberRepository.findAllMyStudy(loggedInMember.getId());
-
-        List<Schedule> todayScheduleList = scheduleRepository.findAllTodayMySchedule(loggedInMember, studyList, LocalDateTime.now(), IsUse.Y);
-
+        List<Schedule> todayScheduleList = getMyTodayScheuleList();
         Map<Schedule, List<ScheduleTodo>> groupingByScheduleToScheduleTodoListMap = scheduleTodoService.getScheduleTodoList(todayScheduleList)
                 .stream()
                 .collect(groupingBy(scheduleTodo -> scheduleTodo.getSchedule()));
@@ -129,5 +126,36 @@ public class ScheduleService {
                 })
                 .collect(Collectors.toList());
 
+    }
+
+    private List<Schedule> getMyTodayScheuleList() {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+        List<Study> studyList = studyMemberRepository.findAllMyStudy(loggedInMember.getId());
+        return scheduleRepository.findAllTodayMySchedule(loggedInMember, studyList, LocalDateTime.now(), IsUse.Y);
+    }
+
+    @Transactional
+    public void updateTodayScheduleList(ScheduleControllerRequest.UpdateTodayScheduleRequest request) {
+        List<Schedule> todayScheduleList = getMyTodayScheuleList();
+
+        Map<Long, List<ScheduleTodo>> scheduleIdToScheduleTodoMap = scheduleTodoService.getScheduleTodoList(todayScheduleList)
+                .stream()
+                .collect(groupingBy(scheduleTodo -> scheduleTodo.getSchedule().getId()));
+
+        for (ScheduleControllerRequest.Element element : request.getClearScheduleTodoList()) {
+
+            if (!scheduleIdToScheduleTodoMap.containsKey(element.getScheduleId())) {
+                throw new IllegalArgumentException("오늘 할 일에 스케줄이 존재하지 않습니다.");
+            }
+
+            Set<Long> clearTodoSet = element.getClearTodoIdList().stream().collect(toSet());
+            for (ScheduleTodo scheduleTodo : scheduleIdToScheduleTodoMap.get(element.getScheduleId())) {
+                if (clearTodoSet.contains(scheduleTodo.getTodo().getId())) {
+                    scheduleTodo.updateIsClear(IsClear.Y);
+                } else {
+                    scheduleTodo.updateIsClear(IsClear.N);
+                }
+            }
+        }
     }
 }

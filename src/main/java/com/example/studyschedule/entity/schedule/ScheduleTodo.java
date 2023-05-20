@@ -41,4 +41,8 @@ public class ScheduleTodo extends BaseEntity {
      * 할 일을 모두 하지 못했다면 이유 작성
      */
     private String reason;
+
+    public void updateIsClear(IsClear isClear) {
+        this.isClear = isClear;
+    }
 }
