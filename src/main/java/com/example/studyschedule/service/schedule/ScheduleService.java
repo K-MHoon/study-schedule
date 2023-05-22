@@ -77,14 +77,26 @@ public class ScheduleService {
             throw new IllegalArgumentException("시작 일자가 종료 일자보다 뒤에 있을 수 없습니다.");
         }
 
-        Schedule newSchedule = new Schedule(loggedInMember, request.getStartDate(), request.getEndDate(), request.getIsUse(), request.getName());
+        Study study = getValidatedStudy(request, loggedInMember);
+
+        Schedule newSchedule = new Schedule(loggedInMember, request.getStartDate(), request.getEndDate(), request.getIsUse(), request.getName(), study);
 
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
+
         if (!request.getTodoList().isEmpty()) {
             createScheduleTodo(request.getTodoList(), loggedInMember, savedSchedule);
         }
 
         return savedSchedule;
+    }
+
+    private Study getValidatedStudy(ScheduleControllerRequest.CreateScheduleRequest request, Member loggedInMember) {
+        Study study = studyRepository.findById(request.getStudyId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디 입니다."));
+
+        if(!studyMemberRepository.existsStudyMemberByStudy_IdAndMember_Id(request.getStudyId(), loggedInMember.getId())) {
+            throw new IllegalArgumentException("스터디에 가입되지 않은 회원입니다.");
+        }
+        return study;
     }
 
     private void createScheduleTodo(List<Long> targetIdList, Member member, Schedule newSchedule) {

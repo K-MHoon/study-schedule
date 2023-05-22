@@ -42,6 +42,9 @@ public class ScheduleControllerRequest {
         private String name;
 
         @NotNull
+        private Long studyId;
+
+        @NotNull
         private LocalDateTime startDate;
 
         @NotNull
