@@ -35,6 +35,7 @@ public class ScheduleControllerRequest {
 
     @Getter
     @AllArgsConstructor
+    @Builder
     @ToString
     public static class CreateScheduleRequest {
 

@@ -3,6 +3,7 @@ package com.example.studyschedule.service.schedule;
 import com.example.studyschedule.TestHelper;
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.schedule.Schedule;
+import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
@@ -68,22 +69,76 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("스케줄이 정상적으로 생성된다.")
     void createSchedule() {
         // given
-        LocalDateTime startDate = LocalDateTime.now();
-        LocalDateTime endDate = startDate.plusDays(10);
-        IsUse isUse = IsUse.Y;
-        String name = "새로운 스케줄";
-
-        ScheduleControllerRequest.CreateScheduleRequest request = new ScheduleControllerRequest.CreateScheduleRequest(name, startDate, endDate, isUse, Collections.emptyList());
+        Study simpleStudy = studyHelper.createMemberWithStudyMember(member);
+        ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(10))
+                .isUse(IsUse.Y)
+                .name("새로운 스케줄")
+                .studyId(simpleStudy.getId())
+                .todoList(Collections.emptyList())
+                .build();
 
         // when
         Schedule schedule = scheduleService.createSchedule(request);
 
         // then
         assertAll(() -> assertThat(schedule.getMember()).isEqualTo(member),
-                () -> assertThat(schedule.getStartDate()).isEqualTo(startDate),
-                () -> assertThat(schedule.getEndDate()).isEqualTo(endDate),
-                () -> assertThat(schedule.getIsUse()).isEqualTo(isUse),
-                () -> assertThat(schedule.getName()).isEqualTo(name));
+                () -> assertThat(schedule.getStartDate()).isEqualTo(request.getStartDate()),
+                () -> assertThat(schedule.getEndDate()).isEqualTo(request.getEndDate()),
+                () -> assertThat(schedule.getIsUse()).isEqualTo(request.getIsUse()),
+                () -> assertThat(schedule.getName()).isEqualTo(request.getName()),
+                () -> assertThat(schedule.getStudy().getId()).isEqualTo(simpleStudy.getId()));
+    }
+
+    @Test
+    @DisplayName("시작 일자가 종료 일자보다 큰 경우 예외가 발생한다.")
+    void rejectcreateScheduleWhenStartDateMoreThanEndDate() {
+        // given
+        Study simpleStudy = studyHelper.createMemberWithStudyMember(member);
+        ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
+                .startDate(LocalDateTime.now().plusDays(10))
+                .endDate(LocalDateTime.now())
+                .isUse(IsUse.Y)
+                .name("새로운 스케줄")
+                .studyId(simpleStudy.getId())
+                .todoList(Collections.emptyList())
+                .build();
+
+        // when & then
+        assertThatThrownBy(() ->scheduleService.createSchedule(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("시작 일자가 종료 일자보다 뒤에 있을 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("스케줄을 생성할 때 연결한 할 일이 추가 된다.")
+    void createScheduleWithTodoList() {
+        // given
+        Study simpleStudy = studyHelper.createMemberWithStudyMember(member);
+        List<Todo> todoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
+        List<Long> todoIdList = todoList.stream().map(Todo::getId).collect(Collectors.toList());
+        ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(10))
+                .isUse(IsUse.Y)
+                .name("새로운 스케줄")
+                .studyId(simpleStudy.getId())
+                .todoList(todoIdList)
+                .build();
+
+        // when
+        scheduleService.createSchedule(request);
+
+        // then
+        entityManagerFlushAndClear();
+        List<Schedule> result = scheduleRepository.findAll();
+        assertAll(() -> assertThat(result).hasSize(1),
+                () -> assertThat(result.get(0).getScheduleTodoList()).hasSize(3),
+                () -> assertThat(result.get(0).getScheduleTodoList())
+                        .extracting("todo")
+                        .extracting("id")
+                        .containsAnyElementsOf(todoIdList));
     }
 
     @Test

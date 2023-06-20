@@ -8,7 +8,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +42,19 @@ class MemberServiceTest extends TestHelper {
         MemberDto member = memberService.getMemberById(memberList.get(0).getId());
 
         assertThat(member.getId()).isEqualTo(memberList.get(0).getId());
+    }
+
+    @Test
+    @DisplayName("로그인한 회원 정보를 조회한다.")
+    void getMemberProfile() {
+        // given & when
+        MemberDto memberProfile = memberService.getMemberProfile();
+
+        // then
+        assertAll(() -> assertThat(memberProfile.getMemberId()).isEqualTo(member.getMemberId()),
+                () -> assertThat(memberProfile.getName()).isEqualTo(member.getName()),
+                () -> assertThat(memberProfile.getAge()).isEqualTo(member.getAge()),
+                () -> assertThat(memberProfile.getId()).isEqualTo(member.getId()));
     }
 
     @Test
