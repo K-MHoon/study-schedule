@@ -22,7 +22,14 @@ public class ScheduleHelper {
     public List<Schedule> createTestSchedulesAndSaveByCount(Member member, int count) {
         return IntStream.range(0, count)
                 .mapToObj(c -> {
-                    Schedule schedule = new Schedule(member, LocalDateTime.now(), LocalDateTime.now().plusDays(10), IsUse.Y, "testSchedule" + c);
+                    Schedule schedule =
+                            Schedule.builder()
+                                    .member(member)
+                                    .startDate(LocalDateTime.now())
+                                    .endDate(LocalDateTime.now().plusDays(10))
+                                    .isUse(IsUse.Y)
+                                    .name("testSchedule" + c)
+                                    .build();
                     return scheduleRepository.save(schedule);
                 })
                 .collect(Collectors.toList());
@@ -31,7 +38,15 @@ public class ScheduleHelper {
     public List<Schedule> createTestSchedulesAndSaveByCount(Member member, int count, Study study) {
         return IntStream.range(0, count)
                 .mapToObj(c -> {
-                    Schedule schedule = new Schedule(member, LocalDateTime.now(), LocalDateTime.now().plusDays(10), IsUse.Y, "testSchedule" + c, study);
+                    Schedule schedule =
+                            Schedule.builder()
+                                    .member(member)
+                                    .startDate(LocalDateTime.now())
+                                    .endDate(LocalDateTime.now().plusDays(10))
+                                    .isUse(IsUse.Y)
+                                    .name("testSchedule" + c)
+                                    .study(study)
+                                    .build();
                     return scheduleRepository.save(schedule);
                 })
                 .collect(Collectors.toList());

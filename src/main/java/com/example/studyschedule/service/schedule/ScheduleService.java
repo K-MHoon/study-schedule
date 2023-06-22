@@ -79,7 +79,14 @@ public class ScheduleService {
 
         Study study = getValidatedStudy(request, loggedInMember);
 
-        Schedule newSchedule = new Schedule(loggedInMember, request.getStartDate(), request.getEndDate(), request.getIsUse(), request.getName(), study);
+        Schedule newSchedule =  Schedule.builder()
+                .member(loggedInMember)
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .isUse(request.getIsUse())
+                .name(request.getName())
+                .study(study)
+                .build();
 
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
