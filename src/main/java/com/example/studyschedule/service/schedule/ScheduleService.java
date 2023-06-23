@@ -86,6 +86,8 @@ public class ScheduleService {
                 .isUse(request.getIsUse())
                 .name(request.getName())
                 .study(study)
+                .period(request.getPeriod())
+                .custom(request.getCustomDay())
                 .build();
 
         Schedule savedSchedule = scheduleRepository.save(newSchedule);

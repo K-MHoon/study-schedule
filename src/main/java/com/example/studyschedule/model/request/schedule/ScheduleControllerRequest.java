@@ -1,6 +1,9 @@
 package com.example.studyschedule.model.request.schedule;
 
 import com.example.studyschedule.enums.IsUse;
+import com.example.studyschedule.enums.SchedulePeriod;
+import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -19,6 +22,7 @@ public class ScheduleControllerRequest {
     public static class UpdateTodayScheduleRequest {
 
         @NotNull
+        @Valid
         private List<Element> clearScheduleTodoList;
     }
 
@@ -53,6 +57,12 @@ public class ScheduleControllerRequest {
 
         @NotNull
         private IsUse isUse;
+
+        @NotNull
+        private SchedulePeriod period;
+
+        @Nullable
+        private Long customDay;
 
         @NotNull
         @UniqueElements

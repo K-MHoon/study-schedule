@@ -38,6 +38,8 @@ public class Schedule extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "DAY")
     private SchedulePeriod period;
 
     private Long custom; // period가 CUSTOM인 경우 사용
