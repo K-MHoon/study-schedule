@@ -6,6 +6,7 @@ import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsClear;
 import com.example.studyschedule.enums.IsUse;
+import com.example.studyschedule.enums.SchedulePeriod;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -36,6 +37,8 @@ public class ScheduleDto {
     private String createdAt;
     private String updatedAt;
     private Double successRate;
+    private SchedulePeriod period;
+    private Long custom;
 
     public static ScheduleDto entityToDtoWithTodo(Schedule schedule) {
         return ScheduleDto.builder()
@@ -47,6 +50,8 @@ public class ScheduleDto {
                 .startDate(localDateTimeToString(schedule.getStartDate()))
                 .endDate(localDateTimeToString(schedule.getEndDate()))
                 .isUse(schedule.getIsUse())
+                .period(schedule.getPeriod())
+                .custom(schedule.getCustom())
                 .createdAt(localDateTimeToString(schedule.getCreatedAt()))
                 .updatedAt(localDateTimeToString(schedule.getUpdatedAt()))
                 .build();
@@ -60,6 +65,8 @@ public class ScheduleDto {
                 .startDate(localDateTimeToString(schedule.getStartDate()))
                 .endDate(localDateTimeToString(schedule.getEndDate()))
                 .isUse(schedule.getIsUse())
+                .period(schedule.getPeriod())
+                .custom(schedule.getCustom())
                 .createdAt(localDateTimeToString(schedule.getCreatedAt()))
                 .updatedAt(localDateTimeToString(schedule.getUpdatedAt()))
                 .build();
