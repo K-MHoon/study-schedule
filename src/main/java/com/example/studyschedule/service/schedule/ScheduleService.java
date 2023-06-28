@@ -79,7 +79,8 @@ public class ScheduleService {
 
         Study study = getValidatedStudy(request, loggedInMember);
 
-        Schedule newSchedule =  Schedule.builder()
+        Schedule newSchedule = Schedule.builder()
+                .id(request.getScheduleId())
                 .member(loggedInMember)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
@@ -102,7 +103,7 @@ public class ScheduleService {
     private Study getValidatedStudy(ScheduleControllerRequest.CreateScheduleRequest request, Member loggedInMember) {
         Study study = studyRepository.findById(request.getStudyId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디 입니다."));
 
-        if(!studyMemberRepository.existsStudyMemberByStudy_IdAndMember_Id(request.getStudyId(), loggedInMember.getId())) {
+        if (!studyMemberRepository.existsStudyMemberByStudy_IdAndMember_Id(request.getStudyId(), loggedInMember.getId())) {
             throw new IllegalArgumentException("스터디에 가입되지 않은 회원입니다.");
         }
         return study;
@@ -110,10 +111,32 @@ public class ScheduleService {
 
     private void createScheduleTodo(List<Long> targetIdList, Member member, Schedule newSchedule) {
         List<Todo> target = todoCommonService.getTodoListByIdList(targetIdList);
+        System.out.println(target.get(0).getId());
         List<Todo> todoListLinkedMember = todoCommonService.getTodoListLinkedMember(member);
 
         if (todoCommonService.checkTargetTodoListInNormalTodoList(target, todoListLinkedMember)) {
-            scheduleTodoService.createScheduleTodo(newSchedule, target);
+
+            List<ScheduleTodo> scheduleTodoList = scheduleTodoService.getScheduleTodoList(List.of(newSchedule));
+            removeScheduleTodo(target, scheduleTodoList);
+
+            List<Todo> createTargetTodoList = getFilteredNewTodoList(target, scheduleTodoList);
+
+            scheduleTodoService.createScheduleTodo(newSchedule, createTargetTodoList);
+        }
+    }
+
+    private List<Todo> getFilteredNewTodoList(List<Todo> target, List<ScheduleTodo> scheduleTodoList) {
+        List<Todo> savedTodoList = scheduleTodoList.stream().map(ScheduleTodo::getTodo).collect(toList());
+        List<Todo> createTargetTodoList = target.stream().filter(todo -> !savedTodoList.contains(todo)).collect(toList());
+        return createTargetTodoList;
+    }
+
+    private void removeScheduleTodo(List<Todo> target, List<ScheduleTodo> scheduleTodoList) {
+        List<Long> targetIdList = target.stream().map(Todo::getId).collect(toList());
+
+        List<ScheduleTodo> removeTargetScheduleTodoList = scheduleTodoList.stream().filter(scheduleTodo -> !targetIdList.contains(scheduleTodo.getTodo().getId())).collect(toList());
+        if(!removeTargetScheduleTodoList.isEmpty()) {
+            scheduleTodoService.removeAllScheduleTodo(removeTargetScheduleTodoList);
         }
     }
 

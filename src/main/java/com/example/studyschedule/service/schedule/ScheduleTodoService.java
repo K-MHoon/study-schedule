@@ -21,6 +21,9 @@ public class ScheduleTodoService {
 
     @Transactional
     public void createScheduleTodo(Schedule schedule, List<Todo> todoList) {
+        if(todoList.isEmpty()) {
+            return;
+        }
         List<ScheduleTodo> newScheduleTodoList = todoList.stream().map(todo -> new ScheduleTodo(schedule, todo)).collect(Collectors.toList());
         scheduleTodoRepository.saveAll(newScheduleTodoList);
     }
@@ -28,5 +31,10 @@ public class ScheduleTodoService {
     @Transactional(readOnly = true)
     public List<ScheduleTodo> getScheduleTodoList(List<Schedule> scheduleList) {
         return scheduleTodoRepository.findAllByScheduleIn(scheduleList);
+    }
+
+    @Transactional
+    public void removeAllScheduleTodo(List<ScheduleTodo> scheduleTodoList) {
+        scheduleTodoRepository.deleteAll(scheduleTodoList);
     }
 }

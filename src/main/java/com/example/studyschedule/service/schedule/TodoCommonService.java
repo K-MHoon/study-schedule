@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,8 +48,11 @@ public class TodoCommonService {
             return false;
         }
 
-        return !targetList.stream()
-                .filter(todo -> !normalList.contains(todo))
+        List<Long> normalIdList = normalList.stream().map(Todo::getId).collect(Collectors.toList());
+        List<Long> targetIdList = targetList.stream().map(Todo::getId).collect(Collectors.toList());
+
+        return !targetIdList.stream()
+                .filter(l -> !normalIdList.contains(l))
                 .findAny()
                 .isPresent();
     }

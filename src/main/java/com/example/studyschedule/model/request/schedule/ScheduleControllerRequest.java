@@ -43,6 +43,9 @@ public class ScheduleControllerRequest {
     @ToString
     public static class CreateScheduleRequest {
 
+        @Nullable
+        private Long scheduleId;
+
         @NotBlank
         private String name;
 
