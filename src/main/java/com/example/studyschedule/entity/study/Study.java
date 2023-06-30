@@ -49,6 +49,10 @@ public final class Study extends BaseEntity {
 
     private Long fullCount; // 스터디 최대 인원
 
+    @OneToMany
+    @Builder.Default
+    private List<StudyCode> studyCodeList = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     private IsUse isUse; // 스터디 사용 여부
 
