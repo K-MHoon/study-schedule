@@ -2,11 +2,13 @@ package com.example.studyschedule.service.study;
 
 import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.study.Study;
+import com.example.studyschedule.entity.study.StudyCode;
 import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.repository.study.StudyCodeRepository;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
@@ -34,6 +36,10 @@ public class StudyService {
     private final PasswordEncoder passwordEncoder;
 
     private final StudyMemberRepository studyMemberRepository;
+
+    private final StudyCommonService studyCommonService;
+
+    private final StudyCodeRepository studyCodeRepository;
 
     @Transactional(readOnly = true)
     public Pagination<List<StudyDto>> getPublicStudyList(StudyControllerRequest.GetPublicStudyListRequest request) {
@@ -98,6 +104,17 @@ public class StudyService {
 
     private List<StudyMember> getRequestStudyMemberList(StudyControllerRequest.DeleteStudyMemberAllRequest request, Member loggedInMember) {
         return studyMemberRepository.findAllByStudy_IdInAndMember_Id(request.getStudyList(), loggedInMember.getId());
+    }
+
+    @Transactional
+    public void createInviteCode(Long studyId) {
+        StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
+        Study study = studyMember.getStudy();
+        if(!study.getSecret()) {
+            throw new IllegalArgumentException("비밀 스터디만 초대 코드 생성이 가능합니다.");
+        }
+        StudyCode studyCode = new StudyCode(study);
+        studyCodeRepository.save(studyCode);
     }
 }
 

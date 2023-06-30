@@ -2,7 +2,6 @@ package com.example.studyschedule.controller.study;
 
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
-import com.example.studyschedule.model.dto.study.StudyRegisterDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.service.study.StudyService;
 import lombok.RequiredArgsConstructor;
@@ -71,5 +70,13 @@ public class StudyController {
         log.info("[deleteStudyMemberAll] called by {}, request IdList = {}", principal.getName(), request.getStudyList());
 
         studyService.deleteStudyMemberAll(request);
+    }
+
+    @PostMapping("/{study_id}/code")
+    @ResponseStatus(HttpStatus.OK)
+    public void createInviteCode(@PathVariable(name = "study_id") Long studyId, Principal principal) {
+        log.info("[createStudyInviteCode] called by {}, study Id = {}", principal.getName(), studyId);
+
+        studyService.createInviteCode(studyId);
     }
 }
