@@ -27,6 +27,7 @@ public class StudyMyService {
     private final MemberCommonService memberCommonService;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyRegisterRepository studyRegisterRepository;
+    private final StudyCommonService studyCommonService;
 
     @Transactional(readOnly = true)
     public List<StudyDto> getMyStudy() {
@@ -39,7 +40,7 @@ public class StudyMyService {
 
     @Transactional(readOnly = true)
     public StudyDto getMyStudyDetail(Long studyId) {
-        StudyMember studyMember = getMyStudyMember(studyId);
+        StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
         return StudyDto.entityToDtoDetail(studyMember);
     }
 
@@ -52,19 +53,9 @@ public class StudyMyService {
                 .collect(Collectors.toList());
     }
 
-    private StudyMember getMyStudyMember(Long studyId) {
-        Member loggedInMember = memberCommonService.getLoggedInMember();
-        StudyMember studyMember = studyMemberRepository.findMyStudyMember(studyId, loggedInMember.getId())
-                .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않거나 가입되지 않은 스터디 입니다."));
-        if (!studyMember.getStudy().getLeader().equals(loggedInMember)) {
-            throw new IllegalArgumentException("본인의 스터디가 아닙니다.");
-        }
-        return studyMember;
-    }
-
     @Transactional
     public void updateStudyState(Long studyId, Long registerId, StudyControllerRequest.UpdateStudyStateRequest request) {
-        StudyMember myStudyMember = getMyStudyMember(studyId);
+        StudyMember myStudyMember = studyCommonService.getMyStudyMember(studyId);
         StudyRegister studyRegister = studyRegisterRepository.findByIdAndRequestStudy_Id(registerId, studyId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 스터디에 가입 요청이 존재하지 않습니다. study Id = " + studyId + " register Id = " + registerId));
 
@@ -82,7 +73,7 @@ public class StudyMyService {
 
     @Transactional
     public void kickOutStudyMember(Long studyId, Long memberId) {
-        StudyMember myStudyMember = getMyStudyMember(studyId);
+        StudyMember myStudyMember = studyCommonService.getMyStudyMember(studyId);
         if (myStudyMember.getMember().getId().equals(memberId)) {
             throw new IllegalArgumentException("자신은 강퇴할 수 없습니다.");
         }
