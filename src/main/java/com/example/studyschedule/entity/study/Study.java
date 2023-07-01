@@ -45,7 +45,7 @@ public final class Study extends BaseEntity {
 
     private Boolean secret; // 비공개 여부
 
-    private String password; // 비밀번호
+    private String password; // 비밀번호 (비밀 스터디 <> 공개 스터디 전환에 사용)
 
     private Long fullCount; // 스터디 최대 인원
 

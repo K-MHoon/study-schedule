@@ -3,6 +3,7 @@ package com.example.studyschedule.entity.study;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
@@ -10,6 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "study_code")
 @NoArgsConstructor
+@Getter
 public final class StudyCode extends BaseEntity {
 
     @Id
@@ -27,6 +29,7 @@ public final class StudyCode extends BaseEntity {
     private String inviteCode;
 
     public StudyCode(Study study) {
+        this.study = study;
         this.inviteCode = UUID.randomUUID().toString();
     }
 
