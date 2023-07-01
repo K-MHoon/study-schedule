@@ -1,35 +1,26 @@
 package com.example.studyschedule.service.study;
 
 import com.example.studyschedule.TestHelper;
-import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.study.Study;
+import com.example.studyschedule.entity.study.StudyCode;
 import com.example.studyschedule.entity.study.StudyMember;
-import com.example.studyschedule.entity.study.StudyRegister;
 import com.example.studyschedule.enums.IsUse;
-import com.example.studyschedule.enums.RegisterState;
-import com.example.studyschedule.enums.exception.common.CommonErrorCode;
-import com.example.studyschedule.exception.StudyScheduleException;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.repository.study.StudyCodeRepository;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,6 +40,9 @@ class StudyServiceTest extends TestHelper {
 
     @Autowired
     StudyRegisterRepository studyRegisterRepository;
+
+    @Autowired
+    StudyCodeRepository studyCodeRepository;
     
     @Test
     @DisplayName("현재 사용 가능하고 공개된 스터디가 조회된다.")
@@ -239,6 +233,35 @@ class StudyServiceTest extends TestHelper {
         assertThatThrownBy(() -> service.deleteStudyMemberAll(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("해당 사용자가 삭제할 수 없는 스터디를 포함하고 있습니다. memberId = " + member.getMemberId());
+    }
+
+    @Test
+    @DisplayName("비밀 스터디에 신규 초대 코드를 발급한다.")
+    void createInviteCodeBySecretStudy() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        study.changeToPrivate("test1234");
+
+        // when
+        service.createInviteCode(study.getId());
+
+        // then
+        List<StudyCode> studyCode = studyCodeRepository.findAll();
+        assertThat(studyCode).hasSize(1);
+        assertThat(studyCode.get(0).getStudy().getId()).isEqualTo(study.getId());
+        assertThat(studyCode.get(0).getUseMember()).isNull();
+    }
+
+    @Test
+    @DisplayName("비밀 스터디가 아닌 경우 초대 코드 생성시 예외가 발생한다.")
+    void causeExceptionWhenCreateInviteCodeIfNotSecretStudy() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+
+        // when & then
+        assertThatThrownBy(() -> service.createInviteCode(study.getId()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("비밀 스터디만 초대 코드 생성이 가능합니다.");
     }
 
 
