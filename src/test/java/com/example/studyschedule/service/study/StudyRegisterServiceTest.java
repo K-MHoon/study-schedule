@@ -13,7 +13,6 @@ import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +103,7 @@ class StudyRegisterServiceTest extends TestHelper {
     @DisplayName("스터디 가입 요청을 취소로 변경한다.")
     void cancelStudyRegisterAll() {
         // given
-        Study savedStudy = studyHelper.createMemberWithStudyMember(member);
+        Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         List<Member> memberList = Arrays.asList(member);
         List<Long> studyRegisterIdList = studyHelper
                 .createStudyRegister(savedStudy, memberList, RegisterState.READ)
@@ -128,7 +127,7 @@ class StudyRegisterServiceTest extends TestHelper {
     @DisplayName("다른 사용자의 스터디 가입 요청을 취소 요청하는 경우 예외가 발생한다.")
     void rejectWhenStudyRegisterCancel() {
         // given
-        Study savedStudy = studyHelper.createMemberWithStudyMember(member);
+        Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         StudyRegister studyRegister = studyHelper.createStudyRegister(savedStudy, memberHelper.getUnknownMember(), RegisterState.READ);
 
         StudyControllerRequest.CancelStudyRegisterRequest request = new StudyControllerRequest.CancelStudyRegisterRequest(Arrays.asList(studyRegister.getId()));

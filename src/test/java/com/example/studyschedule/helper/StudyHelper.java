@@ -31,7 +31,7 @@ public class StudyHelper {
         return studyRepository.save(Study.ofPublic(member, "스터디 테스트", "스터디 설명", 10L, IsUse.Y));
     }
 
-    public Study createMemberWithStudyMember(Member member) {
+    public Study createStudyWithStudyMember(Member member) {
         Study study = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
         StudyMember studyMember = new StudyMember(member, study);
         studyMemberRepository.save(studyMember);

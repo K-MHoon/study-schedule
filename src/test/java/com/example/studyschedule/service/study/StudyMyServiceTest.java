@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -105,7 +104,7 @@ class StudyMyServiceTest extends TestHelper {
     @DisplayName("본인이 방장이 아닌 스터디에 접근하면 예외가 발생한다.")
     void rejectWhenNotLeader() {
         // given
-        Study savedStudy = studyHelper.createMemberWithStudyMember(memberHelper.getUnknownMember());
+        Study savedStudy = studyHelper.createStudyWithStudyMember(memberHelper.getUnknownMember());
         StudyMember studyMember = new StudyMember(member, savedStudy);
         studyMemberRepository.save(studyMember);
 
@@ -119,7 +118,7 @@ class StudyMyServiceTest extends TestHelper {
     @MethodSource("changeUpdateState")
     @DisplayName("스터디 상태를 업데이트 한다.")
     void updateStudyState(String state, RegisterState registerState) {
-        Study savedStudy = studyHelper.createMemberWithStudyMember(member);
+        Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = studyHelper.createStudyRegister(savedStudy, memberList);
 
@@ -134,7 +133,7 @@ class StudyMyServiceTest extends TestHelper {
     @DisplayName("스터디 가입 상태가 Pass가 되면 스터디 가입이 완료된다.")
     void addStudyMemberWhenUpdateStudyStatePass() {
         // given
-        Study savedStudy = studyHelper.createMemberWithStudyMember(member);
+        Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = studyHelper.createStudyRegister(savedStudy, memberList, RegisterState.READ);
 
@@ -150,7 +149,7 @@ class StudyMyServiceTest extends TestHelper {
     @DisplayName("스터디 가입 상태가 Reject되면 스터디 가입이 되지 않는다.")
     void addStudyMemberWhenUpdateStudyStateReject() {
         // given
-        Study savedStudy = studyHelper.createMemberWithStudyMember(member);
+        Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = studyHelper.createStudyRegister(savedStudy, memberList, RegisterState.READ);
 

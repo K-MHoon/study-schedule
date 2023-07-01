@@ -69,7 +69,7 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("스케줄이 정상적으로 생성된다.")
     void createSchedule() {
         // given
-        Study simpleStudy = studyHelper.createMemberWithStudyMember(member);
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusDays(10))
@@ -95,7 +95,7 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("시작 일자가 종료 일자보다 큰 경우 예외가 발생한다.")
     void rejectcreateScheduleWhenStartDateMoreThanEndDate() {
         // given
-        Study simpleStudy = studyHelper.createMemberWithStudyMember(member);
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
                 .startDate(LocalDateTime.now().plusDays(10))
                 .endDate(LocalDateTime.now())
@@ -115,7 +115,7 @@ class ScheduleServiceTest extends TestHelper {
     @DisplayName("스케줄을 생성할 때 연결한 할 일이 추가 된다.")
     void createScheduleWithTodoList() {
         // given
-        Study simpleStudy = studyHelper.createMemberWithStudyMember(member);
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         List<Todo> todoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
         List<Long> todoIdList = todoList.stream().map(Todo::getId).collect(Collectors.toList());
         ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
