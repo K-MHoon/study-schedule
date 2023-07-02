@@ -116,5 +116,13 @@ public class StudyService {
         StudyCode studyCode = new StudyCode(study);
         studyCodeRepository.save(studyCode);
     }
+
+    @Transactional
+    public StudyDto findSecretStudy(String inviteCode) {
+        Member loggedInMember = memberCommonService.getLoggedInMember();
+        StudyCode studyCode = studyCodeRepository.findByInviteCodeAndUseMemberIsNull(inviteCode).orElseThrow(() -> new EntityNotFoundException("코드에 해당하는 스터디가 존재하지 않습니다."));
+        studyCode.updateUseMember(loggedInMember);
+        return StudyDto.entityToDto(studyCode.getStudy());
+    }
 }
 

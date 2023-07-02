@@ -79,4 +79,12 @@ public class StudyController {
 
         studyService.createInviteCode(studyId);
     }
+
+    @GetMapping("/secret")
+    @ResponseStatus(HttpStatus.OK)
+    public StudyDto findSecretStudy(Principal principal, @RequestParam("invite-code") String inviteCode) {
+        log.info("[findSecretStudy] called by {} ", principal.getName());
+
+        return studyService.findSecretStudy(inviteCode);
+    }
 }
