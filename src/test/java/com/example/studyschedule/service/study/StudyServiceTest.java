@@ -1,6 +1,7 @@
 package com.example.studyschedule.service.study;
 
 import com.example.studyschedule.TestHelper;
+import com.example.studyschedule.entity.member.Member;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyCode;
 import com.example.studyschedule.entity.study.StudyMember;
@@ -18,9 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -264,5 +267,55 @@ class StudyServiceTest extends TestHelper {
                 .hasMessage("비밀 스터디만 초대 코드 생성이 가능합니다.");
     }
 
+    @Test
+    @WithMockUser(username = "useMember")
+    @DisplayName("비밀 스터디를 찾는다.")
+    void findSecretStudy() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        study.changeToPrivate("test1234");
+        StudyCode studyCode = studyCodeRepository.save(new StudyCode(study));
+        Member newMember = memberHelper.createSimpleMember("useMember");
 
+        // when
+
+        StudyDto secretStudy = service.findSecretStudy(studyCode.getInviteCode());
+
+        // then
+        assertThat(secretStudy.getId()).isEqualTo(study.getId());
+        assertThat(studyCode.getUseMember().getId()).isEqualTo(newMember.getId());
+    }
+
+    @Test
+    @WithMockUser(username = "useMember")
+    @DisplayName("해당 초대 코드가 올바르지 않은 경우 예외가 발생한다.")
+    void causeExceptionWhenInviteCodInvalid() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        study.changeToPrivate("test1234");
+        StudyCode studyCode = studyCodeRepository.save(new StudyCode(study));
+        Member newMember = memberHelper.createSimpleMember("useMember");
+
+        // when & then
+        assertThatThrownBy(() -> service.findSecretStudy(UUID.randomUUID().toString()))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("코드에 해당하는 스터디가 존재하지 않습니다.");
+    }
+
+    @Test
+    @WithMockUser(username = "useMember")
+    @DisplayName("이미 사용된 코드인 경우 예외가 발생한다.")
+    void causeExceptionWhenInviteCodAlreadyUsed() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        study.changeToPrivate("test1234");
+        StudyCode studyCode = studyCodeRepository.save(new StudyCode(study));
+        Member newMember = memberHelper.createSimpleMember("useMember");
+        studyCode.updateUseMember(newMember);
+
+        // when & then
+        assertThatThrownBy(() -> service.findSecretStudy(UUID.randomUUID().toString()))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("코드에 해당하는 스터디가 존재하지 않습니다.");
+    }
 }
