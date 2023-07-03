@@ -105,6 +105,7 @@ public final class StudyControllerRequest {
     @AllArgsConstructor
     public static class ChangeSecretRequest {
 
+        private Boolean secret;
         @NotEmpty
         private String password;
     }

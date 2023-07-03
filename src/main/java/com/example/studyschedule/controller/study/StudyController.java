@@ -63,7 +63,7 @@ public class StudyController {
                              @RequestBody @Validated StudyControllerRequest.ChangeSecretRequest request) {
         log.info("[changeSecret] called by {}, studyId = {}", principal.getName(), studyId);
 
-        studyService.changeSecret(studyId, request);
+        studyService.changeStudySecretOrPublic(studyId, request);
     }
 
     @DeleteMapping("/{study_id}")

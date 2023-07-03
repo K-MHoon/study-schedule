@@ -75,6 +75,18 @@ public final class Study extends BaseEntity {
         this.password = password;
     }
 
+    public void changeToPublic(String password) {
+        if(this.secret == null || !this.secret) {
+            throw new IllegalArgumentException("해당 스터디는 비밀 스터디가 아닙니다.");
+        }
+
+        if(!this.password.equals(password)) {
+            throw new IllegalArgumentException("스터디 전환 비밀번호가 틀렸습니다.");
+        }
+        this.secret = false;
+        this.password = null;
+    }
+
     public void addStudyMember(Member member) {
         this.studyMemberList.add(new StudyMember(member, this));
     }
