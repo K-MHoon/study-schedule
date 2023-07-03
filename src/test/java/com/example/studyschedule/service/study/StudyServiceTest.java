@@ -318,4 +318,34 @@ class StudyServiceTest extends TestHelper {
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("코드에 해당하는 스터디가 존재하지 않습니다.");
     }
+
+    @Test
+    @DisplayName("공개 스터디를 비밀 스터디로 변경한다.")
+    void changeStudyToSecretStudy() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(true, "test1234");
+
+        // when
+        service.changeStudySecretOrPublic(study.getId(), request);
+
+        // then
+        assertThat(study.getSecret()).isTrue();
+        assertThat(study.getPassword()).isEqualTo(request.getPassword());
+    }
+
+    @Test
+    @DisplayName("비밀 스터디 비밀번호를 변경한다.")
+    void changeStudyPassword() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        study.changeToPrivate("test1234");
+        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(true, "test5678");
+
+        // when
+        service.changeStudySecretOrPublic(study.getId(), request);
+
+        // then
+        assertThat(study.getPassword()).isEqualTo(request.getPassword());
+    }
 }
