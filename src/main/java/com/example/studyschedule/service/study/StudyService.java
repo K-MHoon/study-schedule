@@ -124,5 +124,11 @@ public class StudyService {
         studyCode.updateUseMember(loggedInMember);
         return StudyDto.entityToDto(studyCode.getStudy());
     }
+
+    @Transactional
+    public void changeSecret(Long studyId, StudyControllerRequest.ChangeSecretRequest request) {
+        StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
+        studyMember.getStudy().changeToPrivate(request.getPassword());
+    }
 }
 

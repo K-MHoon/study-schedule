@@ -33,6 +33,7 @@ public class StudyDto {
     private String createdAt;
     private Boolean isMine;
     private String joinedAt;
+    private Boolean secret;
     private List<MemberDto> registeredMemberList;
     private List<StudyRegisterDto> registerRequestList;
 
@@ -51,6 +52,7 @@ public class StudyDto {
                 .content(study.getContent())
                 .remainCount(study.getRemainCount())
                 .fullCount(study.getFullCount())
+                .secret(study.getSecret())
                 .isUse(study.getIsUse())
                 .createdAt(DateUtils.localDateTimeToString(study.getCreatedAt()))
                 .build();
@@ -69,6 +71,7 @@ public class StudyDto {
                 .remainCount(study.getRemainCount())
                 .fullCount(study.getFullCount())
                 .isUse(study.getIsUse())
+                .secret(study.getSecret())
                 .createdAt(DateUtils.localDateTimeToString(study.getCreatedAt()))
                 .isMine(isMine)
                 .joinedAt(DateUtils.localDateTimeToString(studyMember.getCreatedAt()))
@@ -88,6 +91,7 @@ public class StudyDto {
                 .remainCount(study.getRemainCount())
                 .fullCount(study.getFullCount())
                 .isUse(study.getIsUse())
+                .secret(study.getSecret())
                 .createdAt(DateUtils.localDateTimeToString(study.getCreatedAt()))
                 .isMine(isMine)
                 .joinedAt(DateUtils.localDateTimeToString(studyMember.getCreatedAt()))

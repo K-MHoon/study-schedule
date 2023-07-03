@@ -99,4 +99,13 @@ public final class StudyControllerRequest {
         @NotNull
         private List<Long> studyRegisterList;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChangeSecretRequest {
+
+        @NotEmpty
+        private String password;
+    }
 }

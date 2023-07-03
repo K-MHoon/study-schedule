@@ -56,6 +56,16 @@ public class StudyController {
         studyService.createPublicStudy(request);
     }
 
+    @PostMapping("/{study_id}/secret")
+    @ResponseStatus(HttpStatus.OK)
+    public void changeSecret(Principal principal,
+                             @PathVariable("study_id") Long studyId,
+                             @RequestBody @Validated StudyControllerRequest.ChangeSecretRequest request) {
+        log.info("[changeSecret] called by {}, studyId = {}", principal.getName(), studyId);
+
+        studyService.changeSecret(studyId, request);
+    }
+
     @DeleteMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteStudy(@PathVariable("study_id") Long studyId, Principal principal) {
