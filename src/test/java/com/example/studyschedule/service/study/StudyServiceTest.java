@@ -348,4 +348,60 @@ class StudyServiceTest extends TestHelper {
         // then
         assertThat(study.getPassword()).isEqualTo(request.getPassword());
     }
+
+    @Test
+    @DisplayName("비밀 스터디를 공개 스터디로 변경한다.")
+    void changeStudyToPublicStudy() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        study.changeToPrivate("test1234");
+        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(false, "test1234");
+
+        // when
+        service.changeStudySecretOrPublic(study.getId(), request);
+
+        // then
+        assertThat(study.getSecret()).isFalse();
+        assertThat(study.getPassword()).isNull();
+    }
+
+    @Test
+    @DisplayName("공개 전환 비밀번호가 틀리는 경우 예외가 발생한다.")
+    void causeExceptionWhenInputInvalidPassword() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        study.changeToPrivate("test1234");
+        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(false, "test1235");
+
+        // when & then
+        assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("스터디 전환 비밀번호가 틀렸습니다.");
+    }
+
+    @Test
+    @DisplayName("비밀 스터디가 아닌데 공개 전환 요청하는 경우 예외가 발생한다.")
+    void causeExceptionWhenChangePublicStudyIfNotSecretStudy() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(false, "test1235");
+
+        // when & then
+        assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 스터디는 비밀 스터디가 아닙니다.");
+    }
+
+    @Test
+    @DisplayName("비밀 스터디로 전환하는데 비밀번호가 없는 경우 예외가 발생한다.")
+    void causeExceptionWhenChangePrivateStudyIfNotContainPassword() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(true, "");
+
+        // when & then
+        assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("비밀 스터디에는 반드시 비밀번호가 포함되어야 합니다.");
+    }
 }

@@ -69,7 +69,7 @@ public final class Study extends BaseEntity {
 
     public void changeToPrivate(String password) {
         if(StringUtils.isEmpty(password)) {
-            throw new IllegalArgumentException("사설 스터디에는 반드시 비밀번호가 포함되어야 합니다.");
+            throw new IllegalArgumentException("비밀 스터디에는 반드시 비밀번호가 포함되어야 합니다.");
         }
         this.secret = true;
         this.password = password;
