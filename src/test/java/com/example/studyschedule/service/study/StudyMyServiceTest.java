@@ -238,4 +238,37 @@ class StudyMyServiceTest extends TestHelper {
                 Arguments.arguments("pass", RegisterState.PASS),
                 Arguments.arguments("reject", RegisterState.REJECT));
     }
+
+    @Test
+    @DisplayName("스터디 정보를 업데이트 한다.")
+    void updateStudyInfo() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        StudyControllerRequest.UpdateStudyRequest request = new StudyControllerRequest.UpdateStudyRequest("스터디 업데이트 제목", "스터디 업데이트 내용", 100L);
+
+        // when
+        service.updateMyStudy(study.getId(), request);
+
+        // then
+        assertThat(study.getName()).isEqualTo(request.getStudyName());
+        assertThat(study.getContent()).isEqualTo(request.getContent());
+        assertThat(study.getFullCount()).isEqualTo(request.getFullCount());
+    }
+
+    @Test
+    @DisplayName("변경 요청한 스터디 인원 수가 현재 가입된 인원 수 보다 적은 경우 예외가 발생한다.")
+    void causeExceptionIfRequestChangeStudyFulLCountLessThanCurrentJoinedMemberCount() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        List<Member> testMembersAndSaveByCount = memberHelper.createTestMembersAndSaveByCount(5);
+        testMembersAndSaveByCount.forEach(m -> studyMemberRepository.save(new StudyMember(m, study)));
+        entityManagerFlushAndClear();
+
+        StudyControllerRequest.UpdateStudyRequest request = new StudyControllerRequest.UpdateStudyRequest("스터디 업데이트 제목", "스터디 업데이트 내용", 2L);
+
+        // when & then
+        assertThatThrownBy(() -> service.updateMyStudy(study.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("현재 인원보다 적은 수로 업데이트 할 수 없습니다.");
+    }
 }
