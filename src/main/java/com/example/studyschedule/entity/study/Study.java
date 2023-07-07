@@ -110,4 +110,19 @@ public final class Study extends BaseEntity {
     public String getLeaderId() {
         return this.leader.getMemberId();
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updateFullCount(Long fullCount) {
+        if(this.getRemainCount() > fullCount) {
+            throw new IllegalArgumentException("현재 인원보다 적은 수로 업데이트 할 수 없습니다.");
+        }
+        this.fullCount = fullCount;
+    }
 }

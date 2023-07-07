@@ -2,6 +2,7 @@ package com.example.studyschedule.service.study;
 
 
 import com.example.studyschedule.entity.member.Member;
+import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.entity.study.StudyRegister;
 import com.example.studyschedule.enums.RegisterState;
@@ -82,4 +83,13 @@ public class StudyMyService {
         studyMemberRepository.delete(studyMember);
     }
 
+    @Transactional
+    public void updateMyStudy(Long studyId, StudyControllerRequest.UpdateStudyRequest request) {
+        StudyMember myStudyMember = studyCommonService.getMyStudyMember(studyId);
+        Study study = myStudyMember.getStudy();
+
+        study.updateName(request.getStudyName());
+        study.updateContent(request.getContent());
+        study.updateFullCount(request.getFullCount());
+    }
 }

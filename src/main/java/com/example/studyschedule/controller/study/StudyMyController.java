@@ -37,6 +37,17 @@ public class StudyMyController {
         return studyMyService.getMyStudyDetail(studyId);
     }
 
+    @PostMapping("/{studyId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateMyStudy(@PathVariable("studyId") Long studyId,
+                              @RequestBody @Validated StudyControllerRequest.UpdateStudyRequest request,
+                              Principal principal) {
+        log.info("[updateMyStudy] called by {}", principal.getName());
+
+        studyMyService.updateMyStudy(studyId, request);
+    }
+
+
     @PostMapping("/{studyId}/state/{registerId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateStudyState(@PathVariable Long studyId,

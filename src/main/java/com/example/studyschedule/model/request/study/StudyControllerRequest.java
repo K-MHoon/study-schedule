@@ -57,6 +57,25 @@ public final class StudyControllerRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
+    public static final class UpdateStudyRequest {
+
+        @NotEmpty
+        private String studyName;
+
+        @NotEmpty
+        private String content;
+
+        @NotNull
+        @Min(1)
+        @Max(100)
+        private Long fullCount;
+
+    }
+
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static final class DeleteStudyMemberAllRequest {
 
         @NotNull
