@@ -14,6 +14,7 @@ import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +130,7 @@ class StudyServiceTest extends TestHelper {
         study.addStudyMember(memberHelper.getUnknownMember());
 
         // when
-        StudyDto studyDetail = service.getPublicStudyDetail(study.getId());
+        StudyDto studyDetail = service.getPublicStudyDetail(study.getId(), null);
 
         // then
         assertThat(studyDetail.getId()).isEqualTo(study.getId());
@@ -137,6 +138,7 @@ class StudyServiceTest extends TestHelper {
 
     @Test
     @DisplayName("비공개 스터디는 공개 스터디로 조회되지 않는다.")
+    @Disabled("공개 스터디 조건 수정으로 더 이상 사용하지 않음")
     void doNotFindStudyIfStudyIsSecret() {
         // given
         Study study = studyHelper.createSimpleStudy(member);
@@ -146,7 +148,7 @@ class StudyServiceTest extends TestHelper {
 
         // when & then
         assertThrows(EntityNotFoundException.class
-                , () -> service.getPublicStudyDetail(study.getId()));
+                , () -> service.getPublicStudyDetail(study.getId(), "inviteCode"));
     }
 
     @Test

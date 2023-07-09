@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,9 +80,10 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
-    public StudyDto getPublicStudyDetail(Long studyId) {
-        Study publicStudy = studyRepository.findByIdAndSecretAndIsUse(studyId, false, IsUse.Y)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디이거나 비공개 스터디 입니다. id = " + studyId));
+    public StudyDto getPublicStudyDetail(Long studyId, String inviteCode) {
+        boolean secret = StringUtils.hasText(inviteCode) ? true : false;
+        Study publicStudy = studyRepository.findByIdAndSecretAndIsUse(studyId, secret, IsUse.Y)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디 입니다."));
 
         return StudyDto.entityToDto(publicStudy);
     }

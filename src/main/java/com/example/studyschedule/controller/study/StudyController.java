@@ -41,10 +41,10 @@ public class StudyController {
 
     @GetMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
-    public StudyDto getPublicStudyDetail(@PathVariable("study_id") Long studyId) {
-        log.info("[getStudyDetail] call, studyId = {}", studyId);
+    public StudyDto getPublicStudyDetail(@PathVariable("study_id") Long studyId, @RequestParam(value = "invite-code", required = false) String inviteCode) {
+        log.info("[getStudyDetail] call, studyId = {}, inviteCode", studyId, inviteCode);
 
-        return studyService.getPublicStudyDetail(studyId);
+        return studyService.getPublicStudyDetail(studyId, inviteCode);
     }
 
     @PostMapping
