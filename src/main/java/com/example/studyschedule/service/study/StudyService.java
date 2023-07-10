@@ -82,6 +82,11 @@ public class StudyService {
     @Transactional(readOnly = true)
     public StudyDto getPublicStudyDetail(Long studyId, String inviteCode) {
         boolean secret = StringUtils.hasText(inviteCode) ? true : false;
+        if(secret) {
+            Member loggedInMember = memberCommonService.getLoggedInMember();
+            studyCodeRepository.findByInviteCodeAndUseMember_Id(inviteCode, loggedInMember.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 초대 코드 입니다."));
+        }
         Study publicStudy = studyRepository.findByIdAndSecretAndIsUse(studyId, secret, IsUse.Y)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디 입니다."));
 
