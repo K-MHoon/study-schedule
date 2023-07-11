@@ -92,7 +92,7 @@ public class StudyController {
 
     @GetMapping("/secret")
     @ResponseStatus(HttpStatus.OK)
-    public StudyDto findSecretStudy(Principal principal, @RequestParam("invite-code") String inviteCode) {
+    public Long findSecretStudy(Principal principal, @RequestParam("invite-code") String inviteCode) {
         log.info("[findSecretStudy] called by {} ", principal.getName());
 
         return studyService.findSecretStudy(inviteCode);

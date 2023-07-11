@@ -281,10 +281,10 @@ class StudyServiceTest extends TestHelper {
 
         // when
 
-        StudyDto secretStudy = service.findSecretStudy(studyCode.getInviteCode());
+        Long secretStudyId = service.findSecretStudy(studyCode.getInviteCode());
 
         // then
-        assertThat(secretStudy.getId()).isEqualTo(study.getId());
+        assertThat(secretStudyId).isEqualTo(study.getId());
         assertThat(studyCode.getUseMember().getId()).isEqualTo(newMember.getId());
     }
 
