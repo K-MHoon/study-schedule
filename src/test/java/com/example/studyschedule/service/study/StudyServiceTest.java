@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Arrays;
@@ -405,5 +406,61 @@ class StudyServiceTest extends TestHelper {
         assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("비밀 스터디에는 반드시 비밀번호가 포함되어야 합니다.");
+    }
+
+    @Test
+    @WithAnonymousUser
+    @DisplayName("로그인 되지 않은 사용자가 비밀 스터디에 접근하려고 할 때 예외가 발생한다.")
+    void causeExceptionWhenNotLoggedInUserAccessStudyDetail() {
+        Study simpleStudy = studyHelper.createSimpleStudy(member);
+
+        assertThatThrownBy(() -> service.getPublicStudyDetail(simpleStudy.getId(), "inviteCode"))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("member ID에 해당하는 멤버를 찾을 수 없습니다. memberId = anonymous");
+    }
+
+    @Test
+    @DisplayName("잘못된 스터디 코드로 비밀 스터디에 접근하려고 할 때 예외가 발생한다.")
+    void causeExceptionWhenAccessStudyDetailIfHasInvalidInviteCode() {
+        Study simpleStudy = studyHelper.createSimpleStudy(member);
+        simpleStudy.changeToPrivate("password");
+
+        assertThatThrownBy(() -> service.getPublicStudyDetail(simpleStudy.getId(), "inviteCode"))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("존재하지 않는 초대 코드 입니다.");
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자의 스터디 코드가 아닌 경우 예외가 발생한다.")
+    void causeExceptionWhenAccessStudyDetailIfHasOtherInviteCode() {
+        Study simpleStudy = studyHelper.createSimpleStudy(member);
+        simpleStudy.changeToPrivate("password");
+        StudyCode studyCode = new StudyCode(simpleStudy);
+        studyCode.updateUseMember(memberHelper.createSimpleMember("otherMember"));
+        studyCodeRepository.save(studyCode);
+        entityManagerFlushAndClear();
+
+        assertThatThrownBy(() -> service.getPublicStudyDetail(simpleStudy.getId(), studyCode.getInviteCode()))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("존재하지 않는 초대 코드 입니다.");
+    }
+
+    @Test
+    @DisplayName("발급 받은 스터디 코드로 조회하는 경우 스터디 상세 정보를 조회할 수 있다.")
+    void getSecretStudyDetailWhenHasInviteCodeByLoggedInUser() {
+        // given
+        Study simpleStudy = studyHelper.createSimpleStudy(member);
+        simpleStudy.changeToPrivate("password");
+
+        StudyCode studyCode = new StudyCode(simpleStudy);
+        studyCode.updateUseMember(member);
+        studyCodeRepository.save(studyCode);
+        entityManagerFlushAndClear();
+
+        // when
+        StudyDto result = service.getPublicStudyDetail(simpleStudy.getId(), studyCode.getInviteCode());
+
+        // then
+        assertThat(result.getId()).isEqualTo(simpleStudy.getId());
     }
 }
