@@ -117,6 +117,10 @@ public class Member extends BaseEntity implements UserDetails {
         return Objects.equals(id, member.id) && Objects.equals(memberId, member.memberId) && Objects.equals(password, member.password);
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id, memberId, password);

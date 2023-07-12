@@ -118,6 +118,7 @@ public class MemberService {
     @Transactional
     public void updateMemberProfile(MemberControllerRequest.UpdateMemberProfileRequest request) {
         Member loggedInMember = commonService.getLoggedInMember();
+        loggedInMember.updatePassword(passwordEncoder.encode(request.getPassword()));
         loggedInMember.updateName(request.getName());
         loggedInMember.updateAge(request.getAge());
     }
