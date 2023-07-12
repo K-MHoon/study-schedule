@@ -107,12 +107,13 @@ class MemberServiceTest extends TestHelper {
     }
 
     @Test
-    @DisplayName("회원정보 이름, 나이를 변경한다.")
+    @DisplayName("회원정보 이름, 나이, 비밀번호를 변경한다.")
     void updateUserNameAndAge() {
-        MemberControllerRequest.UpdateMemberProfileRequest request = new MemberControllerRequest.UpdateMemberProfileRequest("홍길동", 33);
+        MemberControllerRequest.UpdateMemberProfileRequest request = new MemberControllerRequest.UpdateMemberProfileRequest("홍길동", "1234" ,33);
 
         memberService.updateMemberProfile(request);
 
+        assertThat(passwordEncoder.matches("1234", member.getPassword())).isTrue();
         assertThat(member.getName()).isEqualTo("홍길동");
         assertThat(member.getAge()).isEqualTo(33);
     }
