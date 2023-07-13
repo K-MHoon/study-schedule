@@ -109,12 +109,31 @@ class MemberServiceTest extends TestHelper {
     @Test
     @DisplayName("회원정보 이름, 나이, 비밀번호를 변경한다.")
     void updateUserNameAndAge() {
+        // given
         MemberControllerRequest.UpdateMemberProfileRequest request = new MemberControllerRequest.UpdateMemberProfileRequest("홍길동", "1234" ,33);
+        String prevPassword = member.getPassword();
 
+        // when
         memberService.updateMemberProfile(request);
 
+        // then
+        assertThat(prevPassword).isNotEqualTo(member.getPassword());
         assertThat(passwordEncoder.matches("1234", member.getPassword())).isTrue();
         assertThat(member.getName()).isEqualTo("홍길동");
         assertThat(member.getAge()).isEqualTo(33);
+    }
+
+    @Test
+    @DisplayName("비밀번호가 없는 경우, 현재 비밀번호가 유지된다.")
+    void maintainUserPasswordWhenRequestPasswordIsEmpty() {
+        // given
+        MemberControllerRequest.UpdateMemberProfileRequest request = new MemberControllerRequest.UpdateMemberProfileRequest("홍길동", "" ,33);
+        String prevPassword = member.getPassword();
+
+        // when
+        memberService.updateMemberProfile(request);
+
+        // then
+        assertThat(prevPassword).isEqualTo(member.getPassword());
     }
 }
