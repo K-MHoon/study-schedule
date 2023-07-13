@@ -45,7 +45,6 @@ public class MemberControllerRequest {
         @NotEmpty(message = "이름은 빈 칸일 수 없습니다.")
         private String name;
 
-        @NotEmpty
         private String password;
 
         @Positive(message = "양수 입력만 가능합니다.")

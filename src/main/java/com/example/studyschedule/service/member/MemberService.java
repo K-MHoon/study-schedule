@@ -6,6 +6,7 @@ import com.example.studyschedule.model.dto.security.TokenInfo;
 import com.example.studyschedule.model.request.member.MemberControllerRequest;
 import com.example.studyschedule.repository.member.MemberRepository;
 import com.example.studyschedule.security.provider.JwtTokenProvider;
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.Cookie;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -118,7 +119,9 @@ public class MemberService {
     @Transactional
     public void updateMemberProfile(MemberControllerRequest.UpdateMemberProfileRequest request) {
         Member loggedInMember = commonService.getLoggedInMember();
-        loggedInMember.updatePassword(passwordEncoder.encode(request.getPassword()));
+        if(!StringUtils.isEmpty(request.getPassword())) {
+            loggedInMember.updatePassword(passwordEncoder.encode(request.getPassword()));
+        }
         loggedInMember.updateName(request.getName());
         loggedInMember.updateAge(request.getAge());
     }
