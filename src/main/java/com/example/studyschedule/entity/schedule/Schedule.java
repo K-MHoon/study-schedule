@@ -6,11 +6,13 @@ import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.enums.SchedulePeriod;
+import com.example.studyschedule.enums.ScheduleType;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +41,19 @@ public class Schedule extends BaseEntity {
     private Member member;
 
     @Enumerated(EnumType.STRING)
+    private ScheduleType type;
+
+    // Pattern Schedule
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "DAY")
     private SchedulePeriod period;
 
     private Long custom; // period가 CUSTOM인 경우 사용
 
+    private LocalDateTime nextScheduleDate;
+
     @Builder
-    public Schedule(Long id, String name, List<ScheduleTodo> scheduleTodoList, Study study, Member member, SchedulePeriod period, Long custom, LocalDateTime startDate, LocalDateTime endDate, IsUse isUse) {
+    public Schedule(Long id, String name, List<ScheduleTodo> scheduleTodoList, Study study, Member member, SchedulePeriod period, Long custom, LocalDateTime startDate, LocalDateTime endDate, IsUse isUse, ScheduleType type) {
         this.id = id;
         this.name = name;
         this.scheduleTodoList = scheduleTodoList;
@@ -56,8 +64,10 @@ public class Schedule extends BaseEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.isUse = isUse;
+        this.type = type;
     }
 
+    // Long Schedule
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
@@ -66,4 +76,8 @@ public class Schedule extends BaseEntity {
      */
     @Enumerated(EnumType.STRING)
     private IsUse isUse;
+
+    public void updateNextScheduleDate(LocalDateTime nextScheduleDate) {
+        this.nextScheduleDate = nextScheduleDate;
+    }
 }
