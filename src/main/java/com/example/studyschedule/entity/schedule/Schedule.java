@@ -20,7 +20,9 @@ import java.util.List;
 @Entity
 @Table(name = "member_schedule")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Schedule extends BaseEntity {
 
     @Id
@@ -41,31 +43,16 @@ public class Schedule extends BaseEntity {
     private Member member;
 
     @Enumerated(EnumType.STRING)
-    private ScheduleType type;
+    private ScheduleType scheduleType;
 
     // Pattern Schedule
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "DAY")
+    @Column(columnDefinition = "varchar(255) default 'DAY'")
     private SchedulePeriod period;
 
     private Long custom; // period가 CUSTOM인 경우 사용
 
     private LocalDateTime nextScheduleDate;
-
-    @Builder
-    public Schedule(Long id, String name, List<ScheduleTodo> scheduleTodoList, Study study, Member member, SchedulePeriod period, Long custom, LocalDateTime startDate, LocalDateTime endDate, IsUse isUse, ScheduleType type) {
-        this.id = id;
-        this.name = name;
-        this.scheduleTodoList = scheduleTodoList;
-        this.study = study;
-        this.member = member;
-        this.period = period == null ? SchedulePeriod.DAY : period;
-        this.custom = custom;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.isUse = isUse;
-        this.type = type;
-    }
 
     // Long Schedule
     private LocalDateTime startDate;
