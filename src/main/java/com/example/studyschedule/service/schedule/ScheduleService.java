@@ -7,6 +7,8 @@ import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsClear;
 import com.example.studyschedule.enums.IsUse;
+import com.example.studyschedule.enums.SchedulePeriod;
+import com.example.studyschedule.enums.ScheduleType;
 import com.example.studyschedule.model.dto.schedule.ScheduleDto;
 import com.example.studyschedule.model.request.schedule.ScheduleControllerRequest;
 import com.example.studyschedule.repository.schedule.ScheduleRepository;
@@ -72,24 +74,38 @@ public class ScheduleService {
     @Transactional
     public Schedule createSchedule(ScheduleControllerRequest.CreateScheduleRequest request) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
-
-        if (request.getStartDate().isAfter(request.getEndDate())) {
-            throw new IllegalArgumentException("시작 일자가 종료 일자보다 뒤에 있을 수 없습니다.");
-        }
-
         Study study = getValidatedStudy(request, loggedInMember);
 
-        Schedule newSchedule = Schedule.builder()
-                .id(request.getScheduleId())
-                .member(loggedInMember)
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .isUse(request.getIsUse())
-                .name(request.getName())
-                .study(study)
-                .period(request.getPeriod())
-                .custom(request.getCustomDay())
-                .build();
+        Schedule newSchedule = null;
+        if(request.getScheduleType() == ScheduleType.LONG_TERM) {
+            if (request.getStartDate().isAfter(request.getEndDate())) {
+                throw new IllegalArgumentException("시작 일자가 종료 일자보다 뒤에 있을 수 없습니다.");
+            }
+
+            newSchedule = Schedule.builder()
+                    .id(request.getScheduleId())
+                    .member(loggedInMember)
+                    .startDate(request.getStartDate())
+                    .endDate(request.getEndDate())
+                    .isUse(request.getIsUse())
+                    .name(request.getName())
+                    .scheduleType(request.getScheduleType())
+                    .study(study)
+                    .build();
+        } else {
+            newSchedule = Schedule.builder()
+                    .id(request.getScheduleId())
+                    .member(loggedInMember)
+                    .isUse(request.getIsUse())
+                    .name(request.getName())
+                    .study(study)
+                    .scheduleType(request.getScheduleType())
+                    .period(request.getPeriod())
+                    .custom(request.getCustomDay())
+                    .build();
+
+            setNextScheduleDate(request, newSchedule);
+        }
 
         Schedule savedSchedule = scheduleRepository.save(newSchedule);
 
@@ -98,6 +114,20 @@ public class ScheduleService {
         }
 
         return savedSchedule;
+    }
+
+    private void setNextScheduleDate(ScheduleControllerRequest.CreateScheduleRequest request, Schedule newSchedule) {
+        if(request.getPeriod() == SchedulePeriod.DAY) {
+            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusDays(1));
+        } else if(request.getPeriod() == SchedulePeriod.WEEK) {
+            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusWeeks(1));
+        } else if(request.getPeriod() == SchedulePeriod.MONTH) {
+            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusMonths(1));
+        } else if(request.getPeriod() == SchedulePeriod.YEAR) {
+            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusYears(1));
+        } else {
+            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusDays(request.getCustomDay()));
+        }
     }
 
     private Study getValidatedStudy(ScheduleControllerRequest.CreateScheduleRequest request, Member loggedInMember) {

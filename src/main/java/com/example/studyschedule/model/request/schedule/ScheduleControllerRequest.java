@@ -2,6 +2,7 @@ package com.example.studyschedule.model.request.schedule;
 
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.enums.SchedulePeriod;
+import com.example.studyschedule.enums.ScheduleType;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -60,6 +61,9 @@ public class ScheduleControllerRequest {
 
         @NotNull
         private IsUse isUse;
+
+        @NotNull
+        private ScheduleType scheduleType;
 
         @NotNull
         private SchedulePeriod period;
