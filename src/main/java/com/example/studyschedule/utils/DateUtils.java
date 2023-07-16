@@ -12,7 +12,7 @@ public class DateUtils {
 
     public static String localDateTimeToString(LocalDateTime localDateTime) {
         if(Objects.isNull(localDateTime)) {
-            throw new IllegalArgumentException("시간은 null일 수 없습니다.");
+            return "";
         }
 
         return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
