@@ -49,7 +49,7 @@ public final class Study extends BaseEntity {
 
     private Long fullCount; // 스터디 최대 인원
 
-    @OneToMany
+    @OneToMany(mappedBy = "study")
     @Builder.Default
     private List<StudyCode> studyCodeList = new ArrayList<>();
 

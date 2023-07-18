@@ -6,8 +6,10 @@ import com.example.studyschedule.entity.study.StudyCode;
 import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.Pagination;
+import com.example.studyschedule.model.dto.study.StudyCodeDto;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.model.response.study.StudyControllerResponse.GetStudyDetailResponse;
 import com.example.studyschedule.repository.study.StudyCodeRepository;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
@@ -80,7 +82,7 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
-    public StudyDto getPublicStudyDetail(Long studyId, String inviteCode) {
+    public GetStudyDetailResponse getPublicStudyDetail(Long studyId, String inviteCode) {
         boolean secret = StringUtils.hasText(inviteCode) ? true : false;
         if(secret) {
             Member loggedInMember = memberCommonService.getLoggedInMember();
@@ -90,7 +92,14 @@ public class StudyService {
         Study publicStudy = studyRepository.findByIdAndSecretAndIsUse(studyId, secret, IsUse.Y)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디 입니다."));
 
-        return StudyDto.entityToDto(publicStudy);
+        StudyDto studyDto = StudyDto.entityToDto(publicStudy);
+
+        List<StudyCodeDto> studyCodeDtoList = studyCodeRepository.findAllByStudy(publicStudy)
+                .stream()
+                .map(StudyCodeDto::entityToDto)
+                .collect(Collectors.toList());
+
+        return new GetStudyDetailResponse(studyDto, studyCodeDtoList);
     }
 
     @Transactional
