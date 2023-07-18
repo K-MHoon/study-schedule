@@ -9,6 +9,7 @@ import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.model.response.study.StudyControllerResponse;
 import com.example.studyschedule.repository.study.StudyCodeRepository;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRegisterRepository;
@@ -131,10 +132,10 @@ class StudyServiceTest extends TestHelper {
         study.addStudyMember(memberHelper.getUnknownMember());
 
         // when
-        StudyDto studyDetail = service.getPublicStudyDetail(study.getId(), null);
+        StudyControllerResponse.GetStudyDetailResponse result = service.getPublicStudyDetail(study.getId(), null);
 
         // then
-        assertThat(studyDetail.getId()).isEqualTo(study.getId());
+        assertThat(result.getStudy().getId()).isEqualTo(study.getId());
     }
 
     @Test
@@ -458,9 +459,9 @@ class StudyServiceTest extends TestHelper {
         entityManagerFlushAndClear();
 
         // when
-        StudyDto result = service.getPublicStudyDetail(simpleStudy.getId(), studyCode.getInviteCode());
+        StudyControllerResponse.GetStudyDetailResponse result = service.getPublicStudyDetail(simpleStudy.getId(), studyCode.getInviteCode());
 
         // then
-        assertThat(result.getId()).isEqualTo(simpleStudy.getId());
+        assertThat(result.getStudy().getId()).isEqualTo(simpleStudy.getId());
     }
 }
