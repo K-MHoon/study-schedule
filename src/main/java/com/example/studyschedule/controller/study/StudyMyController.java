@@ -3,6 +3,7 @@ package com.example.studyschedule.controller.study;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.dto.study.StudyRegisterDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.model.response.study.StudyMyControllerResponse;
 import com.example.studyschedule.service.study.StudyMyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class StudyMyController {
 
     @GetMapping("/{studyId}")
     @ResponseStatus(HttpStatus.OK)
-    public StudyDto getMyStudyDetail(@PathVariable Long studyId, Principal principal) {
+    public StudyMyControllerResponse.GetMyStudyDetailResponse getMyStudyDetail(@PathVariable Long studyId, Principal principal) {
         log.info("[getMyStudyDetail] called by {}", principal.getName());
 
         return studyMyService.getMyStudyDetail(studyId);

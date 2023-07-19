@@ -6,9 +6,12 @@ import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyMember;
 import com.example.studyschedule.entity.study.StudyRegister;
 import com.example.studyschedule.enums.RegisterState;
+import com.example.studyschedule.model.dto.study.StudyCodeDto;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.dto.study.StudyRegisterDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.model.response.study.StudyMyControllerResponse;
+import com.example.studyschedule.repository.study.StudyCodeRepository;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
@@ -29,6 +32,7 @@ public class StudyMyService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyRegisterRepository studyRegisterRepository;
     private final StudyCommonService studyCommonService;
+    private final StudyCodeRepository studyCodeRepository;
 
     @Transactional(readOnly = true)
     public List<StudyDto> getMyStudy() {
@@ -40,9 +44,16 @@ public class StudyMyService {
     }
 
     @Transactional(readOnly = true)
-    public StudyDto getMyStudyDetail(Long studyId) {
+    public StudyMyControllerResponse.GetMyStudyDetailResponse getMyStudyDetail(Long studyId) {
         StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
-        return StudyDto.entityToDtoDetail(studyMember);
+        StudyDto studyDto = StudyDto.entityToDtoDetail(studyMember);
+
+        List<StudyCodeDto> studyCodeDtoList = studyCodeRepository.findAllByStudy(studyMember.getStudy())
+                .stream()
+                .map(StudyCodeDto::entityToDto)
+                .collect(Collectors.toList());
+
+        return new StudyMyControllerResponse.GetMyStudyDetailResponse(studyDto, studyCodeDtoList);
     }
 
     @Transactional(readOnly = true)
