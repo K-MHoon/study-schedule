@@ -2,11 +2,11 @@ package com.example.studyschedule.model.dto.schedule;
 
 import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.entity.schedule.ScheduleTodo;
-import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.enums.IsClear;
 import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.enums.SchedulePeriod;
+import com.example.studyschedule.enums.ScheduleType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,6 +38,7 @@ public class ScheduleDto {
     private String updatedAt;
     private Double successRate;
     private SchedulePeriod period;
+    private ScheduleType scheduleType;
     private Long custom;
 
     public static ScheduleDto entityToDtoWithTodo(Schedule schedule) {
@@ -52,6 +53,7 @@ public class ScheduleDto {
                 .isUse(schedule.getIsUse())
                 .period(schedule.getPeriod())
                 .custom(schedule.getCustom())
+                .scheduleType(schedule.getScheduleType())
                 .createdAt(localDateTimeToString(schedule.getCreatedAt()))
                 .updatedAt(localDateTimeToString(schedule.getUpdatedAt()))
                 .build();
@@ -67,6 +69,7 @@ public class ScheduleDto {
                 .isUse(schedule.getIsUse())
                 .period(schedule.getPeriod())
                 .custom(schedule.getCustom())
+                .scheduleType(schedule.getScheduleType())
                 .createdAt(localDateTimeToString(schedule.getCreatedAt()))
                 .updatedAt(localDateTimeToString(schedule.getUpdatedAt()))
                 .build();
