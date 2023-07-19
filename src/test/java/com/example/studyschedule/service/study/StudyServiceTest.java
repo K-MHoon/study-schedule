@@ -132,10 +132,10 @@ class StudyServiceTest extends TestHelper {
         study.addStudyMember(memberHelper.getUnknownMember());
 
         // when
-        StudyControllerResponse.GetStudyDetailResponse result = service.getPublicStudyDetail(study.getId(), null);
+        StudyDto result = service.getPublicStudyDetail(study.getId(), null);
 
         // then
-        assertThat(result.getStudy().getId()).isEqualTo(study.getId());
+        assertThat(result.getId()).isEqualTo(study.getId());
     }
 
     @Test
@@ -459,9 +459,9 @@ class StudyServiceTest extends TestHelper {
         entityManagerFlushAndClear();
 
         // when
-        StudyControllerResponse.GetStudyDetailResponse result = service.getPublicStudyDetail(simpleStudy.getId(), studyCode.getInviteCode());
+        StudyDto result = service.getPublicStudyDetail(simpleStudy.getId(), studyCode.getInviteCode());
 
         // then
-        assertThat(result.getStudy().getId()).isEqualTo(simpleStudy.getId());
+        assertThat(result.getId()).isEqualTo(simpleStudy.getId());
     }
 }

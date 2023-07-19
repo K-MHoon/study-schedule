@@ -42,7 +42,7 @@ public class StudyController {
 
     @GetMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
-    public StudyControllerResponse.GetStudyDetailResponse getPublicStudyDetail(@PathVariable("study_id") Long studyId, @RequestParam(value = "invite-code", required = false) String inviteCode) {
+    public StudyDto getPublicStudyDetail(@PathVariable("study_id") Long studyId, @RequestParam(value = "invite-code", required = false) String inviteCode) {
         log.info("[getStudyDetail] call, studyId = {}, inviteCode", studyId, inviteCode);
 
         return studyService.getPublicStudyDetail(studyId, inviteCode);
