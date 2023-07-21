@@ -9,6 +9,7 @@ import com.example.studyschedule.enums.IsUse;
 import com.example.studyschedule.enums.RegisterState;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.model.response.study.StudyMyControllerResponse;
 import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
@@ -79,12 +80,14 @@ class StudyMyServiceTest extends TestHelper {
         entityManagerFlushAndClear();
 
         // when
-        StudyDto result = service.getMyStudyDetail(savedStudy.getId());
+        StudyMyControllerResponse.GetMyStudyDetailResponse result = service.getMyStudyDetail(savedStudy.getId());
+
+
         // then
-        assertThat(result.getId()).isEqualTo(savedStudy.getId());
-        assertThat(result.getStudyName()).isEqualTo("스터디 테스트1");
-        assertThat(result.getRegisteredMemberList()).hasSize(6);
-        assertThat(result.getRegisterRequestList()).hasSize(4);
+        assertThat(result.getStudy().getId()).isEqualTo(savedStudy.getId());
+        assertThat(result.getStudy().getStudyName()).isEqualTo("스터디 테스트1");
+        assertThat(result.getStudy().getRegisteredMemberList()).hasSize(6);
+        assertThat(result.getStudy().getRegisterRequestList()).hasSize(4);
     }
 
     @Test

@@ -15,6 +15,7 @@ import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -423,7 +425,7 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("잘못된 스터디 코드로 비밀 스터디에 접근하려고 할 때 예외가 발생한다.")
     void causeExceptionWhenAccessStudyDetailIfHasInvalidInviteCode() {
-        Study simpleStudy = studyHelper.createSimpleStudy(member);
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         simpleStudy.changeToPrivate("password");
 
         assertThatThrownBy(() -> service.getPublicStudyDetail(simpleStudy.getId(), "inviteCode"))
@@ -434,8 +436,9 @@ class StudyServiceTest extends TestHelper {
     @Test
     @DisplayName("로그인한 사용자의 스터디 코드가 아닌 경우 예외가 발생한다.")
     void causeExceptionWhenAccessStudyDetailIfHasOtherInviteCode() {
-        Study simpleStudy = studyHelper.createSimpleStudy(member);
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         simpleStudy.changeToPrivate("password");
+
         StudyCode studyCode = new StudyCode(simpleStudy);
         studyCode.updateUseMember(memberHelper.createSimpleMember("otherMember"));
         studyCodeRepository.save(studyCode);
@@ -450,12 +453,10 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("발급 받은 스터디 코드로 조회하는 경우 스터디 상세 정보를 조회할 수 있다.")
     void getSecretStudyDetailWhenHasInviteCodeByLoggedInUser() {
         // given
-        Study simpleStudy = studyHelper.createSimpleStudy(member);
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         simpleStudy.changeToPrivate("password");
 
-        StudyCode studyCode = new StudyCode(simpleStudy);
-        studyCode.updateUseMember(member);
-        studyCodeRepository.save(studyCode);
+        StudyCode studyCode = createStudyCode(simpleStudy);
         entityManagerFlushAndClear();
 
         // when
@@ -463,5 +464,59 @@ class StudyServiceTest extends TestHelper {
 
         // then
         assertThat(result.getId()).isEqualTo(simpleStudy.getId());
+    }
+
+    private StudyCode createStudyCode(Study simpleStudy) {
+        StudyCode studyCode = new StudyCode(simpleStudy);
+        studyCode.updateUseMember(member);
+        return studyCodeRepository.save(studyCode);
+    }
+
+    @Test
+    @DisplayName("요청 받은 스터디 코드 목록을 정상적으로 삭제한다.")
+    void deleteInviteCodeAll() {
+        // given
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
+        simpleStudy.changeToPrivate("password");
+
+        StudyCode studyCode1 = createStudyCode(simpleStudy);
+        StudyCode studyCode2 = createStudyCode(simpleStudy);
+        entityManagerFlushAndClear();
+
+        StudyControllerRequest.DeleteInviteCodeAllRequest request = new StudyControllerRequest.DeleteInviteCodeAllRequest(Arrays.asList(studyCode1.getId(), studyCode2.getId()));
+
+        // when
+        service.deleteInviteCodeAll(simpleStudy.getId(), request);
+
+        // then
+        List<StudyCode> result = studyCodeRepository.findAll();
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("스터디가 비밀 스터디가 아닌 경우 예외가 발생한다.")
+    void causeExceptionIfStudyIsNotSecret() {
+        // given
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
+        StudyControllerRequest.DeleteInviteCodeAllRequest request = new StudyControllerRequest.DeleteInviteCodeAllRequest(Collections.emptyList());
+
+        // when & then
+        assertThatThrownBy(() -> service.deleteInviteCodeAll(simpleStudy.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("요청한 스터디는 비밀 스터디가 아닙니다.");
+    }
+
+    @Test
+    @DisplayName("스터디 코드가 없거나, 다른 스터디 코드를 요청하는 경우 예외가 발생한다.")
+    void causeExceptionWhenRequestOtherStudyInviteCodeOrNotSavedStudyCode() {
+        // given
+        Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
+        simpleStudy.changeToPrivate("password");
+        StudyControllerRequest.DeleteInviteCodeAllRequest request = new StudyControllerRequest.DeleteInviteCodeAllRequest(Arrays.asList(999L));
+
+        // when & then
+        assertThatThrownBy(() -> service.deleteInviteCodeAll(simpleStudy.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 스터디에 존재하지 않는 스터디 코드가 포함되어 있습니다.");
     }
 }
