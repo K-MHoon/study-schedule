@@ -87,6 +87,17 @@ public final class StudyControllerRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
+    public static final class DeleteInviteCodeAllRequest {
+
+        @NotNull
+        @UniqueElements
+        private List<Long> inviteCodeList;
+    }
+
+    @Getter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static final class CreateStudyRegisterRequest {
 
         @NotEmpty

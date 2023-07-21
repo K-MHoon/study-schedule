@@ -3,7 +3,6 @@ package com.example.studyschedule.controller.study;
 import com.example.studyschedule.model.dto.Pagination;
 import com.example.studyschedule.model.dto.study.StudyDto;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
-import com.example.studyschedule.model.response.study.StudyControllerResponse;
 import com.example.studyschedule.service.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +88,14 @@ public class StudyController {
         log.info("[createStudyInviteCode] called by {}, study Id = {}", principal.getName(), studyId);
 
         studyService.createInviteCode(studyId);
+    }
+
+    @DeleteMapping("/{study_id}/code")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteInviteCodeAll(@PathVariable(name = "study_id") Long studyId, @RequestBody @Validated StudyControllerRequest.DeleteInviteCodeAllRequest request, Principal principal) {
+        log.info("[deleteInviteCodeAll] called by {}, study Id = {}", principal.getName(), studyId);
+
+        studyService.deleteInviteCodeAll(studyId, request);
     }
 
     @GetMapping("/secret")

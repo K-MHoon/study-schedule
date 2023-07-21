@@ -18,4 +18,7 @@ public interface StudyCodeRepository extends JpaRepository<StudyCode, Long> {
 
     @EntityGraph(attributePaths = {"useMember"})
     List<StudyCode> findAllByStudy(Study study);
+
+    @EntityGraph(attributePaths = {"useMember"})
+    List<StudyCode> findAllByStudyAndIdIn(Study study, List<Long> inviteCodeIdList);
 }
