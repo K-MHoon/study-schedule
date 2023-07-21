@@ -114,17 +114,6 @@ public class StudyService {
     }
 
     @Transactional
-    public void createInviteCode(Long studyId) {
-        StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
-        Study study = studyMember.getStudy();
-        if(!study.getSecret()) {
-            throw new IllegalArgumentException("비밀 스터디만 초대 코드 생성이 가능합니다.");
-        }
-        StudyCode studyCode = new StudyCode(study);
-        studyCodeRepository.save(studyCode);
-    }
-
-    @Transactional
     public Long findSecretStudy(String inviteCode) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         StudyCode studyCode = studyCodeRepository.findByInviteCodeAndUseMemberIsNull(inviteCode).orElseThrow(() -> new EntityNotFoundException("코드에 해당하는 스터디가 존재하지 않습니다."));
@@ -142,21 +131,6 @@ public class StudyService {
         }
     }
 
-    @Transactional
-    public void deleteInviteCodeAll(Long studyId, StudyControllerRequest.DeleteInviteCodeAllRequest request) {
-        StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
 
-        Study study = studyMember.getStudy();
-        if(!study.getSecret()) {
-            throw new IllegalArgumentException("요청한 스터디는 비밀 스터디가 아닙니다.");
-        }
-
-        List<StudyCode> studyCodeList = studyCodeRepository.findAllByStudyAndIdIn(study, request.getInviteCodeList());
-        if(request.getInviteCodeList().size() != studyCodeList.size()) {
-            throw new IllegalArgumentException("해당 스터디에 존재하지 않는 스터디 코드가 포함되어 있습니다.");
-        }
-
-        studyCodeRepository.deleteAll(studyCodeList);
-    }
 }
 

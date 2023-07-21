@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/study")
 public class StudyController {
+
     private final StudyService studyService;
 
     @GetMapping
@@ -80,22 +81,6 @@ public class StudyController {
         log.info("[deleteStudyMemberAll] called by {}, request IdList = {}", principal.getName(), request.getStudyList());
 
         studyService.deleteStudyMemberAll(request);
-    }
-
-    @PostMapping("/{study_id}/code")
-    @ResponseStatus(HttpStatus.OK)
-    public void createInviteCode(@PathVariable(name = "study_id") Long studyId, Principal principal) {
-        log.info("[createStudyInviteCode] called by {}, study Id = {}", principal.getName(), studyId);
-
-        studyService.createInviteCode(studyId);
-    }
-
-    @DeleteMapping("/{study_id}/code")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteInviteCodeAll(@PathVariable(name = "study_id") Long studyId, @RequestBody @Validated StudyControllerRequest.DeleteInviteCodeAllRequest request, Principal principal) {
-        log.info("[deleteInviteCodeAll] called by {}, study Id = {}", principal.getName(), studyId);
-
-        studyService.deleteInviteCodeAll(studyId, request);
     }
 
     @GetMapping("/secret")
