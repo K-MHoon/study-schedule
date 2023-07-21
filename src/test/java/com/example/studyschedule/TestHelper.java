@@ -31,6 +31,9 @@ public class TestHelper {
     protected ScheduleTodoHelper scheduleTodoHelper;
 
     @Autowired
+    protected StudyCodeHelper studyCodeHelper;
+
+    @Autowired
     private EntityManager entityManager;
 
     @Autowired
