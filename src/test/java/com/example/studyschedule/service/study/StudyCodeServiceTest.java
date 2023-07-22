@@ -3,6 +3,7 @@ package com.example.studyschedule.service.study;
 import com.example.studyschedule.TestHelper;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyCode;
+import com.example.studyschedule.model.request.study.StudyCodeControllerRequest;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.repository.study.StudyCodeRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -65,7 +66,7 @@ class StudyCodeServiceTest extends TestHelper {
         StudyCode studyCode2 = studyCodeHelper.createStudyCode(member, simpleStudy);
         entityManagerFlushAndClear();
 
-        StudyControllerRequest.DeleteInviteCodeAllRequest request = new StudyControllerRequest.DeleteInviteCodeAllRequest(Arrays.asList(studyCode1.getId(), studyCode2.getId()));
+        StudyCodeControllerRequest.DeleteInviteCodeAllRequest request = new StudyCodeControllerRequest.DeleteInviteCodeAllRequest(Arrays.asList(studyCode1.getId(), studyCode2.getId()));
 
         // when
         service.deleteInviteCodeAll(simpleStudy.getId(), request);
@@ -80,7 +81,7 @@ class StudyCodeServiceTest extends TestHelper {
     void causeExceptionIfStudyIsNotSecret() {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
-        StudyControllerRequest.DeleteInviteCodeAllRequest request = new StudyControllerRequest.DeleteInviteCodeAllRequest(Collections.emptyList());
+        StudyCodeControllerRequest.DeleteInviteCodeAllRequest request = new StudyCodeControllerRequest.DeleteInviteCodeAllRequest(Collections.emptyList());
 
         // when & then
         assertThatThrownBy(() -> service.deleteInviteCodeAll(simpleStudy.getId(), request))
@@ -94,7 +95,7 @@ class StudyCodeServiceTest extends TestHelper {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         simpleStudy.changeToPrivate("password");
-        StudyControllerRequest.DeleteInviteCodeAllRequest request = new StudyControllerRequest.DeleteInviteCodeAllRequest(Arrays.asList(999L));
+        StudyCodeControllerRequest.DeleteInviteCodeAllRequest request = new StudyCodeControllerRequest.DeleteInviteCodeAllRequest(Arrays.asList(999L));
 
         // when & then
         assertThatThrownBy(() -> service.deleteInviteCodeAll(simpleStudy.getId(), request))
