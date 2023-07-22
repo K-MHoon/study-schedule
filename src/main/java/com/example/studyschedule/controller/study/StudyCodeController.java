@@ -1,5 +1,6 @@
 package com.example.studyschedule.controller.study;
 
+import com.example.studyschedule.model.request.study.StudyCodeControllerRequest;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.service.study.StudyCodeService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class StudyCodeController {
 
     private final StudyCodeService service;
 
-    @PostMapping("/{study_id}/code")
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public void createInviteCode(@PathVariable(name = "study_id") Long studyId, Principal principal) {
         log.info("[createStudyInviteCode] called by {}, study Id = {}", principal.getName(), studyId);
@@ -26,9 +27,9 @@ public class StudyCodeController {
         service.createInviteCode(studyId);
     }
 
-    @DeleteMapping("/{study_id}/code")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteInviteCodeAll(@PathVariable(name = "study_id") Long studyId, @RequestBody @Validated StudyControllerRequest.DeleteInviteCodeAllRequest request, Principal principal) {
+    public void deleteInviteCodeAll(@PathVariable(name = "study_id") Long studyId, @RequestBody @Validated StudyCodeControllerRequest.DeleteInviteCodeAllRequest request, Principal principal) {
         log.info("[deleteInviteCodeAll] called by {}, study Id = {}", principal.getName(), studyId);
 
         service.deleteInviteCodeAll(studyId, request);

@@ -3,6 +3,7 @@ package com.example.studyschedule.service.study;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyCode;
 import com.example.studyschedule.entity.study.StudyMember;
+import com.example.studyschedule.model.request.study.StudyCodeControllerRequest;
 import com.example.studyschedule.model.request.study.StudyControllerRequest;
 import com.example.studyschedule.repository.study.StudyCodeRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class StudyCodeService {
 
 
     @Transactional
-    public void deleteInviteCodeAll(Long studyId, StudyControllerRequest.DeleteInviteCodeAllRequest request) {
+    public void deleteInviteCodeAll(Long studyId, StudyCodeControllerRequest.DeleteInviteCodeAllRequest request) {
         StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
 
         Study study = studyMember.getStudy();

@@ -82,18 +82,6 @@ public final class StudyControllerRequest {
         @UniqueElements
         private List<Long> studyList;
     }
-
-    @Getter
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static final class DeleteInviteCodeAllRequest {
-
-        @NotNull
-        @UniqueElements
-        private List<Long> inviteCodeList;
-    }
-
     @Getter
     @ToString
     @NoArgsConstructor
