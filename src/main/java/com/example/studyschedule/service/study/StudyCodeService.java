@@ -3,8 +3,9 @@ package com.example.studyschedule.service.study;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyCode;
 import com.example.studyschedule.entity.study.StudyMember;
+import com.example.studyschedule.model.dto.study.StudyCodeDto;
 import com.example.studyschedule.model.request.study.StudyCodeControllerRequest;
-import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.model.response.study.StudyCodeControllerResponse;
 import com.example.studyschedule.repository.study.StudyCodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -48,5 +50,13 @@ public class StudyCodeService {
         }
 
         studyCodeRepository.deleteAll(studyCodeList);
+    }
+
+    @Transactional(readOnly = true)
+    public StudyCodeControllerResponse.GetStudyCodeListResponse getInviteCodeList(Long studyId) {
+        StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
+        List<StudyCode> studyCodeList = studyCodeRepository.findAllByStudy(studyMember.getStudy());
+        List<StudyCodeDto> studyCodeDtoList = studyCodeList.stream().map(StudyCodeDto::entityToDto).collect(Collectors.toList());
+        return new StudyCodeControllerResponse.GetStudyCodeListResponse(studyCodeDtoList);
     }
 }
