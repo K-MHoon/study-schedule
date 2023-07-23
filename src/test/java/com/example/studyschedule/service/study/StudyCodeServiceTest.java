@@ -4,7 +4,7 @@ import com.example.studyschedule.TestHelper;
 import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.entity.study.StudyCode;
 import com.example.studyschedule.model.request.study.StudyCodeControllerRequest;
-import com.example.studyschedule.model.request.study.StudyControllerRequest;
+import com.example.studyschedule.model.response.study.StudyCodeControllerResponse;
 import com.example.studyschedule.repository.study.StudyCodeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -101,5 +101,34 @@ class StudyCodeServiceTest extends TestHelper {
         assertThatThrownBy(() -> service.deleteInviteCodeAll(simpleStudy.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("해당 스터디에 존재하지 않는 스터디 코드가 포함되어 있습니다.");
+    }
+
+    @Test
+    @DisplayName("스터디 코드 목록을 조회한다.")
+    void getStudyCodeList() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+        studyCodeHelper.createStudyCode(null, study);
+        studyCodeHelper.createStudyCode(null, study);
+        studyCodeHelper.createStudyCode(null, study);
+
+        // when
+        StudyCodeControllerResponse.GetStudyCodeListResponse result = service.getInviteCodeList(study.getId());
+
+        // then
+        assertThat(result.getStudyCodeList()).hasSize(3);
+    }
+
+    @Test
+    @DisplayName("스터디 코드가 존재하지 않으면, 빈 배열을 반환한다.")
+    void studyCodeIsEmptyWhenNotExistStudyCode() {
+        // given
+        Study study = studyHelper.createStudyWithStudyMember(member);
+
+        // when
+        StudyCodeControllerResponse.GetStudyCodeListResponse result = service.getInviteCodeList(study.getId());
+
+        // then
+        assertThat(result.getStudyCodeList()).isEmpty();
     }
 }
