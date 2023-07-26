@@ -81,6 +81,22 @@ class TodoServiceTest extends TestHelper {
     }
 
     @Test
+    @DisplayName("스케줄에 연결된 할 일이 있는 경우 예외가 발생한다.")
+    void causeExceptionWhenHasScheduleConnectedTodo() {
+        // given
+        Todo todo = todoHelper.createSimpleTodo(member);
+        Schedule simpleSchedule = scheduleHelper.createSimpleSchedule(member);
+        scheduleTodoHelper.connectScheduleTodo(simpleSchedule, todo);
+
+        TodoControllerRequest.DeleteTodoRequest request = new TodoControllerRequest.DeleteTodoRequest(List.of(todo.getId()));
+
+        // when & then
+        assertThatThrownBy(() -> todoService.deleteTodoAll(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("스케줄이 연결된 할 일이 존재하여 삭제할 수 없습니다.");
+    }
+
+    @Test
     @DisplayName("멤버에 해당되지 않는 할 일 목록 삭제를 요청할 경우 예외가 발생한다.")
     void doNotDeleteWhenDeleteRequestOtherMemberTodo() {
         // given

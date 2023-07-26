@@ -3,10 +3,7 @@ package com.example.studyschedule.entity.schedule;
 import com.example.studyschedule.entity.common.BaseEntity;
 import com.example.studyschedule.entity.member.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +29,7 @@ public class Todo extends BaseEntity {
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     private List<ScheduleTodo> scheduleTodoList = new ArrayList<>();
 
+    @Builder
     public Todo(String title, String content, Member member) {
         this.title = title;
         this.content = content;
