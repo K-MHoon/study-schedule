@@ -5,6 +5,7 @@ import com.example.studyschedule.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
+@Transactional
 public class MemberHelper {
 
     @Autowired

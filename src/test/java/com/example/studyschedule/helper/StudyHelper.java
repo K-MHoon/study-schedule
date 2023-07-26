@@ -11,11 +11,13 @@ import com.example.studyschedule.repository.study.StudyRegisterRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Transactional
 public class StudyHelper {
 
     @Autowired

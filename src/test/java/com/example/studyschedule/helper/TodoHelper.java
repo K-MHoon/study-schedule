@@ -6,12 +6,14 @@ import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.repository.schedule.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
+@Transactional
 public class TodoHelper {
 
     @Autowired
@@ -24,5 +26,14 @@ public class TodoHelper {
                     return todoRepository.save(todo);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public Todo createSimpleTodo(Member member) {
+        Todo todo = Todo.builder()
+                .title("simple Title")
+                .content("simple Content")
+                .member(member)
+                .build();
+        return todoRepository.save(todo);
     }
 }
