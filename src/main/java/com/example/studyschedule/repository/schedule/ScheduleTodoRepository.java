@@ -17,4 +17,6 @@ public interface ScheduleTodoRepository extends JpaRepository<ScheduleTodo, Long
 
     @Query("select st from ScheduleTodo st join fetch st.schedule sts join fetch st.todo stt where sts = :schedule and stt in :todoList")
     List<ScheduleTodo> findAllByScheduleAndTodoIn(@Param("schedule") Schedule schedule, @Param("todoList") List<Todo> todoList);
+
+    List<ScheduleTodo> findAllByTodo_IdIn(List<Long> todoIdList);
 }

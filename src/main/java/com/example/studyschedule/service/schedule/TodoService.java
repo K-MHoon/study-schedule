@@ -6,6 +6,7 @@ import com.example.studyschedule.entity.schedule.ScheduleTodo;
 import com.example.studyschedule.entity.schedule.Todo;
 import com.example.studyschedule.model.dto.schedule.TodoDto;
 import com.example.studyschedule.model.request.schedule.TodoControllerRequest;
+import com.example.studyschedule.repository.schedule.ScheduleTodoRepository;
 import com.example.studyschedule.repository.schedule.TodoRepository;
 import com.example.studyschedule.service.member.MemberCommonService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class TodoService {
     private final MemberCommonService memberCommonService;
     private final TodoCommonService todoCommonService;
     private final ScheduleCommonService scheduleCommonService;
+    private final ScheduleTodoRepository scheduleTodoRepository;
 
     private final TodoRepository todoRepository;
 
@@ -57,8 +59,11 @@ public class TodoService {
         if(isNotSameRequestAndDataCount(request, member)) {
             throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 할 일을 포함하고 있습니다. memberId = " + member.getMemberId());
         }
+        List<ScheduleTodo> scheduleTodoList = scheduleTodoRepository.findAllByTodo_IdIn(request.getTodoList());
+        if(!scheduleTodoList.isEmpty()) {
+            throw new IllegalArgumentException("스케줄이 연결된 할 일이 존재하여 삭제할 수 없습니다.");
+        }
         todoRepository.deleteAllByIdInAndMember_Id(request.getTodoList(), member.getId());
-
     }
 
     private boolean isNotSameRequestAndDataCount(TodoControllerRequest.DeleteTodoRequest request, Member member) {
