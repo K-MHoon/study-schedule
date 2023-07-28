@@ -1,10 +1,17 @@
 package com.example.studyschedule.service.member;
 
 import com.example.studyschedule.entity.member.Member;
+import com.example.studyschedule.entity.schedule.Schedule;
 import com.example.studyschedule.model.dto.member.MemberDto;
 import com.example.studyschedule.model.dto.security.TokenInfo;
 import com.example.studyschedule.model.request.member.MemberControllerRequest;
 import com.example.studyschedule.repository.member.MemberRepository;
+import com.example.studyschedule.repository.schedule.ScheduleHistoryRepository;
+import com.example.studyschedule.repository.schedule.ScheduleRepository;
+import com.example.studyschedule.repository.schedule.ScheduleTodoRepository;
+import com.example.studyschedule.repository.schedule.TodoRepository;
+import com.example.studyschedule.repository.study.StudyMemberRepository;
+import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.security.provider.JwtTokenProvider;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.Cookie;
@@ -29,6 +36,13 @@ import java.util.stream.Collectors;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final StudyRepository studyRepository;
+    private final StudyMemberRepository studyMemberRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final ScheduleTodoRepository scheduleTodoRepository;
+    private final ScheduleHistoryRepository scheduleHistoryRepository;
+    private final TodoRepository todoRepository;
+
     private final MemberCommonService commonService;
 
     private final PasswordEncoder passwordEncoder;
@@ -124,6 +138,25 @@ public class MemberService {
         }
         loggedInMember.updateName(request.getName());
         loggedInMember.updateAge(request.getAge());
+    }
+
+    @Transactional
+    public void deleteMember() {
+        Member loggedInMember = commonService.getLoggedInMember();
+
+        if(studyRepository.existsByLeader(loggedInMember)) {
+            throw new IllegalArgumentException("운영중인 스터디가 존재하여 탈퇴할 수 없습니다.");
+        }
+        if(studyMemberRepository.existsByMember(loggedInMember)) {
+            throw new IllegalArgumentException("가입된 스터디가 존재하여 탈퇴할 수 없습니다. 모든 스터디를 탈퇴해주세요.");
+        }
+        List<Schedule> scheduleList = scheduleRepository.findAllByMember_IdByJPQL(loggedInMember.getId());
+        List<Long> scheduleIdList = scheduleList.stream().map(Schedule::getId).collect(Collectors.toList());
+        scheduleTodoRepository.deleteAllByScheduleIdList(scheduleIdList);
+        scheduleHistoryRepository.deleteAllByScheduleIdList(scheduleIdList);
+        scheduleRepository.deleteAllByScheduleIdList(scheduleIdList);
+        todoRepository.deleteAllByMember(loggedInMember);
+        memberRepository.delete(loggedInMember);
     }
 
     @Getter

@@ -119,4 +119,12 @@ public class MemberController {
 
         return new ResponseEntity<>(response.getTokenInfo(), HttpStatus.OK);
     }
+
+    @DeleteMapping("/member")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteMember(Principal principal) {
+        log.info("[deleteMember] called by {}", principal.getName());
+
+        memberService.deleteMember();
+    }
 }
