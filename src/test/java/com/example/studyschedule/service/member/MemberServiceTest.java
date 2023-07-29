@@ -2,6 +2,9 @@ package com.example.studyschedule.service.member;
 
 import com.example.studyschedule.TestHelper;
 import com.example.studyschedule.entity.member.Member;
+import com.example.studyschedule.entity.schedule.Schedule;
+import com.example.studyschedule.entity.schedule.Todo;
+import com.example.studyschedule.entity.study.Study;
 import com.example.studyschedule.model.dto.member.MemberDto;
 import com.example.studyschedule.model.request.member.MemberControllerRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -135,5 +138,48 @@ class MemberServiceTest extends TestHelper {
 
         // then
         assertThat(prevPassword).isEqualTo(member.getPassword());
+    }
+
+    @Test
+    @DisplayName("스터디를 생성한 회원을 삭제하려는 경우, 예외가 발생한다.")
+    void causeExceptionWhenDeleteMemberIfHasStudy() {
+        // given
+        Study simpleStudy = studyHelper.createSimpleStudy(member);
+
+        // when & then
+        assertThatThrownBy(() -> memberService.deleteMember())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("운영중인 스터디가 존재하여 탈퇴할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("스터디가 가입된 회원을 삭제하려는 경우, 예외가 발생한다.")
+    void causeExceptionWhenDeleteMemberIfHasJoinedStudy() {
+        // given
+        Member otherMember = memberHelper.createSimpleMember("otherMember");
+        Study study = studyHelper.createStudyWithStudyMember(otherMember);
+        studyHelper.joinStudy(study, member);
+
+        // when & then
+        assertThatThrownBy(() -> memberService.deleteMember())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가입된 스터디가 존재하여 탈퇴할 수 없습니다. 모든 스터디를 탈퇴해주세요.");
+    }
+
+    @Test
+    @DisplayName("회원 삭제에 성공한다.")
+    void deleteMember() {
+        // given
+        Schedule simpleSchedule = scheduleHelper.createSimpleSchedule(member);
+        Todo simpleTodo = todoHelper.createSimpleTodo(member);
+        scheduleTodoHelper.connectScheduleTodo(simpleSchedule, simpleTodo);
+
+        // when
+        memberService.deleteMember();
+
+        // then
+        assertThat(memberHelper.findById(member.getId())).isEmpty();
+        assertThat(scheduleHelper.findById(simpleSchedule.getId())).isEmpty();
+        assertThat(todoHelper.findById(simpleTodo.getId())).isEmpty();
     }
 }
