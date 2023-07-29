@@ -14,6 +14,7 @@ import com.example.studyschedule.repository.study.StudyMemberRepository;
 import com.example.studyschedule.repository.study.StudyRepository;
 import com.example.studyschedule.security.provider.JwtTokenProvider;
 import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -150,7 +151,7 @@ public class MemberService {
         if(studyMemberRepository.existsByMember(loggedInMember)) {
             throw new IllegalArgumentException("가입된 스터디가 존재하여 탈퇴할 수 없습니다. 모든 스터디를 탈퇴해주세요.");
         }
-        List<Schedule> scheduleList = scheduleRepository.findAllByMember_IdByJPQL(loggedInMember.getId());
+        List<Schedule> scheduleList = scheduleRepository.findAllByMember_Id(loggedInMember.getId());
         List<Long> scheduleIdList = scheduleList.stream().map(Schedule::getId).collect(Collectors.toList());
         scheduleTodoRepository.deleteAllByScheduleIdList(scheduleIdList);
         scheduleHistoryRepository.deleteAllByScheduleIdList(scheduleIdList);

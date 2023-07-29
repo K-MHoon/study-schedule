@@ -21,9 +21,11 @@ public final class ScheduleHistory {
     private LocalDateTime activeDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "todo_id")
     private Todo todo;
 
     /**

@@ -54,11 +54,11 @@ public class Member extends BaseEntity implements UserDetails {
         this.age = age;
     }
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Schedule> scheduleList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Todo> todoList = new ArrayList<>();
 

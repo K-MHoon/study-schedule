@@ -14,11 +14,7 @@ import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>, ScheduleRepositorySupport {
 
-    @Query("select s from Schedule s " +
-            "join fetch s.scheduleTodoList stl " +
-            "join fetch stl.todo " +
-            "where s.member.id = :memberId")
-    List<Schedule> findAllByMember_IdByJPQL(@Param("memberId") Long memberId);
+    List<Schedule> findAllByMember_Id(Long id);
 
     @EntityGraph(attributePaths = {"member", "study"})
     List<Schedule> findAllByMemberAndStudy(Member member, Study study);
