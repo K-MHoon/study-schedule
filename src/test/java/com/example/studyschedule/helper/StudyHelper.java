@@ -41,6 +41,11 @@ public class StudyHelper {
         return savedStudy;
     }
 
+    public StudyMember joinStudy(Study study, Member member) {
+        StudyMember studyMember = new StudyMember(member, study);
+        return studyMemberRepository.save(studyMember);
+    }
+
     public void createStudyMember(Study savedStudy, List<Member> memberList) {
         List<StudyMember> studyMemberList = memberList.stream()
                 .map(m -> new StudyMember(m, savedStudy))

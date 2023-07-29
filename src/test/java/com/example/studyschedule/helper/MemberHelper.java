@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -44,6 +45,10 @@ public class MemberHelper {
 
     public Member find(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new EntityNotFoundException("해당하는 멤버 ID가 존재하지 않습니다."));
+    }
+
+    public Optional<Member> findById(Long memberId) {
+        return memberRepository.findById(memberId);
     }
 
     public Member getUnknownMember() {

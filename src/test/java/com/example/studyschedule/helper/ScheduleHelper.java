@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,6 +31,10 @@ public class ScheduleHelper {
                         .name("simpleSchedule")
                         .build();
         return scheduleRepository.save(schedule);
+    }
+
+    public Optional<Schedule> findById(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId);
     }
 
     public List<Schedule> createTestSchedulesAndSaveByCount(Member member, int count) {
