@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3307/study_schedule?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: root
+
+  batch:
+    jdbc:
+      initialize-schema: always
+      schema: classpath:org/springframework/batch/core/schema-mariadb.sql
+    job:
+      enabled: false
