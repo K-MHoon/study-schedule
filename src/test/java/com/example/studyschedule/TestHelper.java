@@ -1,7 +1,7 @@
-package com.example.studyschedule;
+package com.example.service;
 
-import com.example.studyschedule.entity.member.Member;
-import com.example.studyschedule.helper.*;
+import com.example.service.entity.member.Member;
+import com.example.service.helper.*;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

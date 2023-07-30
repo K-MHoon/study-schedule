@@ -1,4 +1,4 @@
-package com.example.studyschedule.service;
+package com.example.service.service;
 
 import org.junit.jupiter.api.Test;
 

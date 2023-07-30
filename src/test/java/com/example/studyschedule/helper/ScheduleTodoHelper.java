@@ -1,9 +1,9 @@
-package com.example.studyschedule.helper;
+package com.example.service.helper;
 
-import com.example.studyschedule.entity.schedule.Schedule;
-import com.example.studyschedule.entity.schedule.ScheduleTodo;
-import com.example.studyschedule.entity.schedule.Todo;
-import com.example.studyschedule.repository.schedule.ScheduleTodoRepository;
+import com.example.service.entity.schedule.Schedule;
+import com.example.service.entity.schedule.ScheduleTodo;
+import com.example.service.entity.schedule.Todo;
+import com.example.service.repository.schedule.ScheduleTodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

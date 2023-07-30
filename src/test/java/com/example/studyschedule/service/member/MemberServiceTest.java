@@ -1,12 +1,12 @@
-package com.example.studyschedule.service.member;
+package com.example.service.service.member;
 
-import com.example.studyschedule.TestHelper;
-import com.example.studyschedule.entity.member.Member;
-import com.example.studyschedule.entity.schedule.Schedule;
-import com.example.studyschedule.entity.schedule.Todo;
-import com.example.studyschedule.entity.study.Study;
-import com.example.studyschedule.model.dto.member.MemberDto;
-import com.example.studyschedule.model.request.member.MemberControllerRequest;
+import com.example.service.TestHelper;
+import com.example.service.entity.member.Member;
+import com.example.service.entity.schedule.Schedule;
+import com.example.service.entity.schedule.Todo;
+import com.example.service.entity.study.Study;
+import com.example.service.model.dto.member.MemberDto;
+import com.example.service.model.request.member.MemberControllerRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

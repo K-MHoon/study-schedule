@@ -1,6 +1,6 @@
-package com.example.studyschedule.service.schedule;
+package com.example.service.service.schedule;
 
-import com.example.studyschedule.entity.schedule.Todo;
+import com.example.service.entity.schedule.Todo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

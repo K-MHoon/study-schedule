@@ -1,7 +1,7 @@
-package com.example.studyschedule.helper;
+package com.example.service.helper;
 
-import com.example.studyschedule.entity.member.Member;
-import com.example.studyschedule.repository.member.MemberRepository;
+import com.example.service.entity.member.Member;
+import com.example.service.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

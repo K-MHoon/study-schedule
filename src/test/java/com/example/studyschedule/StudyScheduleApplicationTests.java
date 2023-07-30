@@ -1,4 +1,4 @@
-package com.example.studyschedule;
+package com.example.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
