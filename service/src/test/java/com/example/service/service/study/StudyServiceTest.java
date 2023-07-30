@@ -9,13 +9,11 @@ import com.example.service.enums.IsUse;
 import com.example.service.model.dto.Pagination;
 import com.example.service.model.dto.study.StudyDto;
 import com.example.service.model.request.study.StudyControllerRequest;
-import com.example.service.model.response.study.StudyControllerResponse;
 import com.example.service.repository.study.StudyCodeRepository;
 import com.example.service.repository.study.StudyMemberRepository;
 import com.example.service.repository.study.StudyRegisterRepository;
 import com.example.service.repository.study.StudyRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +24,6 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
