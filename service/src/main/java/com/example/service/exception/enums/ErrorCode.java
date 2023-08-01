@@ -1,4 +1,4 @@
-package com.example.service.enums.exception;
+package com.example.service.exception.enums;
 
 import org.springframework.http.HttpStatus;
 

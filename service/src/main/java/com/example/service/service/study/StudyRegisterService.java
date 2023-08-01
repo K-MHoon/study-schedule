@@ -1,16 +1,16 @@
 package com.example.service.service.study;
 
 
-import com.example.service.entity.member.Member;
-import com.example.service.entity.study.Study;
-import com.example.service.entity.study.StudyRegister;
-import com.example.service.enums.RegisterState;
-import com.example.service.enums.exception.common.CommonErrorCode;
+import com.example.common.entity.member.Member;
+import com.example.common.entity.study.Study;
+import com.example.common.entity.study.StudyRegister;
+import com.example.common.enums.RegisterState;
+import com.example.service.exception.enums.common.CommonErrorCode;
 import com.example.service.exception.StudyScheduleException;
-import com.example.service.model.request.study.StudyControllerRequest;
-import com.example.service.repository.study.StudyMemberRepository;
-import com.example.service.repository.study.StudyRegisterRepository;
-import com.example.service.repository.study.StudyRepository;
+import com.example.common.model.request.study.StudyControllerRequest;
+import com.example.common.repository.study.StudyMemberRepository;
+import com.example.common.repository.study.StudyRegisterRepository;
+import com.example.common.repository.study.StudyRepository;
 import com.example.service.service.member.MemberCommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

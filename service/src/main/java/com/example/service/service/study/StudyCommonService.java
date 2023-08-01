@@ -1,8 +1,8 @@
 package com.example.service.service.study;
 
-import com.example.service.entity.member.Member;
-import com.example.service.entity.study.StudyMember;
-import com.example.service.repository.study.StudyMemberRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.entity.study.StudyMember;
+import com.example.common.repository.study.StudyMemberRepository;
 import com.example.service.service.member.MemberCommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudyCommonService {
 
     private final MemberCommonService memberCommonService;
-
     private final StudyMemberRepository studyMemberRepository;
 
     @Transactional(readOnly = true)

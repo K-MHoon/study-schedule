@@ -1,7 +1,7 @@
 package com.example.service.controller.schedule;
 
-import com.example.service.model.dto.schedule.ScheduleDto;
-import com.example.service.model.request.schedule.ScheduleControllerRequest;
+import com.example.common.model.dto.schedule.ScheduleDto;
+import com.example.common.model.request.schedule.ScheduleControllerRequest;
 import com.example.service.service.schedule.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

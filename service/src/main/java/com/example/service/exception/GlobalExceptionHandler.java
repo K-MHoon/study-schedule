@@ -1,8 +1,8 @@
 package com.example.service.exception;
 
-import com.example.service.enums.exception.ErrorCode;
-import com.example.service.enums.exception.common.CommonErrorCode;
-import com.example.service.model.dto.exception.ErrorResponse;
+import com.example.service.exception.enums.ErrorCode;
+import com.example.service.exception.enums.common.CommonErrorCode;
+import com.example.common.model.dto.exception.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

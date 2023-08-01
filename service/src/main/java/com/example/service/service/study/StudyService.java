@@ -1,16 +1,16 @@
 package com.example.service.service.study;
 
-import com.example.service.entity.member.Member;
-import com.example.service.entity.study.Study;
-import com.example.service.entity.study.StudyCode;
-import com.example.service.entity.study.StudyMember;
-import com.example.service.enums.IsUse;
-import com.example.service.model.dto.Pagination;
-import com.example.service.model.dto.study.StudyDto;
-import com.example.service.model.request.study.StudyControllerRequest;
-import com.example.service.repository.study.StudyCodeRepository;
-import com.example.service.repository.study.StudyMemberRepository;
-import com.example.service.repository.study.StudyRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.entity.study.Study;
+import com.example.common.entity.study.StudyCode;
+import com.example.common.entity.study.StudyMember;
+import com.example.common.enums.IsUse;
+import com.example.common.model.dto.Pagination;
+import com.example.common.model.dto.study.StudyDto;
+import com.example.common.model.request.study.StudyControllerRequest;
+import com.example.common.repository.study.StudyCodeRepository;
+import com.example.common.repository.study.StudyMemberRepository;
+import com.example.common.repository.study.StudyRepository;
 import com.example.service.service.member.MemberCommonService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

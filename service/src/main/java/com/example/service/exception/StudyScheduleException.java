@@ -1,7 +1,7 @@
 package com.example.service.exception;
 
 
-import com.example.service.enums.exception.ErrorCode;
+import com.example.service.exception.enums.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

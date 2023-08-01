@@ -1,8 +1,8 @@
 package com.example.service.controller.study;
 
-import com.example.service.model.dto.Pagination;
-import com.example.service.model.dto.study.StudyDto;
-import com.example.service.model.request.study.StudyControllerRequest;
+import com.example.common.model.dto.Pagination;
+import com.example.common.model.dto.study.StudyDto;
+import com.example.common.model.request.study.StudyControllerRequest;
 import com.example.service.service.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,8 @@
 package com.example.service.service.schedule;
 
-import com.example.service.entity.member.Member;
-import com.example.service.entity.schedule.Todo;
-import com.example.service.repository.schedule.TodoRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.entity.schedule.Todo;
+import com.example.common.repository.schedule.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

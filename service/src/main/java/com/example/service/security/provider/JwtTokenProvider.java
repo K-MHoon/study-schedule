@@ -1,6 +1,6 @@
 package com.example.service.security.provider;
 
-import com.example.service.model.dto.security.TokenInfo;
+import com.example.common.model.dto.security.TokenInfo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

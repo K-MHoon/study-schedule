@@ -1,13 +1,13 @@
 package com.example.service.service.schedule;
 
-import com.example.service.entity.member.Member;
-import com.example.service.entity.schedule.Schedule;
-import com.example.service.entity.schedule.ScheduleTodo;
-import com.example.service.entity.schedule.Todo;
-import com.example.service.model.dto.schedule.TodoDto;
-import com.example.service.model.request.schedule.TodoControllerRequest;
-import com.example.service.repository.schedule.ScheduleTodoRepository;
-import com.example.service.repository.schedule.TodoRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.entity.schedule.Schedule;
+import com.example.common.entity.schedule.ScheduleTodo;
+import com.example.common.entity.schedule.Todo;
+import com.example.common.model.dto.schedule.TodoDto;
+import com.example.common.model.request.schedule.TodoControllerRequest;
+import com.example.common.repository.schedule.ScheduleTodoRepository;
+import com.example.common.repository.schedule.TodoRepository;
 import com.example.service.service.member.MemberCommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

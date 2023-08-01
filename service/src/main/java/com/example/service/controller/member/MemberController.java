@@ -1,8 +1,8 @@
 package com.example.service.controller.member;
 
-import com.example.service.model.dto.member.MemberDto;
-import com.example.service.model.dto.security.TokenInfo;
-import com.example.service.model.request.member.MemberControllerRequest;
+import com.example.common.model.dto.member.MemberDto;
+import com.example.common.model.dto.security.TokenInfo;
+import com.example.common.model.request.member.MemberControllerRequest;
 import com.example.service.service.member.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

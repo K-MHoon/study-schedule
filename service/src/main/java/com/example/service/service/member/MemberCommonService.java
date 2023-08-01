@@ -1,7 +1,7 @@
 package com.example.service.service.member;
 
-import com.example.service.entity.member.Member;
-import com.example.service.repository.member.MemberRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.repository.member.MemberRepository;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

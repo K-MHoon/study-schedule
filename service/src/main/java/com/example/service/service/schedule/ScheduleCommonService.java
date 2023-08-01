@@ -1,7 +1,7 @@
 package com.example.service.service.schedule;
 
-import com.example.service.entity.schedule.Schedule;
-import com.example.service.repository.schedule.ScheduleRepository;
+import com.example.common.entity.schedule.Schedule;
+import com.example.common.repository.schedule.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

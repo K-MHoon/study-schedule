@@ -1,7 +1,7 @@
 package com.example.service.security.service;
 
-import com.example.service.entity.member.Member;
-import com.example.service.repository.member.MemberRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +24,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private UserDetails createUserDetails(Member member) {
         return User.builder()
-                .username(member.getUsername())
+                .username(member.getMemberId())
                 .password(member.getPassword())
                 .roles(member.getRoles().toArray(new String[0]))
                 .build();
