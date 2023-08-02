@@ -3,7 +3,6 @@ package com.example.common.model.request.schedule;
 import com.example.common.enums.IsUse;
 import com.example.common.enums.SchedulePeriod;
 import com.example.common.enums.ScheduleType;
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -44,7 +43,6 @@ public class ScheduleControllerRequest {
     @ToString
     public static class CreateScheduleRequest {
 
-        @Nullable
         private Long scheduleId;
 
         @NotBlank
@@ -68,7 +66,6 @@ public class ScheduleControllerRequest {
         @NotNull
         private SchedulePeriod period;
 
-        @Nullable
         private Long customDay;
 
         @NotNull
