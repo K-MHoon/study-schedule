@@ -1,16 +1,16 @@
 package com.example.service.service.schedule;
 
 import com.example.service.TestHelper;
-import com.example.service.entity.member.Member;
-import com.example.service.entity.schedule.Schedule;
-import com.example.service.entity.schedule.Todo;
-import com.example.service.entity.study.Study;
-import com.example.service.enums.IsUse;
-import com.example.service.enums.SchedulePeriod;
-import com.example.service.enums.ScheduleType;
-import com.example.service.model.dto.schedule.ScheduleDto;
-import com.example.service.model.request.schedule.ScheduleControllerRequest;
-import com.example.service.repository.schedule.ScheduleRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.entity.schedule.Schedule;
+import com.example.common.entity.schedule.Todo;
+import com.example.common.entity.study.Study;
+import com.example.common.enums.IsUse;
+import com.example.common.enums.SchedulePeriod;
+import com.example.common.enums.ScheduleType;
+import com.example.common.model.dto.schedule.ScheduleDto;
+import com.example.common.model.request.schedule.ScheduleControllerRequest;
+import com.example.common.repository.schedule.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

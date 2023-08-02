@@ -1,9 +1,9 @@
 package com.example.service.helper;
 
-import com.example.service.entity.member.Member;
-import com.example.service.entity.study.Study;
-import com.example.service.entity.study.StudyCode;
-import com.example.service.repository.study.StudyCodeRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.entity.study.Study;
+import com.example.common.entity.study.StudyCode;
+import com.example.common.repository.study.StudyCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

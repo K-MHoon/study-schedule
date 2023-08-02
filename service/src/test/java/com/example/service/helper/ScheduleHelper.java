@@ -1,10 +1,10 @@
 package com.example.service.helper;
 
-import com.example.service.entity.member.Member;
-import com.example.service.entity.schedule.Schedule;
-import com.example.service.entity.study.Study;
-import com.example.service.enums.IsUse;
-import com.example.service.repository.schedule.ScheduleRepository;
+import com.example.common.entity.member.Member;
+import com.example.common.entity.schedule.Schedule;
+import com.example.common.entity.study.Study;
+import com.example.common.enums.IsUse;
+import com.example.common.repository.schedule.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

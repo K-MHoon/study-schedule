@@ -1,11 +1,11 @@
 package com.example.service.service.study;
 
 import com.example.service.TestHelper;
-import com.example.service.entity.study.Study;
-import com.example.service.entity.study.StudyCode;
-import com.example.service.model.request.study.StudyCodeControllerRequest;
-import com.example.service.model.response.study.StudyCodeControllerResponse;
-import com.example.service.repository.study.StudyCodeRepository;
+import com.example.common.entity.study.Study;
+import com.example.common.entity.study.StudyCode;
+import com.example.common.model.request.study.StudyCodeControllerRequest;
+import com.example.common.model.response.study.StudyCodeControllerResponse;
+import com.example.common.repository.study.StudyCodeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
