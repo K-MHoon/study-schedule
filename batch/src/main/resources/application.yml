@@ -7,7 +7,6 @@ spring:
 
   batch:
     jdbc:
-      initialize-schema: always
-      schema: classpath:org/springframework/batch/core/schema-mariadb.sql
+      initialize-schema: never
     job:
-      enabled: false
+      enabled: true
