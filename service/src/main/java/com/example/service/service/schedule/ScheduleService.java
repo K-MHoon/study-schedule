@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -118,15 +118,15 @@ public class ScheduleService {
 
     private void setNextScheduleDate(ScheduleControllerRequest.CreateScheduleRequest request, Schedule newSchedule) {
         if(request.getPeriod() == SchedulePeriod.DAY) {
-            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusDays(1));
+            newSchedule.updateNextScheduleDate(LocalDate.now().plusDays(1));
         } else if(request.getPeriod() == SchedulePeriod.WEEK) {
-            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusWeeks(1));
+            newSchedule.updateNextScheduleDate(LocalDate.now().plusWeeks(1));
         } else if(request.getPeriod() == SchedulePeriod.MONTH) {
-            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusMonths(1));
+            newSchedule.updateNextScheduleDate(LocalDate.now().plusMonths(1));
         } else if(request.getPeriod() == SchedulePeriod.YEAR) {
-            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusYears(1));
+            newSchedule.updateNextScheduleDate(LocalDate.now().plusYears(1));
         } else {
-            newSchedule.updateNextScheduleDate(LocalDateTime.now().plusDays(request.getCustomDay()));
+            newSchedule.updateNextScheduleDate(LocalDate.now().plusDays(request.getCustomDay()));
         }
     }
 
@@ -205,7 +205,7 @@ public class ScheduleService {
     private List<Schedule> getMyTodayScheuleList() {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         List<Study> studyList = studyMemberRepository.findAllMyStudy(loggedInMember.getId());
-        return scheduleRepository.findAllTodayMySchedule(loggedInMember, studyList, LocalDateTime.now(), IsUse.Y);
+        return scheduleRepository.findAllTodayMySchedule(loggedInMember, studyList, LocalDate.now(), IsUse.Y);
     }
 
     @Transactional

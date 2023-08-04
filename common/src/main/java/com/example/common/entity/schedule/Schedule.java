@@ -9,6 +9,7 @@ import com.example.common.entity.study.Study;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +49,11 @@ public class Schedule extends BaseEntity {
 
     private Long custom; // period가 CUSTOM인 경우 사용
 
-    private LocalDateTime nextScheduleDate;
+    private LocalDate nextScheduleDate;
 
     // Long Schedule
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     /**
      * 진행중인 스케줄인지 여부
@@ -60,7 +61,7 @@ public class Schedule extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IsUse isUse;
 
-    public void updateNextScheduleDate(LocalDateTime nextScheduleDate) {
+    public void updateNextScheduleDate(LocalDate nextScheduleDate) {
         this.nextScheduleDate = nextScheduleDate;
     }
 }

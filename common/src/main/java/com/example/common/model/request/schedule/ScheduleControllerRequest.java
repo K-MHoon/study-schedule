@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,10 +53,10 @@ public class ScheduleControllerRequest {
         private Long studyId;
 
         @NotNull
-        private LocalDateTime startDate;
+        private LocalDate startDate;
 
         @NotNull
-        private LocalDateTime endDate;
+        private LocalDate endDate;
 
         @NotNull
         private IsUse isUse;
