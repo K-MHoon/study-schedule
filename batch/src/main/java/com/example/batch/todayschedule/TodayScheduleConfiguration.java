@@ -1,10 +1,14 @@
 package com.example.batch.todayschedule;
 
 import com.example.common.entity.schedule.Schedule;
+import com.example.common.entity.schedule.ScheduleHistory;
+import com.example.common.entity.schedule.ScheduleTodo;
 import com.example.common.enums.IsUse;
 import com.example.common.enums.SchedulePeriod;
 import com.example.common.enums.ScheduleType;
+import com.example.common.repository.schedule.ScheduleHistoryRepository;
 import com.example.common.repository.schedule.ScheduleRepository;
+import com.example.common.repository.schedule.ScheduleTodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -24,7 +28,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Configuration
@@ -33,6 +39,8 @@ public class TodayScheduleConfiguration {
 
     private static final int CHUNK_SIZE = 10;
     private final ScheduleRepository scheduleRepository;
+    private final ScheduleHistoryRepository scheduleHistoryRepository;
+    private final ScheduleTodoRepository scheduleTodoRepository;
 
     @Bean
     public Job todayScheduleJob(JobRepository jobRepository, Step todayScheduleStep) {
@@ -58,7 +66,7 @@ public class TodayScheduleConfiguration {
                 .repository(scheduleRepository)
                 .pageSize(CHUNK_SIZE)
                 .methodName("findByScheduleTypeAndIsUseAndNextScheduleDate")
-                .arguments(ScheduleType.PATTERN, IsUse.Y, LocalDate.now())
+                .arguments(ScheduleType.PATTERN, IsUse.Y, LocalDate.now().minusDays(1))
                 .sorts(Map.of("id", Sort.Direction.ASC))
                 .build();
     }
@@ -80,8 +88,23 @@ public class TodayScheduleConfiguration {
                 schedule.updateNextScheduleDate(schedule.getNextScheduleDate().plusDays(customDay));
             }
             log.info("nextScheduleDate = {}", schedule.getNextScheduleDate());
+            createScheduleHistory(schedule);
             return schedule;
         };
+    }
+
+    private void createScheduleHistory(Schedule schedule) {
+        List<ScheduleTodo> scheduleTodoList = scheduleTodoRepository.findAllBySchedule(schedule);
+        List<ScheduleHistory> scheduleHistoryList = scheduleTodoList.stream()
+                .map(st -> ScheduleHistory.builder()
+                        .schedule(st.getSchedule())
+                        .todo(st.getTodo())
+                        .isClear(st.getIsClear())
+                        .activeDate(LocalDate.now().minusDays(1))
+                        .reason(st.getReason())
+                        .build())
+                .collect(Collectors.toList());
+        scheduleHistoryRepository.saveAll(scheduleHistoryList);
     }
 
     @Bean
