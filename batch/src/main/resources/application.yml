@@ -10,3 +10,9 @@ spring:
       initialize-schema: never
     job:
       enabled: true
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true #To beautify or pretty print the SQL
+        show_sql: false #show sql

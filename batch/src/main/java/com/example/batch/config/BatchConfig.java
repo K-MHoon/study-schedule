@@ -1,11 +1,12 @@
 package com.example.batch.config;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -35,8 +36,13 @@ public class BatchConfig {
         return dataSourceBuilder.build();
     }
 
-    @Bean
-    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+    @Bean("dataSourceTransactionManager")
+    public PlatformTransactionManager dataSourceTransactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
     }
 }

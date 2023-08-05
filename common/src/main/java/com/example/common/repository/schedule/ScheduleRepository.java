@@ -3,12 +3,17 @@ package com.example.common.repository.schedule;
 import com.example.common.entity.member.Member;
 import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.study.Study;
+import com.example.common.enums.IsUse;
+import com.example.common.enums.ScheduleType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +37,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, Sched
     int countAllByIdInAndMember_Id(List<Long> scheduleIdList, Long memberId);
 
     int deleteAllByIdInAndMember_Id(List<Long> scheduleIdList, Long memberId);
+
+    Page<Schedule> findByScheduleTypeAndIsUseAndNextScheduleDate(ScheduleType scheduleType, IsUse isUse, LocalDate nextScheduleDate, Pageable pageable);
 }
