@@ -1,11 +1,10 @@
 package com.example.common.entity.schedule;
 
 import com.example.common.enums.IsClear;
-import com.example.common.enums.IsClear;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "schedule_history")
@@ -19,7 +18,7 @@ public final class ScheduleHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime activeDate;
+    private LocalDate activeDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
