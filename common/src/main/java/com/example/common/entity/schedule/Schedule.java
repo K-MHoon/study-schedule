@@ -64,4 +64,8 @@ public class Schedule extends BaseEntity {
     public void updateNextScheduleDate(LocalDate nextScheduleDate) {
         this.nextScheduleDate = nextScheduleDate;
     }
+
+    public void delete() {
+        this.isUse = isUse.N;
+    }
 }

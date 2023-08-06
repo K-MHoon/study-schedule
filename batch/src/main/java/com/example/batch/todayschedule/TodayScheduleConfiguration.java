@@ -43,26 +43,40 @@ public class TodayScheduleConfiguration {
     private final ScheduleTodoRepository scheduleTodoRepository;
 
     @Bean
-    public Job todayScheduleJob(JobRepository jobRepository, Step todayScheduleStep) {
+    public Job todayScheduleJob(JobRepository jobRepository
+            , Step patternScheduleStep
+            , Step longTermScheduleStep) {
         return new JobBuilder("todayScheduleJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(todayScheduleStep)
-                .build();
-    }
-    @Bean
-    public Step todayScheduleStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new StepBuilder("todayScheduleStep", jobRepository)
-                .<Schedule, Schedule>chunk(CHUNK_SIZE, transactionManager)
-                .reader(todayScheduleItemReader())
-                .processor(todayScheduleItemProcessor())
-                .writer(todayScheduleItemWriter())
+                .start(patternScheduleStep)
+                .next(longTermScheduleStep)
                 .build();
     }
 
     @Bean
-    public RepositoryItemReader<Schedule> todayScheduleItemReader() {
+    public Step patternScheduleStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("patternScheduleStep", jobRepository)
+                .<Schedule, Schedule>chunk(CHUNK_SIZE, transactionManager)
+                .reader(patternScheduleItemReader())
+                .processor(patternScheduleItemProcessor())
+                .writer(patternScheduleItemWriter())
+                .build();
+    }
+
+    @Bean
+    public Step longTermScheduleStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("longTermScheduleStep", jobRepository)
+                .<Schedule, Schedule>chunk(CHUNK_SIZE, transactionManager)
+                .reader(longTermScheduleItemReader())
+                .processor(longTermScheduleItemProcessor())
+                .writer(longTermScheduleItemWriter())
+                .build();
+    }
+
+    @Bean
+    public RepositoryItemReader<Schedule> patternScheduleItemReader() {
         return new RepositoryItemReaderBuilder<Schedule>()
-                .name("todayScheduleItemReader")
+                .name("patternScheduleItemReader")
                 .repository(scheduleRepository)
                 .pageSize(CHUNK_SIZE)
                 .methodName("findByScheduleTypeAndIsUseAndNextScheduleDate")
@@ -72,10 +86,22 @@ public class TodayScheduleConfiguration {
     }
 
     @Bean
-    public ItemProcessor<Schedule, Schedule> todayScheduleItemProcessor() {
+    public RepositoryItemReader<Schedule> longTermScheduleItemReader() {
+        return new RepositoryItemReaderBuilder<Schedule>()
+                .name("longTermScheduleItemReader")
+                .repository(scheduleRepository)
+                .pageSize(CHUNK_SIZE)
+                .methodName("findByScheduleTypeAndIsUseAndEndDate")
+                .arguments(ScheduleType.LONG_TERM, IsUse.Y, LocalDate.now().minusDays(1))
+                .sorts(Map.of("id", Sort.Direction.ASC))
+                .build();
+    }
+
+    @Bean
+    public ItemProcessor<Schedule, Schedule> patternScheduleItemProcessor() {
         return schedule -> {
             log.info("schedule Id = {}", schedule.getId());
-            if(schedule.getPeriod() == SchedulePeriod.DAY) {
+            if (schedule.getPeriod() == SchedulePeriod.DAY) {
                 schedule.updateNextScheduleDate(schedule.getNextScheduleDate().plusDays(1));
             } else if (schedule.getPeriod() == SchedulePeriod.WEEK) {
                 schedule.updateNextScheduleDate(schedule.getNextScheduleDate().plusWeeks(1));
@@ -87,14 +113,25 @@ public class TodayScheduleConfiguration {
                 Long customDay = schedule.getCustom();
                 schedule.updateNextScheduleDate(schedule.getNextScheduleDate().plusDays(customDay));
             }
-            log.info("nextScheduleDate = {}", schedule.getNextScheduleDate());
-            createScheduleHistory(schedule);
+            List<ScheduleTodo> scheduleTodoList = scheduleTodoRepository.findAllBySchedule(schedule);
+            createScheduleHistory(scheduleTodoList);
+            resetScheduleTodo(scheduleTodoList);
             return schedule;
         };
     }
 
-    private void createScheduleHistory(Schedule schedule) {
-        List<ScheduleTodo> scheduleTodoList = scheduleTodoRepository.findAllBySchedule(schedule);
+    @Bean
+    public ItemProcessor<Schedule, Schedule> longTermScheduleItemProcessor() {
+        return schedule -> {
+            log.info("schedule Id = {}", schedule.getId());
+            List<ScheduleTodo> scheduleTodoList = scheduleTodoRepository.findAllBySchedule(schedule);
+            createScheduleHistory(scheduleTodoList);
+            schedule.delete();
+            return schedule;
+        };
+    }
+
+    private void createScheduleHistory(List<ScheduleTodo> scheduleTodoList) {
         List<ScheduleHistory> scheduleHistoryList = scheduleTodoList.stream()
                 .map(st -> ScheduleHistory.builder()
                         .schedule(st.getSchedule())
@@ -107,8 +144,20 @@ public class TodayScheduleConfiguration {
         scheduleHistoryRepository.saveAll(scheduleHistoryList);
     }
 
+    private void resetScheduleTodo(List<ScheduleTodo> scheduleTodoList) {
+        scheduleTodoList.forEach(scheduleTodo -> scheduleTodo.reset());
+        scheduleTodoRepository.saveAll(scheduleTodoList);
+    }
+
     @Bean
-    public RepositoryItemWriter<Schedule> todayScheduleItemWriter() {
+    public RepositoryItemWriter<Schedule> patternScheduleItemWriter() {
+        return new RepositoryItemWriterBuilder<Schedule>()
+                .repository(scheduleRepository) // saveAll
+                .build();
+    }
+
+    @Bean
+    public RepositoryItemWriter<Schedule> longTermScheduleItemWriter() {
         return new RepositoryItemWriterBuilder<Schedule>()
                 .repository(scheduleRepository) // saveAll
                 .build();

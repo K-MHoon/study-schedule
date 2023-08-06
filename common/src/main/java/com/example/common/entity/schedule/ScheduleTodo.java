@@ -46,4 +46,9 @@ public class ScheduleTodo extends BaseEntity {
     public void updateIsClear(IsClear isClear) {
         this.isClear = isClear;
     }
+
+    public void reset() {
+        this.isClear = IsClear.N;
+        this.reason = null;
+    }
 }

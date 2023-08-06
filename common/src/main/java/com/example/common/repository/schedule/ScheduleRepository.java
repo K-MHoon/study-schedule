@@ -39,4 +39,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, Sched
     int deleteAllByIdInAndMember_Id(List<Long> scheduleIdList, Long memberId);
 
     Page<Schedule> findByScheduleTypeAndIsUseAndNextScheduleDate(ScheduleType scheduleType, IsUse isUse, LocalDate nextScheduleDate, Pageable pageable);
+
+    Page<Schedule> findByScheduleTypeAndIsUseAndEndDate(ScheduleType scheduleType, IsUse isUse, LocalDate endDate, Pageable pageable);
+
 }
