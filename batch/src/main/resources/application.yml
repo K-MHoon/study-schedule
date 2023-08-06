@@ -9,7 +9,7 @@ spring:
     jdbc:
       initialize-schema: never
     job:
-      enabled: true
+      enabled: false
 
   jpa:
     properties:
