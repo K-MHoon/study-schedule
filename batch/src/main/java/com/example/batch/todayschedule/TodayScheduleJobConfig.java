@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class TodayScheduleConfiguration {
+public class TodayScheduleJobConfig {
 
     private static final int CHUNK_SIZE = 10;
     private final ScheduleRepository scheduleRepository;
