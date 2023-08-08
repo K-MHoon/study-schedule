@@ -81,8 +81,8 @@ class ScheduleServiceTest extends TestHelper {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
-                .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now().plusDays(10))
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(10))
                 .isUse(IsUse.Y)
                 .scheduleType(ScheduleType.LONG_TERM)
                 .name("새로운 스케줄")
@@ -140,7 +140,7 @@ class ScheduleServiceTest extends TestHelper {
         Schedule schedule = scheduleService.createSchedule(request);
 
         // then
-        assertThat(schedule.getNextScheduleDate().toLocalDate().isEqual(nextDate)).isTrue();
+        assertThat(schedule.getNextScheduleDate().isEqual(nextDate)).isTrue();
     }
 
     static Stream<Arguments> nextScheduleDate() {
@@ -165,7 +165,7 @@ class ScheduleServiceTest extends TestHelper {
         Schedule schedule = scheduleService.createSchedule(request);
 
         // then
-        assertThat(schedule.getNextScheduleDate().toLocalDate().isEqual(LocalDate.now().plusDays(10))).isTrue();
+        assertThat(schedule.getNextScheduleDate().isEqual(LocalDate.now().plusDays(10))).isTrue();
     }
     @Test
     @Tag("pattern")
@@ -202,8 +202,8 @@ class ScheduleServiceTest extends TestHelper {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
-                .startDate(LocalDateTime.now().plusDays(10))
-                .endDate(LocalDateTime.now())
+                .startDate(LocalDate.now().plusDays(10))
+                .endDate(LocalDate.now())
                 .isUse(IsUse.Y)
                 .name("새로운 스케줄")
                 .studyId(simpleStudy.getId())
@@ -224,8 +224,8 @@ class ScheduleServiceTest extends TestHelper {
         List<Todo> todoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
         List<Long> todoIdList = todoList.stream().map(Todo::getId).collect(Collectors.toList());
         ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
-                .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now().plusDays(10))
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(10))
                 .isUse(IsUse.Y)
                 .scheduleType(ScheduleType.LONG_TERM)
                 .name("새로운 스케줄")

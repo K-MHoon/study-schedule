@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,8 +25,8 @@ public class ScheduleHelper {
     public Schedule createSimpleSchedule(Member member) {
         Schedule schedule = Schedule.builder()
                         .member(member)
-                        .startDate(LocalDateTime.now())
-                        .endDate(LocalDateTime.now().plusDays(10))
+                        .startDate(LocalDate.now())
+                        .endDate(LocalDate.now().plusDays(10))
                         .isUse(IsUse.Y)
                         .name("simpleSchedule")
                         .build();
@@ -43,8 +43,8 @@ public class ScheduleHelper {
                     Schedule schedule =
                             Schedule.builder()
                                     .member(member)
-                                    .startDate(LocalDateTime.now())
-                                    .endDate(LocalDateTime.now().plusDays(10))
+                                    .startDate(LocalDate.now())
+                                    .endDate(LocalDate.now().plusDays(10))
                                     .isUse(IsUse.Y)
                                     .name("testSchedule" + c)
                                     .build();
@@ -59,8 +59,8 @@ public class ScheduleHelper {
                     Schedule schedule =
                             Schedule.builder()
                                     .member(member)
-                                    .startDate(LocalDateTime.now())
-                                    .endDate(LocalDateTime.now().plusDays(10))
+                                    .startDate(LocalDate.now())
+                                    .endDate(LocalDate.now().plusDays(10))
                                     .isUse(IsUse.Y)
                                     .name("testSchedule" + c)
                                     .study(study)
