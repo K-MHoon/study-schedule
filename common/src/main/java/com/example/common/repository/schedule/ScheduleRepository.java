@@ -36,7 +36,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, Sched
 
     int countAllByIdInAndMember_Id(List<Long> scheduleIdList, Long memberId);
 
-    int deleteAllByIdInAndMember_Id(List<Long> scheduleIdList, Long memberId);
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Schedule s set s.isUse = :isUse where s.id in (:scheduleIdList) and s.member.id = :memberId")
+    int updateAllByScheduleIdInAndMember_Id(@Param("isUse") IsUse isUse, @Param("scheduleIdList") List<Long> scheduleIdList, @Param("memberId") Long memberId);
 
     Page<Schedule> findByScheduleTypeAndIsUseAndNextScheduleDate(ScheduleType scheduleType, IsUse isUse, LocalDate nextScheduleDate, Pageable pageable);
 
