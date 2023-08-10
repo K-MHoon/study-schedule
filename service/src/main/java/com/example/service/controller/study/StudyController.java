@@ -28,8 +28,6 @@ public class StudyController {
     public Pagination<List<StudyDto>> getPublicStudyList(@PageableDefault Pageable pageable,
                                                          @RequestParam(value = "name", required = false) String name,
                                                          @RequestParam(value = "leader", required = false) String leader) {
-        log.info("[getPublicStudyList] call ");
-
         StudyControllerRequest.GetPublicStudyListRequest request = StudyControllerRequest
                 .GetPublicStudyListRequest.builder()
                 .name(name)
@@ -43,51 +41,37 @@ public class StudyController {
     @GetMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
     public StudyDto getPublicStudyDetail(@PathVariable("study_id") Long studyId, @RequestParam(value = "invite-code", required = false) String inviteCode) {
-        log.info("[getStudyDetail] call, studyId = {}, inviteCode", studyId, inviteCode);
-
         return studyService.getPublicStudyDetail(studyId, inviteCode);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createPublicStudy(@RequestBody @Validated StudyControllerRequest.CreateStudyRequest request,
-                                            Principal principal) {
-        log.info("[createPublicStudyList] called by {}", principal.getName());
-
+    public void createPublicStudy(@RequestBody @Validated StudyControllerRequest.CreateStudyRequest request) {
         studyService.createPublicStudy(request);
     }
 
     @PostMapping("/{study_id}/secret")
     @ResponseStatus(HttpStatus.OK)
-    public void changeSecret(Principal principal,
-                             @PathVariable("study_id") Long studyId,
+    public void changeSecret(@PathVariable("study_id") Long studyId,
                              @RequestBody @Validated StudyControllerRequest.ChangeSecretRequest request) {
-        log.info("[changeSecret] called by {}, studyId = {}", principal.getName(), studyId);
-
         studyService.changeStudySecretOrPublic(studyId, request);
     }
 
     @DeleteMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteStudy(@PathVariable("study_id") Long studyId, Principal principal) {
-        log.info("[deleteStudy] called by {}", principal.getName());
-
+    public void deleteStudy(@PathVariable("study_id") Long studyId) {
         studyService.deleteStudy(studyId);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteStudyMemberAll(@RequestBody @Validated StudyControllerRequest.DeleteStudyMemberAllRequest request, Principal principal) {
-        log.info("[deleteStudyMemberAll] called by {}, request IdList = {}", principal.getName(), request.getStudyList());
-
+    public void deleteStudyMemberAll(@RequestBody @Validated StudyControllerRequest.DeleteStudyMemberAllRequest request) {
         studyService.deleteStudyMemberAll(request);
     }
 
     @GetMapping("/secret")
     @ResponseStatus(HttpStatus.OK)
-    public Long findSecretStudy(Principal principal, @RequestParam("invite-code") String inviteCode) {
-        log.info("[findSecretStudy] called by {} ", principal.getName());
-
+    public Long findSecretStudy(@RequestParam("invite-code") String inviteCode) {
         return studyService.findSecretStudy(inviteCode);
     }
 }

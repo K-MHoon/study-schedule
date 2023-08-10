@@ -21,25 +21,19 @@ public class StudyCodeController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public StudyCodeControllerResponse.GetStudyCodeListResponse getInviteCodeList(@PathVariable(name = "study_id") Long studyId, Principal principal) {
-        log.info("[getInviteCodeList] called by {}, study Id = {}", principal.getName(), studyId);
-
+    public StudyCodeControllerResponse.GetStudyCodeListResponse getInviteCodeList(@PathVariable(name = "study_id") Long studyId) {
         return service.getInviteCodeList(studyId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createInviteCode(@PathVariable(name = "study_id") Long studyId, Principal principal) {
-        log.info("[createStudyInviteCode] called by {}, study Id = {}", principal.getName(), studyId);
-
+    public void createInviteCode(@PathVariable(name = "study_id") Long studyId) {
         service.createInviteCode(studyId);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteInviteCodeAll(@PathVariable(name = "study_id") Long studyId, @RequestBody @Validated StudyCodeControllerRequest.DeleteInviteCodeAllRequest request, Principal principal) {
-        log.info("[deleteInviteCodeAll] called by {}, study Id = {}", principal.getName(), studyId);
-
+    public void deleteInviteCodeAll(@PathVariable(name = "study_id") Long studyId, @RequestBody @Validated StudyCodeControllerRequest.DeleteInviteCodeAllRequest request) {
         service.deleteInviteCodeAll(studyId, request);
     }
 }

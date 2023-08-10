@@ -32,16 +32,12 @@ public class MemberController {
     @GetMapping("/members")
     @ResponseStatus(HttpStatus.OK)
     public List<MemberDto> getMemberList() {
-        log.info("[getMemberList] call");
-
         return memberService.getMemberList();
     }
 
     @GetMapping("/member/profile")
     @ResponseStatus(HttpStatus.OK)
-    public MemberDto getMemberProfile(Principal principal) {
-        log.info("[getMemberProfile] called by {}", principal.getName());
-
+    public MemberDto getMemberProfile() {
         return memberService.getMemberProfile();
     }
 
@@ -53,9 +49,7 @@ public class MemberController {
      */
     @GetMapping("/member/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public MemberDto getMemberById(@PathVariable(name = "id") Long id, Principal principal) {
-        log.info("[getMemberById] called by {}", principal.getName());
-
+    public MemberDto getMemberById(@PathVariable(name = "id") Long id) {
         return memberService.getMemberById(id);
     }
 
@@ -68,8 +62,6 @@ public class MemberController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
     public void createMember(@RequestBody @Validated MemberControllerRequest.CreateMemberRequest request) {
-        log.info("[createMember] ID = {}, name = {}, age = {}", request.getMemberId(), request.getName(), request.getAge());
-
         memberService.createMember(request);
     }
 
@@ -82,17 +74,12 @@ public class MemberController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public TokenInfo login(@RequestBody @Validated MemberControllerRequest.LoginRequest request) {
-        log.info("[login] Id = {}", request.getMemberId());
-
         return memberService.login(request.getMemberId(), request.getPassword());
     }
 
     @PostMapping("/member/profile")
     @ResponseStatus(HttpStatus.OK)
-    public void updateMemberProfile(@RequestBody @Validated MemberControllerRequest.UpdateMemberProfileRequest request,
-                                    Principal principal) {
-        log.info("[updateMemberProfile] called by {}, request = {}", principal.getName(), request);
-
+    public void updateMemberProfile(@RequestBody @Validated MemberControllerRequest.UpdateMemberProfileRequest request) {
         memberService.updateMemberProfile(request);
     }
 
@@ -121,9 +108,7 @@ public class MemberController {
 
     @DeleteMapping("/member")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteMember(Principal principal) {
-        log.info("[deleteMember] called by {}", principal.getName());
-
+    public void deleteMember() {
         memberService.deleteMember();
     }
 }

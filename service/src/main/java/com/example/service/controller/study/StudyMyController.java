@@ -24,27 +24,20 @@ public class StudyMyController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<StudyDto> getMyStudy(Principal principal) {
-        log.info("[getMyStudy] called by {}", principal.getName());
-
+    public List<StudyDto> getMyStudy() {
         return studyMyService.getMyStudy();
     }
 
     @GetMapping("/{studyId}")
     @ResponseStatus(HttpStatus.OK)
-    public StudyMyControllerResponse.GetMyStudyDetailResponse getMyStudyDetail(@PathVariable Long studyId, Principal principal) {
-        log.info("[getMyStudyDetail] called by {}", principal.getName());
-
+    public StudyMyControllerResponse.GetMyStudyDetailResponse getMyStudyDetail(@PathVariable Long studyId) {
         return studyMyService.getMyStudyDetail(studyId);
     }
 
     @PostMapping("/{studyId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateMyStudy(@PathVariable("studyId") Long studyId,
-                              @RequestBody @Validated StudyControllerRequest.UpdateStudyRequest request,
-                              Principal principal) {
-        log.info("[updateMyStudy] called by {}", principal.getName());
-
+                              @RequestBody @Validated StudyControllerRequest.UpdateStudyRequest request) {
         studyMyService.updateMyStudy(studyId, request);
     }
 
@@ -53,27 +46,19 @@ public class StudyMyController {
     @ResponseStatus(HttpStatus.OK)
     public void updateStudyState(@PathVariable Long studyId,
                                  @PathVariable Long registerId,
-                                 @RequestBody @Validated StudyControllerRequest.UpdateStudyStateRequest state,
-                                 Principal principal) {
-        log.info("[updateStudyReadState] called by {} state = {}", principal.getName(), state);
-
+                                 @RequestBody @Validated StudyControllerRequest.UpdateStudyStateRequest state) {
         studyMyService.updateStudyState(studyId, registerId, state);
     }
 
     @PostMapping("/{studyId}/member/{memberId}/out")
     @ResponseStatus(HttpStatus.OK)
-    public void kickOutStudyMember(@PathVariable Long studyId, @PathVariable Long memberId,
-                                   Principal principal) {
-        log.info("[kickOutStudyMember] called by {}, studyId = {}, memberId = {}", principal.getName(), studyId, memberId);
-
+    public void kickOutStudyMember(@PathVariable Long studyId, @PathVariable Long memberId) {
         studyMyService.kickOutStudyMember(studyId, memberId);
     }
 
     @GetMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public List<StudyRegisterDto> getMyStudyRegisterRequestList(Principal principal) {
-        log.info("[getMyStudyRegisterRequestList] called by {}", principal.getName());
-
+    public List<StudyRegisterDto> getMyStudyRegisterRequestList() {
         return studyMyService.getMyStudyRegisterRequestList();
     }
 }

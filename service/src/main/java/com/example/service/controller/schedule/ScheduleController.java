@@ -22,50 +22,37 @@ public class ScheduleController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ScheduleDto> getMemberScheduleList(Principal principal, @RequestParam Long studyId) {
-        log.info("[getMemberSchedule] called by {}, studyId = {}", principal.getName(), studyId);
-
+    public List<ScheduleDto> getMemberScheduleList(@RequestParam Long studyId) {
         return scheduleService.getMemberScheduleList(studyId);
     }
 
     @GetMapping("/today")
     @ResponseStatus(HttpStatus.OK)
-    public List<ScheduleDto> getTodayScheduleList(Principal principal) {
-        log.info("[getTodayScheduleList] called by {}", principal.getName());
-
+    public List<ScheduleDto> getTodayScheduleList() {
         return scheduleService.getTodayScheduleList();
     }
 
     @PostMapping("/today")
     @ResponseStatus(HttpStatus.OK)
-    public void updateTodayScheduleList(Principal principal, @RequestBody @Validated ScheduleControllerRequest.UpdateTodayScheduleRequest request) {
-        log.info("[updateTodayScheduleList] called by {}", principal.getName());
-
+    public void updateTodayScheduleList(@RequestBody @Validated ScheduleControllerRequest.UpdateTodayScheduleRequest request) {
         scheduleService.updateTodayScheduleList(request);
     }
 
     @GetMapping("/{schedule_id}")
     @ResponseStatus(HttpStatus.OK)
-    public ScheduleDto getSchedule(Principal principal, @PathVariable(name = "schedule_id") Long scheduleId) {
-        log.info("[getSchedule] called by {}, schedule Id = {}", principal.getName(), scheduleId);
-
+    public ScheduleDto getSchedule(@PathVariable(name = "schedule_id") Long scheduleId) {
         return scheduleService.getSchedule(scheduleId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createSchedule(Principal principal, @RequestBody @Validated ScheduleControllerRequest.CreateScheduleRequest request) {
-        log.info("[createSchedule] called by {}, body = {}", principal.getName(), request);
-
+    public void createSchedule(@RequestBody @Validated ScheduleControllerRequest.CreateScheduleRequest request) {
         scheduleService.createSchedule(request);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteScheduleAll(@RequestBody @Validated ScheduleControllerRequest.DeleteScheduleRequest request,
-                                  Principal principal) {
-        log.info("[deleteScheduleAll] called by memberId = {}, scheduleList = {}", principal.getName(), request.getScheduleList());
-
+    public void deleteScheduleAll(@RequestBody @Validated ScheduleControllerRequest.DeleteScheduleRequest request) {
         scheduleService.deleteScheduleAll(request);
     }
 }
