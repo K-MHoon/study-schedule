@@ -1,5 +1,6 @@
 package com.example.service.controller.schedule;
 
+import com.example.common.enums.ScheduleType;
 import com.example.common.model.dto.schedule.ScheduleDto;
 import com.example.common.model.request.schedule.ScheduleControllerRequest;
 import com.example.service.service.schedule.ScheduleService;
@@ -9,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -28,8 +28,8 @@ public class ScheduleController {
 
     @GetMapping("/today")
     @ResponseStatus(HttpStatus.OK)
-    public List<ScheduleDto> getTodayScheduleList() {
-        return scheduleService.getTodayScheduleList();
+    public List<ScheduleDto> getTodayScheduleList(@RequestParam(value = "type", required = false) ScheduleType scheduleType) {
+        return scheduleService.getTodayScheduleList(scheduleType);
     }
 
     @PostMapping("/today")

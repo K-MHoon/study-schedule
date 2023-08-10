@@ -69,6 +69,8 @@ public class ScheduleDto {
                 .isUse(schedule.getIsUse())
                 .period(schedule.getPeriod())
                 .custom(schedule.getCustom())
+                .studyId(schedule.getStudy().getId())
+                .studyName(schedule.getStudy().getName())
                 .scheduleType(schedule.getScheduleType())
                 .createdAt(DateUtils.localDateTimeToString(schedule.getCreatedAt()))
                 .updatedAt(DateUtils.localDateTimeToString(schedule.getUpdatedAt()))
@@ -87,11 +89,6 @@ public class ScheduleDto {
                 .map(ScheduleTodo::getTodo)
                 .map(TodoDto::entityToDto)
                 .collect(Collectors.toList());
-    }
-
-    public void updateStudy(Study study) {
-        this.studyId = study.getId();
-        this.studyName = study.getName();
     }
 
     public void updateTodoList(List<ScheduleTodo> scheduleTodoList) {
