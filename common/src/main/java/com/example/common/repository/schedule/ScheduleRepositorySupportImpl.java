@@ -28,10 +28,15 @@ public class ScheduleRepositorySupportImpl extends QuerydslRepositorySupport imp
                 .leftJoin(schedule.member, QMember.member)
                 .where(schedule.member.eq(member),
                         schedule.study.in(studyList),
-                        schedule.startDate.before(checkDate).and(schedule.endDate.after(checkDate)),
+                        findDateBy(checkDate),
                         schedule.isUse.eq(isUse),
                         findScheduleType(scheduleType))
                 .fetch();
+    }
+
+    private BooleanExpression findDateBy(LocalDate checkDate) {
+        return schedule.nextScheduleDate.eq(checkDate)
+                .or(schedule.startDate.before(checkDate).and(schedule.endDate.after(checkDate)));
     }
 
     private BooleanExpression findScheduleType(ScheduleType scheduleType) {

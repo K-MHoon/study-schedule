@@ -39,6 +39,7 @@ public class ScheduleDto {
     private Double successRate;
     private SchedulePeriod period;
     private ScheduleType scheduleType;
+    private String nextScheduleDate;
     private Long custom;
 
     public static ScheduleDto entityToDtoWithTodo(Schedule schedule) {
@@ -48,6 +49,7 @@ public class ScheduleDto {
                 .studyId(schedule.getStudy().getId())
                 .memberId(getMemberId(schedule))
                 .todoList(getTodoList(schedule))
+                .nextScheduleDate(DateUtils.localDateToString(schedule.getNextScheduleDate()))
                 .startDate(DateUtils.localDateToString(schedule.getStartDate()))
                 .endDate(DateUtils.localDateToString(schedule.getEndDate()))
                 .isUse(schedule.getIsUse())
@@ -64,6 +66,7 @@ public class ScheduleDto {
                 .id(schedule.getId())
                 .name(schedule.getName())
                 .memberId(getMemberId(schedule))
+                .nextScheduleDate(DateUtils.localDateToString(schedule.getNextScheduleDate()))
                 .startDate(DateUtils.localDateToString(schedule.getStartDate()))
                 .endDate(DateUtils.localDateToString(schedule.getEndDate()))
                 .isUse(schedule.getIsUse())
