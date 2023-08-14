@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,7 +21,7 @@ public class TodoController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<TodoDto> getMemberTodoList(Principal principal) {
+    public List<TodoDto> getMemberTodoList() {
         return  todoService.getTodoDtoListLinkedMember();
     }
 
@@ -34,15 +33,13 @@ public class TodoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createTodo(Principal principal,
-    @RequestBody @Validated TodoControllerRequest.CreateTodoRequest request) {
+    public void createTodo(@RequestBody @Validated TodoControllerRequest.CreateTodoRequest request) {
         todoService.createTodo(request);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTodoAll(@RequestBody @Validated TodoControllerRequest.DeleteTodoRequest request,
-                                  Principal principal) {
+    public void deleteTodoAll(@RequestBody @Validated TodoControllerRequest.DeleteTodoRequest request) {
         todoService.deleteTodoAll(request);
     }
 }

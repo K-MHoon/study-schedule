@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @RestController
 @Slf4j
 @RequiredArgsConstructor
