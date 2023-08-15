@@ -1,5 +1,6 @@
 package com.example.service.security.config;
 
+import com.example.service.security.SecurityProperties;
 import com.example.service.security.filter.JwtAuthenticationFilter;
 import com.example.service.security.filter.LoginFilter;
 import com.example.service.security.handler.LoginFailureHandler;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
+    private final SecurityProperties securityProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,9 +56,10 @@ public class SecurityConfig {
 
     private LoginFilter loginFilter() {
         LoginFilter loginFilter = new LoginFilter();
+        loginFilter.setRequiresAuthenticationRequestMatcher(securityProperties.getLoginProcessRequestMatcher());
         loginFilter.setAuthenticationManager(authenticationManagerBuilder.getObject());
-        loginFilter.setUsernameParameter("memberId");
-        loginFilter.setPasswordParameter("password");
+        loginFilter.setUsernameParameter(securityProperties.getUsernameParameter());
+        loginFilter.setPasswordParameter(securityProperties.getPasswordParameter());
         loginFilter.setAllowSessionCreation(false);
         loginFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
         loginFilter.setAuthenticationFailureHandler(loginFailureHandler);

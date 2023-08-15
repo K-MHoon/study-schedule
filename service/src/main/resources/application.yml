@@ -27,3 +27,7 @@ logging:
       type.descriptor.sql: trace #show parameter binding
       SQL: DEBUG
 
+security:
+  login-processing-url: /api/login
+  username-parameter: memberId
+  password-parameter: password

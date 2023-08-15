@@ -21,8 +21,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        return request.getServletPath().equals("/api/login")
-                && request.getMethod().equals("POST")
+        return super.requiresAuthentication(request, response)
                 && StringUtils.hasText(request.getParameter(super.getUsernameParameter()))
                 && StringUtils.hasText(request.getParameter(super.getPasswordParameter()));
     }
