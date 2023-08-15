@@ -1,13 +1,19 @@
 package com.example.common.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum RegisterState {
 
-    NO_READ, // 아직 방장이 읽지 않음
-    CANCEL, // 사용자가 취소함
-    READ, // 읽음
-    REJECT, // 거절
-    PASS; // 가입 성공
+    NO_READ("방장이 읽지 않음"),
+    CANCEL("사용자가 취소함"),
+    READ("방장이 읽음"),
+    REJECT("방장이 거절함"),
+    PASS("가입 성공");
 
+    private final String desc;
 
     public static RegisterState convertStringToRegisterState(String value) {
         assert value != null;
