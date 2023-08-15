@@ -44,7 +44,7 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public Pagination<List<StudyDto>> getPublicStudyList(StudyControllerRequest.GetPublicStudyListRequest request) {
-        Page<Study> studyPage = studyRepository.findAllPublicStudyList(request);
+        Page<Study> studyPage = studyRepository.findAllPublicStudyList(request.getName(), request.getLeaderId(), request.getPageable());
 
         List<StudyDto> data = studyPage.getContent().stream()
                 .map(StudyDto::entityToDto)
