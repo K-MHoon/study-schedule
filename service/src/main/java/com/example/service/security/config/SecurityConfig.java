@@ -2,6 +2,8 @@ package com.example.service.security.config;
 
 import com.example.service.security.filter.JwtAuthenticationFilter;
 import com.example.service.security.filter.LoginFilter;
+import com.example.service.security.handler.LoginFailureHandler;
+import com.example.service.security.handler.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +24,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailureHandler loginFailureHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,6 +58,8 @@ public class SecurityConfig {
         loginFilter.setUsernameParameter("memberId");
         loginFilter.setPasswordParameter("password");
         loginFilter.setAllowSessionCreation(false);
+        loginFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
+        loginFilter.setAuthenticationFailureHandler(loginFailureHandler);
         return loginFilter;
     }
 }
