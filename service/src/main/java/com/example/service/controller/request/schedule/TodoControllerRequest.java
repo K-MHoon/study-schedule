@@ -1,4 +1,4 @@
-package com.example.common.model.request.schedule;
+package com.example.service.controller.request.schedule;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

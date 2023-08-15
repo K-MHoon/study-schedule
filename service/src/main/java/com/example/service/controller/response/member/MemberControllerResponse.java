@@ -1,4 +1,4 @@
-package com.example.common.model.response.member;
+package com.example.service.controller.response.member;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

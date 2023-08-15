@@ -1,4 +1,4 @@
-package com.example.common.model.request.member;
+package com.example.service.controller.request.member;
 
 import jakarta.validation.constraints.*;
 import lombok.*;

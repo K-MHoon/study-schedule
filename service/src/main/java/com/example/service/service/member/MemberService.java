@@ -4,7 +4,7 @@ import com.example.common.entity.member.Member;
 import com.example.common.entity.schedule.Schedule;
 import com.example.common.model.dto.member.MemberDto;
 import com.example.common.model.dto.security.TokenInfo;
-import com.example.common.model.request.member.MemberControllerRequest;
+import com.example.service.controller.request.member.MemberControllerRequest;
 import com.example.common.repository.member.MemberRepository;
 import com.example.common.repository.schedule.ScheduleHistoryRepository;
 import com.example.common.repository.schedule.ScheduleRepository;

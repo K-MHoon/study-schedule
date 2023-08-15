@@ -7,7 +7,7 @@ import com.example.common.entity.study.StudyMember;
 import com.example.common.enums.IsUse;
 import com.example.common.model.dto.Pagination;
 import com.example.common.model.dto.study.StudyDto;
-import com.example.common.model.request.study.StudyControllerRequest;
+import com.example.service.controller.request.study.StudyControllerRequest;
 import com.example.common.repository.study.StudyCodeRepository;
 import com.example.common.repository.study.StudyMemberRepository;
 import com.example.common.repository.study.StudyRepository;

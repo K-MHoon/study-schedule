@@ -1,4 +1,4 @@
-package com.example.common.model.request.study;
+package com.example.service.controller.request.study;
 
 import com.example.common.enums.IsUse;
 import jakarta.validation.constraints.Max;

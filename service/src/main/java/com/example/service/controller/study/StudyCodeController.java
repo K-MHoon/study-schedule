@@ -1,7 +1,7 @@
 package com.example.service.controller.study;
 
-import com.example.common.model.request.study.StudyCodeControllerRequest;
-import com.example.common.model.response.study.StudyCodeControllerResponse;
+import com.example.service.controller.request.study.StudyCodeControllerRequest;
+import com.example.service.controller.response.study.StudyCodeControllerResponse;
 import com.example.service.service.study.StudyCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

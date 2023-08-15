@@ -6,7 +6,7 @@ import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.schedule.Todo;
 import com.example.common.entity.study.Study;
 import com.example.common.model.dto.member.MemberDto;
-import com.example.common.model.request.member.MemberControllerRequest;
+import com.example.service.controller.request.member.MemberControllerRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

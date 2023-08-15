@@ -1,4 +1,4 @@
-package com.example.common.model.request.schedule;
+package com.example.service.controller.request.schedule;
 
 import com.example.common.enums.IsUse;
 import com.example.common.enums.SchedulePeriod;

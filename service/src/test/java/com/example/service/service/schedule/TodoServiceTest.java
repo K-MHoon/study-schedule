@@ -5,7 +5,7 @@ import com.example.common.entity.member.Member;
 import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.schedule.Todo;
 import com.example.common.model.dto.schedule.TodoDto;
-import com.example.common.model.request.schedule.TodoControllerRequest;
+import com.example.service.controller.request.schedule.TodoControllerRequest;
 import com.example.common.repository.schedule.TodoRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

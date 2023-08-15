@@ -1,4 +1,4 @@
-package com.example.common.model.response.study;
+package com.example.service.controller.response.study;
 
 import com.example.common.model.dto.study.StudyCodeDto;
 import lombok.AccessLevel;

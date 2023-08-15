@@ -9,7 +9,7 @@ import com.example.common.enums.IsUse;
 import com.example.common.enums.SchedulePeriod;
 import com.example.common.enums.ScheduleType;
 import com.example.common.model.dto.schedule.ScheduleDto;
-import com.example.common.model.request.schedule.ScheduleControllerRequest;
+import com.example.service.controller.request.schedule.ScheduleControllerRequest;
 import com.example.common.repository.schedule.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;

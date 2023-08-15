@@ -5,7 +5,7 @@ import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.schedule.ScheduleTodo;
 import com.example.common.entity.schedule.Todo;
 import com.example.common.model.dto.schedule.TodoDto;
-import com.example.common.model.request.schedule.TodoControllerRequest;
+import com.example.service.controller.request.schedule.TodoControllerRequest;
 import com.example.common.repository.schedule.ScheduleTodoRepository;
 import com.example.common.repository.schedule.TodoRepository;
 import com.example.service.service.member.MemberCommonService;

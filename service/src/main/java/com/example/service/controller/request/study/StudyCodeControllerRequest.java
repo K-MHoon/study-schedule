@@ -1,4 +1,4 @@
-package com.example.common.model.request.study;
+package com.example.service.controller.request.study;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

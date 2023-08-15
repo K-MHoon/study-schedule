@@ -9,7 +9,7 @@ import com.example.common.enums.IsUse;
 import com.example.common.enums.RegisterState;
 import com.example.service.exception.enums.common.CommonErrorCode;
 import com.example.service.exception.StudyScheduleException;
-import com.example.common.model.request.study.StudyControllerRequest;
+import com.example.service.controller.request.study.StudyControllerRequest;
 import com.example.common.repository.study.StudyMemberRepository;
 import com.example.common.repository.study.StudyRegisterRepository;
 import com.example.common.repository.study.StudyRepository;
