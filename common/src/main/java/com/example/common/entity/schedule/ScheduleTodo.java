@@ -1,6 +1,5 @@
 package com.example.common.entity.schedule;
 
-import com.example.common.enums.IsClear;
 import com.example.common.entity.common.BaseEntity;
 import com.example.common.enums.IsClear;
 import jakarta.persistence.*;

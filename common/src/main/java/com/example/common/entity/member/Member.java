@@ -5,7 +5,7 @@ import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.schedule.Todo;
 import com.example.common.entity.study.StudyMember;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +17,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "study_member")
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
 
     @Id
@@ -38,14 +36,16 @@ public class Member extends BaseEntity {
 
     private String name;
 
+    @Column(nullable = false)
     private Integer age;
 
-    public Member(String memberId, String password, List<String> roles, String name, Integer age) {
+    @Builder
+    private Member(String memberId, String password, List<String> roles, String name, Integer age) {
         this.memberId = memberId;
         this.password = password;
         this.roles = roles;
         this.name = name;
-        this.age = age;
+        this.updateAge(age);
     }
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -82,6 +82,12 @@ public class Member extends BaseEntity {
     }
 
     public void updateAge(Integer age) {
+        if(age == null) {
+            throw new IllegalArgumentException("나이는 null 값 일 수 없습니다.");
+        }
+        if(age < 1 || age > 100) {
+            throw new IllegalArgumentException("나이는 1~100살 까지만 입력이 가능합니다.");
+        }
         this.age = age;
     }
 }

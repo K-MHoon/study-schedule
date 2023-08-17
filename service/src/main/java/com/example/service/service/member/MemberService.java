@@ -96,7 +96,14 @@ public class MemberService {
                     throw new IllegalArgumentException("동일한 멤버가 존재합니다. ID = " + member.getMemberId());
                 });
 
-        Member newMember = new Member(request.getMemberId(), passwordEncoder.encode(request.getPassword()), List.of("USER"), request.getName(), request.getAge());
+        Member newMember = Member.builder()
+                .memberId(request.getMemberId())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .roles(List.of("USER"))
+                .name(request.getName())
+                .age(request.getAge())
+                .build();
+
         memberRepository.save(newMember);
     }
 
@@ -132,6 +139,10 @@ public class MemberService {
 
     @Transactional
     public void updateMemberProfile(MemberControllerRequest.UpdateMemberProfileRequest request) {
+        if(request.getAge() < 1 || request.getAge() > 100) {
+            throw new IllegalArgumentException("나이는 1 ~ 100살 까지만 입력 할 수 있습니다.");
+        }
+
         Member loggedInMember = commonService.getLoggedInMember();
         if(!StringUtils.isEmpty(request.getPassword())) {
             loggedInMember.updatePassword(passwordEncoder.encode(request.getPassword()));
