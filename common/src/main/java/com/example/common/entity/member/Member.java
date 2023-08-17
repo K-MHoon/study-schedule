@@ -17,7 +17,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "study_member")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Member extends BaseEntity {
 
     @Id
@@ -31,7 +31,6 @@ public class Member extends BaseEntity {
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
     private List<String> roles = new ArrayList<>();
 
     private String name;
@@ -49,15 +48,12 @@ public class Member extends BaseEntity {
     }
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<Schedule> scheduleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<Todo> todoList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<StudyMember> studyMemberList = new ArrayList<>();
 
     @Override
