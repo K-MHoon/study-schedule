@@ -64,18 +64,6 @@ public class MemberController {
         memberService.createMember(request);
     }
 
-    /**
-     * 로그인을 한다.
-     *
-     * @param request 로그인 정보
-     * @return {@link TokenInfo 로그인 토큰 정보}
-     */
-    @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
-    public TokenInfo login(@RequestBody @Validated MemberControllerRequest.LoginRequest request) {
-        return memberService.login(request.getMemberId(), request.getPassword());
-    }
-
     @PostMapping("/member/profile")
     @ResponseStatus(HttpStatus.OK)
     public void updateMemberProfile(@RequestBody @Validated MemberControllerRequest.UpdateMemberProfileRequest request) {

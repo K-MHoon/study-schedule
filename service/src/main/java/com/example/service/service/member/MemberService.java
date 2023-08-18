@@ -47,16 +47,7 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Transactional
-    public TokenInfo login(String memberId, String password) {
-        Authentication authentication = authenticationManagerBuilder.getObject()
-                .authenticate(new UsernamePasswordAuthenticationToken(memberId, password));
-        return jwtTokenProvider.generateToken(authentication);
-    }
 
     /**
      * 스터디 전체 회원 정보를 가지고 온다.
