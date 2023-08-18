@@ -45,8 +45,6 @@ public final class StudyControllerRequest {
         private String password;
 
         @NotNull
-        @Min(1)
-        @Max(100)
         private Long fullCount;
 
         @NotNull
@@ -66,8 +64,6 @@ public final class StudyControllerRequest {
         private String content;
 
         @NotNull
-        @Min(1)
-        @Max(100)
         private Long fullCount;
 
     }

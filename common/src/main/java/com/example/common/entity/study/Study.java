@@ -14,8 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "study")
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public final class Study extends BaseEntity {
 
@@ -24,11 +23,9 @@ public final class Study extends BaseEntity {
     private Long id;
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<StudyMember> studyMemberList = new ArrayList<>();
 
     @OneToMany(mappedBy = "requestStudy", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<StudyRegister> studyRegisterList = new ArrayList<>();
 
     @OneToMany(mappedBy = "study")
@@ -49,14 +46,13 @@ public final class Study extends BaseEntity {
     private Long fullCount; // 스터디 최대 인원
 
     @OneToMany(mappedBy = "study")
-    @Builder.Default
     private List<StudyCode> studyCodeList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private IsUse isUse; // 스터디 사용 여부
 
     public static Study ofPublic(Member leader, String name, String content, Long fullCount, IsUse isUse) {
-        return builder()
+        return Study.builder()
                 .leader(leader)
                 .name(name)
                 .content(content)
@@ -64,6 +60,22 @@ public final class Study extends BaseEntity {
                 .fullCount(fullCount)
                 .isUse(isUse)
                 .build();
+    }
+
+    @Builder
+    private Study(Long id, List<StudyMember> studyMemberList, List<StudyRegister> studyRegisterList, List<Schedule> scheduleList, Member leader, String name, String content, Boolean secret, String password, Long fullCount, List<StudyCode> studyCodeList, IsUse isUse) {
+        this.id = id;
+        this.studyMemberList = studyMemberList;
+        this.studyRegisterList = studyRegisterList;
+        this.scheduleList = scheduleList;
+        this.leader = leader;
+        this.name = name;
+        this.content = content;
+        this.secret = secret;
+        this.password = password;
+        this.studyCodeList = studyCodeList;
+        this.isUse = isUse;
+        this.updateFullCount(fullCount);
     }
 
     public void changeToPrivate(String password) {
@@ -119,6 +131,9 @@ public final class Study extends BaseEntity {
     }
 
     public void updateFullCount(Long fullCount) {
+        if(fullCount < 1 || fullCount > 100) {
+            throw new IllegalArgumentException("인원 수는 반드시 1~100명 사이여야 합니다.");
+        }
         if(this.getRemainCount() > fullCount) {
             throw new IllegalArgumentException("현재 인원보다 적은 수로 업데이트 할 수 없습니다.");
         }
