@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Table(name = "study")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public final class Study extends BaseEntity {
 
@@ -32,23 +31,28 @@ public final class Study extends BaseEntity {
     private List<Schedule> scheduleList = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "leader_id")
+    @JoinColumn(name = "leader_id", nullable = false)
     private Member leader; // 스터디 방장
 
+    @Column(nullable = false)
     private String name; // 스터디 이름
 
+    @Column(nullable = false)
     private String content; // 스터디 소개
 
+    @Column(nullable = false)
     private Boolean secret; // 비공개 여부
 
     private String password; // 비밀번호 (비밀 스터디 <> 공개 스터디 전환에 사용)
 
+    @Column(nullable = false)
     private Long fullCount; // 스터디 최대 인원
 
     @OneToMany(mappedBy = "study")
     private List<StudyCode> studyCodeList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private IsUse isUse; // 스터디 사용 여부
 
     public static Study ofPublic(Member leader, String name, String content, Long fullCount, IsUse isUse) {
@@ -79,6 +83,9 @@ public final class Study extends BaseEntity {
     }
 
     public void changeToPrivate(String password) {
+        if(this.secret) {
+            throw new IllegalArgumentException("해당 스터디는 이미 비밀 스터디 입니다.");
+        }
         if(StringUtils.isEmpty(password)) {
             throw new IllegalArgumentException("비밀 스터디에는 반드시 비밀번호가 포함되어야 합니다.");
         }
@@ -103,6 +110,9 @@ public final class Study extends BaseEntity {
     }
 
     public Long getRemainCount() {
+        if(this.studyMemberList == null) {
+            return 0L;
+        }
         return Long.valueOf(this.studyMemberList.size());
     }
 
@@ -131,6 +141,9 @@ public final class Study extends BaseEntity {
     }
 
     public void updateFullCount(Long fullCount) {
+        if(fullCount == null) {
+            fullCount = 1L;
+        }
         if(fullCount < 1 || fullCount > 100) {
             throw new IllegalArgumentException("인원 수는 반드시 1~100명 사이여야 합니다.");
         }
