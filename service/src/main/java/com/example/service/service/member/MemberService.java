@@ -13,14 +13,12 @@ import com.example.common.repository.schedule.TodoRepository;
 import com.example.common.repository.study.StudyMemberRepository;
 import com.example.common.repository.study.StudyRepository;
 import com.example.service.security.provider.JwtTokenProvider;
+import com.example.service.service.request.MemberServiceRequest;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.Cookie;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,7 +127,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMemberProfile(MemberControllerRequest.UpdateMemberProfileRequest request) {
+    public void updateMemberProfile(MemberServiceRequest.UpdateMemberProfile request) {
         if(request.getAge() < 1 || request.getAge() > 100) {
             throw new IllegalArgumentException("나이는 1 ~ 100살 까지만 입력 할 수 있습니다.");
         }

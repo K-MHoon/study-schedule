@@ -66,8 +66,8 @@ public class MemberController {
 
     @PostMapping("/member/profile")
     @ResponseStatus(HttpStatus.OK)
-    public void updateMemberProfile(@RequestBody @Validated MemberControllerRequest.UpdateMemberProfileRequest request) {
-        memberService.updateMemberProfile(request);
+    public void updateMemberProfile(@RequestBody @Validated MemberControllerRequest.UpdateMemberProfile request) {
+        memberService.updateMemberProfile(request.toServiceRequest());
     }
 
     @PostMapping("/token/check")
