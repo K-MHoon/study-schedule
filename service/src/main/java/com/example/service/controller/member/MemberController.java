@@ -60,8 +60,8 @@ public class MemberController {
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public void createMember(@RequestBody @Validated MemberControllerRequest.CreateMemberRequest request) {
-        memberService.createMember(request);
+    public void createMember(@RequestBody @Validated MemberControllerRequest.CreateMember request) {
+        memberService.createMember(request.toServiceRequest());
     }
 
     @PostMapping("/member/profile")

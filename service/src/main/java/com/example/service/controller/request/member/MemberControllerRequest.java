@@ -9,7 +9,7 @@ public class MemberControllerRequest {
     @Getter
     @Builder
     @AllArgsConstructor
-    public static class CreateMemberRequest {
+    public static class CreateMember {
 
         @NotBlank(message = "회원 아이디는 빈 칸일 수 없습니다.")
         private String memberId;
@@ -22,6 +22,15 @@ public class MemberControllerRequest {
 
         @NotNull(message = "해당 값은 널(Null)일 수 없습니다.")
         private Integer age;
+
+        public MemberServiceRequest.CreateMember toServiceRequest() {
+            return MemberServiceRequest.CreateMember.builder()
+                    .memberId(this.memberId)
+                    .name(this.name)
+                    .password(this.password)
+                    .age(this.age)
+                    .build();
+        }
     }
 
     @Getter

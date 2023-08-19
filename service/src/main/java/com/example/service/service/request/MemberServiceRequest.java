@@ -16,4 +16,17 @@ public class MemberServiceRequest {
         private String password;
         private Integer age;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @ToString
+    public static class CreateMember {
+
+        private String memberId;
+        private String password;
+        private String name;
+        private Integer age;
+    }
 }

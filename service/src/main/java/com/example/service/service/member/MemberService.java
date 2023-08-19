@@ -78,7 +78,7 @@ public class MemberService {
      * @param request 신규 스터디 회원 정보를 가진 객체
      */
     @Transactional
-    public void createMember(MemberControllerRequest.CreateMemberRequest request) {
+    public void createMember(MemberServiceRequest.CreateMember request) {
         memberRepository.findByMemberId(request.getMemberId())
                 .ifPresent(member -> {
                     log.error("동일한 멤버가 존재합니다. ID = {}", member.getMemberId());
