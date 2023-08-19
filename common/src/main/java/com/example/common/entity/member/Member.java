@@ -5,7 +5,6 @@ import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.schedule.Todo;
 import com.example.common.entity.study.StudyMember;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -27,19 +27,22 @@ public class MemberHelper {
     public List<Member> createTestMembersAndSaveByCount(int start, int count) {
         return IntStream.range(start, count)
                 .mapToObj(c -> {
-                    Member member = Member.builder().memberId("testMember" + c).password("testPassword").build();
+                    Member member = createSimpleMember("testMember" + c);
                     return memberRepository.save(member);
                 })
                 .collect(Collectors.toList());
     }
 
     public Member createSimpleMember() {
-        Member member = Member.builder().memberId("testMember").password("testPassword").build();
-        return memberRepository.save(member);
+        return createSimpleMember("testMember");
     }
 
     public Member createSimpleMember(String memberId) {
-        Member member = Member.builder().memberId(memberId).password("testPassword").build();
+        return createSimpleMember(memberId, "testPassword");
+    }
+
+    public Member createSimpleMember(String memberId, String password) {
+        Member member = Member.builder().memberId(memberId).password(password).age(10).build();
         return memberRepository.save(member);
     }
 
@@ -52,9 +55,6 @@ public class MemberHelper {
     }
 
     public Member getUnknownMember() {
-        return memberRepository.save(Member.builder()
-                .memberId(UUID.randomUUID().toString())
-                .password(UUID.randomUUID().toString())
-                .build());
+        return createSimpleMember(UUID.randomUUID().toString(), UUID.randomUUID().toString());
     }
 }
