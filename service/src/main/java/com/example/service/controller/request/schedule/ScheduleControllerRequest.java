@@ -111,10 +111,16 @@ public class ScheduleControllerRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DeleteScheduleRequest {
+    public static class DeleteSchedule {
 
         @UniqueElements
         @NotNull
         private List<Long> scheduleList;
+
+        public ScheduleServiceRequest.DeleteSchedule toServiceRequest() {
+            return ScheduleServiceRequest.DeleteSchedule.builder()
+                    .scheduleList(this.scheduleList)
+                    .build();
+        }
     }
 }

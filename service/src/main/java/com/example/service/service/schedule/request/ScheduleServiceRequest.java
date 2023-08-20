@@ -50,4 +50,14 @@ public class ScheduleServiceRequest {
         private Long customDay;
         private List<Long> todoList;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @ToString
+    public static class DeleteSchedule {
+
+        private List<Long> scheduleList;
+    }
 }

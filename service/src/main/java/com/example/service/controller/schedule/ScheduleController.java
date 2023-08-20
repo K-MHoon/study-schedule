@@ -52,7 +52,7 @@ public class ScheduleController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteScheduleAll(@RequestBody @Validated ScheduleControllerRequest.DeleteScheduleRequest request) {
-        scheduleService.deleteScheduleAll(request);
+    public void deleteScheduleAll(@RequestBody @Validated ScheduleControllerRequest.DeleteSchedule request) {
+        scheduleService.deleteScheduleAll(request.toServiceRequest());
     }
 }
