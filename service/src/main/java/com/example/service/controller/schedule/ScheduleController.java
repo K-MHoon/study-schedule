@@ -46,8 +46,8 @@ public class ScheduleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createSchedule(@RequestBody @Validated ScheduleControllerRequest.CreateScheduleRequest request) {
-        scheduleService.createSchedule(request);
+    public void createSchedule(@RequestBody @Validated ScheduleControllerRequest.CreateSchedule request) {
+        scheduleService.createSchedule(request.toServiceRequest());
     }
 
     @DeleteMapping

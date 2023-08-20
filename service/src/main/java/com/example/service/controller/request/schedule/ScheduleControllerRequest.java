@@ -60,7 +60,7 @@ public class ScheduleControllerRequest {
     @AllArgsConstructor
     @Builder
     @ToString
-    public static class CreateScheduleRequest {
+    public static class CreateSchedule {
 
         private Long scheduleId;
 
@@ -90,6 +90,21 @@ public class ScheduleControllerRequest {
         @NotNull
         @UniqueElements
         private List<Long> todoList;
+
+        public ScheduleServiceRequest.CreateSchedule toServiceRequest() {
+            return ScheduleServiceRequest.CreateSchedule.builder()
+                    .scheduleId(this.scheduleId)
+                    .name(this.name)
+                    .studyId(this.studyId)
+                    .startDate(this.startDate)
+                    .endDate(this.endDate)
+                    .isUse(this.isUse)
+                    .scheduleType(this.scheduleType)
+                    .period(this.period)
+                    .customDay(this.customDay)
+                    .todoList(this.todoList)
+                    .build();
+        }
     }
 
     @Getter

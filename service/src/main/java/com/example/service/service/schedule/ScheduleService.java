@@ -72,7 +72,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Schedule createSchedule(ScheduleControllerRequest.CreateScheduleRequest request) {
+    public Schedule createSchedule(ScheduleServiceRequest.CreateSchedule request) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         Study study = getValidatedStudy(request, loggedInMember);
 
@@ -116,7 +116,7 @@ public class ScheduleService {
         return savedSchedule;
     }
 
-    private void setNextScheduleDate(ScheduleControllerRequest.CreateScheduleRequest request, Schedule newSchedule) {
+    private void setNextScheduleDate(ScheduleServiceRequest.CreateSchedule request, Schedule newSchedule) {
         if(request.getPeriod() == SchedulePeriod.DAY) {
             newSchedule.updateNextScheduleDate(LocalDate.now().plusDays(1));
         } else if(request.getPeriod() == SchedulePeriod.WEEK) {
@@ -130,7 +130,7 @@ public class ScheduleService {
         }
     }
 
-    private Study getValidatedStudy(ScheduleControllerRequest.CreateScheduleRequest request, Member loggedInMember) {
+    private Study getValidatedStudy(ScheduleServiceRequest.CreateSchedule request, Member loggedInMember) {
         Study study = studyRepository.findById(request.getStudyId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 스터디 입니다."));
 
         if (!studyMemberRepository.existsStudyMemberByStudy_IdAndMember_Id(request.getStudyId(), loggedInMember.getId())) {
