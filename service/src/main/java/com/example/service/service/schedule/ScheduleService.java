@@ -15,6 +15,7 @@ import com.example.common.repository.schedule.ScheduleRepository;
 import com.example.common.repository.study.StudyMemberRepository;
 import com.example.common.repository.study.StudyRepository;
 import com.example.service.service.member.MemberCommonService;
+import com.example.service.service.schedule.request.ScheduleServiceRequest;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -211,14 +212,14 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void updateTodayScheduleList(ScheduleControllerRequest.UpdateTodayScheduleRequest request) {
+    public void updateTodayScheduleList(ScheduleServiceRequest.UpdateTodaySchedule request) {
         List<Schedule> todayScheduleList = getMyTodayScheuleList(ScheduleType.NONE);
 
         Map<Long, List<ScheduleTodo>> scheduleIdToScheduleTodoMap = scheduleTodoService.getScheduleTodoList(todayScheduleList)
                 .stream()
                 .collect(groupingBy(scheduleTodo -> scheduleTodo.getSchedule().getId()));
 
-        for (ScheduleControllerRequest.Element element : request.getClearScheduleTodoList()) {
+        for (ScheduleServiceRequest.Element element : request.getClearScheduleTodoList()) {
 
             if (!scheduleIdToScheduleTodoMap.containsKey(element.getScheduleId())) {
                 throw new IllegalArgumentException("오늘 할 일에 스케줄이 존재하지 않습니다.");

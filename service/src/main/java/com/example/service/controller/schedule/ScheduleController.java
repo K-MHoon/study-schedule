@@ -34,8 +34,8 @@ public class ScheduleController {
 
     @PostMapping("/today")
     @ResponseStatus(HttpStatus.OK)
-    public void updateTodayScheduleList(@RequestBody @Validated ScheduleControllerRequest.UpdateTodayScheduleRequest request) {
-        scheduleService.updateTodayScheduleList(request);
+    public void updateTodayScheduleList(@RequestBody @Validated ScheduleControllerRequest.UpdateTodaySchedule request) {
+        scheduleService.updateTodayScheduleList(request.toServiceRequest());
     }
 
     @GetMapping("/{schedule_id}")
