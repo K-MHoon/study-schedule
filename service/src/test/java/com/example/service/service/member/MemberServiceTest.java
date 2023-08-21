@@ -1,12 +1,12 @@
 package com.example.service.service.member;
 
-import com.example.service.TestHelper;
 import com.example.common.entity.member.Member;
 import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.schedule.Todo;
 import com.example.common.entity.study.Study;
 import com.example.common.model.dto.member.MemberDto;
-import com.example.service.controller.request.member.MemberControllerRequest;
+import com.example.service.TestHelper;
+import com.example.service.service.request.MemberServiceRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ class MemberServiceTest extends TestHelper {
     @DisplayName("새로운 스터디 회원을 생성한다.")
     void createMember() {
         // given
-        MemberControllerRequest.CreateMemberRequest request = createSimpleMemberRequest();
+        MemberServiceRequest.CreateMember request = createSimpleMemberRequest();
 
         // then
         memberService.createMember(request);
@@ -88,7 +88,7 @@ class MemberServiceTest extends TestHelper {
     @DisplayName("기존에 있는 MemberId 생성을 요청하면 예외가 발생한다.")
     void causeExceptionWhenRequestAlreadyExistedMemberIdCreate() {
         // given
-        MemberControllerRequest.CreateMemberRequest request = createSimpleMemberRequest();
+        MemberServiceRequest.CreateMember request = createSimpleMemberRequest();
 
         // when
         memberService.createMember(request);
@@ -100,8 +100,8 @@ class MemberServiceTest extends TestHelper {
                                 .isEqualTo("동일한 멤버가 존재합니다. ID = " + request.getMemberId());
     }
 
-    private MemberControllerRequest.CreateMemberRequest createSimpleMemberRequest() {
-        return MemberControllerRequest.CreateMemberRequest.builder()
+    private MemberServiceRequest.CreateMember createSimpleMemberRequest() {
+        return MemberServiceRequest.CreateMember.builder()
                 .memberId(UUID.randomUUID().toString())
                 .password(UUID.randomUUID().toString())
                 .name("흑시바")
@@ -113,7 +113,12 @@ class MemberServiceTest extends TestHelper {
     @DisplayName("회원정보 이름, 나이, 비밀번호를 변경한다.")
     void updateUserNameAndAge() {
         // given
-        MemberControllerRequest.UpdateMemberProfileRequest request = new MemberControllerRequest.UpdateMemberProfileRequest("홍길동", "1234" ,33);
+        MemberServiceRequest.UpdateMemberProfile request = MemberServiceRequest.UpdateMemberProfile
+                .builder()
+                .name("홍길동")
+                .password("1234")
+                .age(33)
+                .build();
         String prevPassword = member.getPassword();
 
         // when
@@ -130,7 +135,11 @@ class MemberServiceTest extends TestHelper {
     @DisplayName("비밀번호가 없는 경우, 현재 비밀번호가 유지된다.")
     void maintainUserPasswordWhenRequestPasswordIsEmpty() {
         // given
-        MemberControllerRequest.UpdateMemberProfileRequest request = new MemberControllerRequest.UpdateMemberProfileRequest("홍길동", "" ,33);
+        MemberServiceRequest.UpdateMemberProfile request = MemberServiceRequest.UpdateMemberProfile
+                .builder()
+                .name("홍길동")
+                .age(33)
+                .build();
         String prevPassword = member.getPassword();
 
         // when
