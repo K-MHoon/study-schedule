@@ -1,6 +1,5 @@
 package com.example.service.service.schedule;
 
-import com.example.service.TestHelper;
 import com.example.common.entity.member.Member;
 import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.schedule.Todo;
@@ -9,8 +8,9 @@ import com.example.common.enums.IsUse;
 import com.example.common.enums.SchedulePeriod;
 import com.example.common.enums.ScheduleType;
 import com.example.common.model.dto.schedule.ScheduleDto;
-import com.example.service.controller.request.schedule.ScheduleControllerRequest;
 import com.example.common.repository.schedule.ScheduleRepository;
+import com.example.service.TestHelper;
+import com.example.service.service.schedule.request.ScheduleServiceRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -21,7 +21,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,7 +79,7 @@ class ScheduleServiceTest extends TestHelper {
     void createScheduleByLongTermType() {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
-        ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
+        ScheduleServiceRequest.CreateSchedule request = ScheduleServiceRequest.CreateSchedule.builder()
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(10))
                 .isUse(IsUse.Y)
@@ -109,7 +108,7 @@ class ScheduleServiceTest extends TestHelper {
     void createScheduleByPatternType() {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
-        ScheduleControllerRequest.CreateScheduleRequest request = createScheduleRequestPatternBuilder(simpleStudy)
+        ScheduleServiceRequest.CreateSchedule request = createScheduleRequestPatternBuilder(simpleStudy)
                 .period(SchedulePeriod.DAY)
                 .build();
 
@@ -132,7 +131,7 @@ class ScheduleServiceTest extends TestHelper {
     void getNextScheduleDateBySchedulePeriodType(SchedulePeriod schedulePeriod, LocalDate nextDate) {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
-        ScheduleControllerRequest.CreateScheduleRequest request = createScheduleRequestPatternBuilder(simpleStudy)
+        ScheduleServiceRequest.CreateSchedule request = createScheduleRequestPatternBuilder(simpleStudy)
                 .period(schedulePeriod)
                 .build();
 
@@ -144,10 +143,10 @@ class ScheduleServiceTest extends TestHelper {
     }
 
     static Stream<Arguments> nextScheduleDate() {
-        return Stream.of(arguments(SchedulePeriod.DAY, LocalDateTime.now().plusDays(1).toLocalDate()),
-                arguments(SchedulePeriod.WEEK, LocalDateTime.now().plusWeeks(1).toLocalDate()),
-                arguments(SchedulePeriod.MONTH, LocalDateTime.now().plusMonths(1).toLocalDate()),
-                arguments(SchedulePeriod.YEAR, LocalDateTime.now().plusYears(1).toLocalDate()));
+        return Stream.of(arguments(SchedulePeriod.DAY, LocalDate.now().plusDays(1)),
+                arguments(SchedulePeriod.WEEK, LocalDate.now().plusWeeks(1)),
+                arguments(SchedulePeriod.MONTH, LocalDate.now().plusMonths(1)),
+                arguments(SchedulePeriod.YEAR, LocalDate.now().plusYears(1)));
     }
 
     @Test
@@ -156,7 +155,7 @@ class ScheduleServiceTest extends TestHelper {
     void schedulePeriodIsCustom() {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
-        ScheduleControllerRequest.CreateScheduleRequest request = createScheduleRequestPatternBuilder(simpleStudy)
+        ScheduleServiceRequest.CreateSchedule request = createScheduleRequestPatternBuilder(simpleStudy)
                 .period(SchedulePeriod.CUSTOM)
                 .customDay(10L)
                 .build();
@@ -173,7 +172,7 @@ class ScheduleServiceTest extends TestHelper {
     void schedulePeriodIsWEEK() {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
-        ScheduleControllerRequest.CreateScheduleRequest request = createScheduleRequestPatternBuilder(simpleStudy)
+        ScheduleServiceRequest.CreateSchedule request = createScheduleRequestPatternBuilder(simpleStudy)
                 .period(SchedulePeriod.WEEK)
                 .build();
 
@@ -181,14 +180,13 @@ class ScheduleServiceTest extends TestHelper {
         Schedule schedule = scheduleService.createSchedule(request);
 
         // then
-        assertThat(schedule.getNextScheduleDate()).isEqualTo(LocalDateTime.now().plusWeeks(1));
+        assertThat(schedule.getNextScheduleDate()).isEqualTo(LocalDate.now().plusWeeks(1));
     }
 
 
 
-    private ScheduleControllerRequest.CreateScheduleRequest.CreateScheduleRequestBuilder createScheduleRequestPatternBuilder(Study simpleStudy) {
-        return ScheduleControllerRequest.CreateScheduleRequest.builder()
-
+    private ScheduleServiceRequest.CreateSchedule.CreateScheduleBuilder createScheduleRequestPatternBuilder(Study simpleStudy) {
+        return ScheduleServiceRequest.CreateSchedule.builder()
                 .isUse(IsUse.Y)
                 .scheduleType(ScheduleType.PATTERN)
                 .name("새로운 스케줄")
@@ -201,10 +199,11 @@ class ScheduleServiceTest extends TestHelper {
     void rejectCreateScheduleWhenStartDateMoreThanEndDate() {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
-        ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
+        ScheduleServiceRequest.CreateSchedule request = ScheduleServiceRequest.CreateSchedule.builder()
                 .startDate(LocalDate.now().plusDays(10))
                 .endDate(LocalDate.now())
                 .isUse(IsUse.Y)
+                .scheduleType(ScheduleType.LONG_TERM)
                 .name("새로운 스케줄")
                 .studyId(simpleStudy.getId())
                 .todoList(Collections.emptyList())
@@ -223,7 +222,7 @@ class ScheduleServiceTest extends TestHelper {
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         List<Todo> todoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
         List<Long> todoIdList = todoList.stream().map(Todo::getId).collect(Collectors.toList());
-        ScheduleControllerRequest.CreateScheduleRequest request = ScheduleControllerRequest.CreateScheduleRequest.builder()
+        ScheduleServiceRequest.CreateSchedule request = ScheduleServiceRequest.CreateSchedule.builder()
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(10))
                 .isUse(IsUse.Y)
@@ -248,18 +247,23 @@ class ScheduleServiceTest extends TestHelper {
     }
 
     @Test
-    @DisplayName("요청된 스케줄 전체를 정상적으로 삭제한다.")
+    @DisplayName("요청된 스케줄 삭제하면, 전체가 미사용 처리로 변경된다.")
     void deleteScheduleAllSuccess() {
         // given
         List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 10);
-        ScheduleControllerRequest.DeleteScheduleRequest request = new ScheduleControllerRequest.DeleteScheduleRequest(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()));
+        ScheduleServiceRequest.DeleteSchedule request = ScheduleServiceRequest.DeleteSchedule
+                .builder()
+                .scheduleList(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()))
+                .build();
 
         // when
         scheduleService.deleteScheduleAll(request);
 
         // then
         List<Schedule> allScheduleList = scheduleRepository.findAll();
-        assertThat(allScheduleList).hasSize(0);
+        assertThat(allScheduleList).hasSize(10)
+                .extracting("isUse")
+                .containsOnly(IsUse.N);
     }
 
     @Test
@@ -269,7 +273,10 @@ class ScheduleServiceTest extends TestHelper {
         Member member2 = memberHelper.createSimpleMember("anotherMember");
         List<Schedule> scheduleList = scheduleHelper.createTestSchedulesAndSaveByCount(member, 10);
         scheduleList.addAll(scheduleHelper.createTestSchedulesAndSaveByCount(member2, 2));
-        ScheduleControllerRequest.DeleteScheduleRequest request = new ScheduleControllerRequest.DeleteScheduleRequest(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()));
+        ScheduleServiceRequest.DeleteSchedule request = ScheduleServiceRequest.DeleteSchedule
+                .builder()
+                .scheduleList(scheduleList.stream().map(Schedule::getId).collect(Collectors.toList()))
+                .build();
 
         // when & then
         assertThatThrownBy(() -> scheduleService.deleteScheduleAll(request))

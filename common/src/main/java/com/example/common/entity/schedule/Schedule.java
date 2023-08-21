@@ -29,6 +29,7 @@ public class Schedule extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ScheduleTodo> scheduleTodoList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
