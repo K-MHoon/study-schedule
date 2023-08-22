@@ -1,12 +1,12 @@
 package com.example.service.service.schedule;
 
-import com.example.service.TestHelper;
 import com.example.common.entity.member.Member;
 import com.example.common.entity.schedule.Schedule;
 import com.example.common.entity.schedule.Todo;
 import com.example.common.model.dto.schedule.TodoDto;
-import com.example.service.controller.request.schedule.TodoControllerRequest;
 import com.example.common.repository.schedule.TodoRepository;
+import com.example.service.TestHelper;
+import com.example.service.service.schedule.request.TodoServiceRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ class TodoServiceTest extends TestHelper {
 
     @Autowired
     TodoService todoService;
+
     @Autowired
     TodoRepository todoRepository;
 
@@ -32,9 +33,9 @@ class TodoServiceTest extends TestHelper {
 
         List<TodoDto> result = todoService.getTodoDtoListLinkedMember();
 
-        assertAll(() -> assertThat(result).hasSize(3),
-                () -> assertThat(result).extracting("id")
-                        .containsExactlyInAnyOrderElementsOf(todoList.stream().map(Todo::getId).collect(Collectors.toList())));
+        assertThat(result).hasSize(3)
+                .extracting("id")
+                .containsExactlyInAnyOrderElementsOf(todoList.stream().map(Todo::getId).collect(Collectors.toList()));
     }
 
     @Test
@@ -47,22 +48,24 @@ class TodoServiceTest extends TestHelper {
 
         List<TodoDto> result = todoService.getTodoDtoListLinkedSchedule(scheduleList.get(0).getId());
 
-        assertAll(() -> assertThat(result).hasSize(3),
-                () -> assertThat(result).extracting("id")
-                        .containsExactlyInAnyOrderElementsOf(todoList.stream().map(Todo::getId).collect(Collectors.toList())));
+        assertAll(() -> assertThat(result).hasSize(3)
+                .extracting("id")
+                .containsExactlyInAnyOrderElementsOf(todoList.stream().map(Todo::getId).collect(Collectors.toList())));
     }
 
     @Test
     @DisplayName("새로운 할 일을 생성한다.")
     void createTodo() {
-        String title = "제목 테스트";
-        String content = "내용 테스트";
-        TodoControllerRequest.CreateTodoRequest request = new TodoControllerRequest.CreateTodoRequest(title, content);
+        TodoServiceRequest.CreateTodo request = TodoServiceRequest.CreateTodo.builder()
+                .title("제목 테스트")
+                .content("내용 테스트")
+                .build();
 
         Todo result = todoService.createTodo(request);
 
-        assertAll(() -> assertThat(result.getTitle()).isEqualTo(title),
-                () -> assertThat(result.getContent()).isEqualTo(content));
+        assertThat(result)
+                .extracting("title", "content")
+                .contains("제목 테스트", "내용 테스트");
     }
 
     @Test
@@ -70,9 +73,11 @@ class TodoServiceTest extends TestHelper {
     void deleteTodoAll() {
         List<Todo> testTodoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
         List<Long> testTodoIdList = testTodoList.stream().map(Todo::getId).collect(Collectors.toList());
-        TodoControllerRequest.DeleteTodoRequest deleteTodoRequest = new TodoControllerRequest.DeleteTodoRequest(testTodoIdList);
+        TodoServiceRequest.DeleteTodo request = TodoServiceRequest.DeleteTodo.builder()
+                .todoList(testTodoIdList)
+                .build();
 
-        todoService.deleteTodoAll(deleteTodoRequest);
+        todoService.deleteTodoAll(request);
 
         List<Todo> todoList = todoRepository.findAll();
         assertThat(todoList).hasSize(0);
@@ -86,7 +91,9 @@ class TodoServiceTest extends TestHelper {
         Schedule simpleSchedule = scheduleHelper.createSimpleSchedule(member);
         scheduleTodoHelper.connectScheduleTodo(simpleSchedule, todo);
 
-        TodoControllerRequest.DeleteTodoRequest request = new TodoControllerRequest.DeleteTodoRequest(List.of(todo.getId()));
+        TodoServiceRequest.DeleteTodo request = TodoServiceRequest.DeleteTodo.builder()
+                .todoList(List.of(todo.getId()))
+                .build();
 
         // when & then
         assertThatThrownBy(() -> todoService.deleteTodoAll(request))
@@ -104,13 +111,14 @@ class TodoServiceTest extends TestHelper {
 
         List<Todo> testTodoList = todoHelper.createTestTodosAndSaveByCount(member, 3);
         List<Long> testTodoIdList = testTodoList.stream().map(Todo::getId).collect(Collectors.toList());
-
         testTodoIdList.addAll(otherMemberTodoIdList);
 
-        TodoControllerRequest.DeleteTodoRequest deleteTodoRequest = new TodoControllerRequest.DeleteTodoRequest(testTodoIdList);
+        TodoServiceRequest.DeleteTodo request = TodoServiceRequest.DeleteTodo.builder()
+                .todoList(testTodoIdList)
+                .build();
 
         // when & then
-        assertThatThrownBy(() -> todoService.deleteTodoAll(deleteTodoRequest))
+        assertThatThrownBy(() -> todoService.deleteTodoAll(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("해당 사용자가 삭제할 수 없는 할 일을 포함하고 있습니다. memberId = testMember");
 
