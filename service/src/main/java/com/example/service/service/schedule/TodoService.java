@@ -9,6 +9,7 @@ import com.example.service.controller.request.schedule.TodoControllerRequest;
 import com.example.common.repository.schedule.ScheduleTodoRepository;
 import com.example.common.repository.schedule.TodoRepository;
 import com.example.service.service.member.MemberCommonService;
+import com.example.service.service.schedule.request.TodoServiceRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class TodoService {
     }
 
     @Transactional
-    public Todo createTodo(TodoControllerRequest.CreateTodoRequest request) {
+    public Todo createTodo(TodoServiceRequest.CreateTodo request) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         Todo newTodo = new Todo(request.getTitle(), request.getContent(), loggedInMember);
         return todoRepository.save(newTodo);

@@ -33,8 +33,8 @@ public class TodoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createTodo(@RequestBody @Validated TodoControllerRequest.CreateTodoRequest request) {
-        todoService.createTodo(request);
+    public void createTodo(@RequestBody @Validated TodoControllerRequest.CreateTodo request) {
+        todoService.createTodo(request.toServiceRequest());
     }
 
     @DeleteMapping

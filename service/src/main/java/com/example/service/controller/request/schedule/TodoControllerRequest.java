@@ -1,5 +1,6 @@
 package com.example.service.controller.request.schedule;
 
+import com.example.service.service.schedule.request.TodoServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -11,15 +12,23 @@ import java.util.List;
 public class TodoControllerRequest {
 
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     @ToString
-    public static class CreateTodoRequest {
+    public static class CreateTodo {
 
         @NotBlank
         private String title;
 
         @NotBlank
         private String content;
+
+        public TodoServiceRequest.CreateTodo toServiceRequest() {
+            return TodoServiceRequest.CreateTodo.builder()
+                    .title(this.title)
+                    .content(this.content)
+                    .build();
+        }
     }
 
     @Getter
