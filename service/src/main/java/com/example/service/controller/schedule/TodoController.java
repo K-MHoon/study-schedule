@@ -39,7 +39,7 @@ public class TodoController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTodoAll(@RequestBody @Validated TodoControllerRequest.DeleteTodoRequest request) {
-        todoService.deleteTodoAll(request);
+    public void deleteTodoAll(@RequestBody @Validated TodoControllerRequest.DeleteTodo request) {
+        todoService.deleteTodoAll(request.toServiceRequest());
     }
 }

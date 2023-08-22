@@ -35,10 +35,16 @@ public class TodoControllerRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DeleteTodoRequest {
+    public static class DeleteTodo {
 
         @UniqueElements
         @NotNull
         private List<Long> todoList;
+
+        public TodoServiceRequest.DeleteTodo toServiceRequest() {
+            return TodoServiceRequest.DeleteTodo.builder()
+                    .todoList(this.todoList)
+                    .build();
+        }
     }
 }

@@ -55,7 +55,7 @@ public class TodoService {
     }
 
     @Transactional
-    public void deleteTodoAll(TodoControllerRequest.DeleteTodoRequest request) {
+    public void deleteTodoAll(TodoServiceRequest.DeleteTodo request) {
         Member member = memberCommonService.getLoggedInMember();
         if(isNotSameRequestAndDataCount(request, member)) {
             throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 할 일을 포함하고 있습니다. memberId = " + member.getMemberId());
@@ -67,7 +67,7 @@ public class TodoService {
         todoRepository.deleteAllByIdInAndMember_Id(request.getTodoList(), member.getId());
     }
 
-    private boolean isNotSameRequestAndDataCount(TodoControllerRequest.DeleteTodoRequest request, Member member) {
+    private boolean isNotSameRequestAndDataCount(TodoServiceRequest.DeleteTodo request, Member member) {
         return todoRepository.countAllByIdInAndMember_Id(request.getTodoList(), member.getId()) != request.getTodoList().size();
     }
 }
