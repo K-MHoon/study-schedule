@@ -45,8 +45,8 @@ public class StudyController {
     @PostMapping("/{study_id}/secret")
     @ResponseStatus(HttpStatus.OK)
     public void changeSecret(@PathVariable("study_id") Long studyId,
-                             @RequestBody @Validated StudyControllerRequest.ChangeSecretRequest request) {
-        studyService.changeStudySecretOrPublic(studyId, request);
+                             @RequestBody @Validated StudyControllerRequest.ChangeSecret request) {
+        studyService.changeStudySecretOrPublic(studyId, request.toServiceRequest());
     }
 
     @DeleteMapping("/{study_id}")

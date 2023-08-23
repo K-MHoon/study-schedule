@@ -113,11 +113,18 @@ public final class StudyControllerRequest {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ChangeSecretRequest {
+    public static class ChangeSecret {
 
         private Boolean secret;
 
         @NotEmpty
         private String password;
+
+        public StudyServiceRequest.ChangeSecret toServiceRequest() {
+            return StudyServiceRequest.ChangeSecret.builder()
+                    .secret(this.secret)
+                    .password(this.password)
+                    .build();
+        }
     }
 }

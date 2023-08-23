@@ -20,4 +20,15 @@ public class StudyServiceRequest {
         private Long fullCount;
         private IsUse isUse;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @ToString
+    public static class ChangeSecret {
+
+        private Boolean secret;
+        private String password;
+    }
 }

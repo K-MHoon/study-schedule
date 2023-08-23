@@ -124,7 +124,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void changeStudySecretOrPublic(Long studyId, StudyControllerRequest.ChangeSecretRequest request) {
+    public void changeStudySecretOrPublic(Long studyId, StudyServiceRequest.ChangeSecret request) {
         StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
         if(request.getSecret()) {
             studyMember.getStudy().changeToPrivate(request.getPassword());
