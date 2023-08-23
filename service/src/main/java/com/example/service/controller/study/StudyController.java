@@ -38,8 +38,8 @@ public class StudyController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createPublicStudy(@RequestBody @Validated StudyControllerRequest.CreateStudyRequest request) {
-        studyService.createPublicStudy(request);
+    public void createPublicStudy(@RequestBody @Validated StudyControllerRequest.CreateStudy request) {
+        studyService.createPublicStudy(request.toServiceRequest());
     }
 
     @PostMapping("/{study_id}/secret")

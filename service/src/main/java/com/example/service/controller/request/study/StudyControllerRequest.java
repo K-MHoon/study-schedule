@@ -1,11 +1,11 @@
 package com.example.service.controller.request.study;
 
 import com.example.common.enums.IsUse;
+import com.example.service.service.study.request.StudyServiceRequest;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public final class StudyControllerRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static final class CreateStudyRequest {
+    public static final class CreateStudy {
 
         @NotEmpty
         private String studyName;
@@ -34,6 +34,17 @@ public final class StudyControllerRequest {
 
         @NotNull
         private IsUse isUse;
+
+        public StudyServiceRequest.CreateStudy toServiceRequest() {
+            return StudyServiceRequest.CreateStudy.builder()
+                    .studyName(this.studyName)
+                    .content(this.content)
+                    .secret(this.secret)
+                    .password(this.password)
+                    .fullCount(this.fullCount)
+                    .isUse(this.isUse)
+                    .build();
+        }
     }
 
     @Getter
