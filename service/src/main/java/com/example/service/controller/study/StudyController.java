@@ -27,14 +27,7 @@ public class StudyController {
     public Pagination<List<StudyDto>> getPublicStudyList(@PageableDefault Pageable pageable,
                                                          @RequestParam(value = "name", required = false) String name,
                                                          @RequestParam(value = "leader", required = false) String leader) {
-        StudyControllerRequest.GetPublicStudyListRequest request = StudyControllerRequest
-                .GetPublicStudyListRequest.builder()
-                .name(name)
-                .leaderId(leader)
-                .pageable(pageable)
-                .build();
-
-        return studyService.getPublicStudyList(request);
+        return studyService.getPublicStudyList(name, leader, pageable);
     }
 
     @GetMapping("/{study_id}")

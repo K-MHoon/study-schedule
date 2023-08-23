@@ -1,8 +1,6 @@
 package com.example.service.controller.request.study;
 
 import com.example.common.enums.IsUse;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -13,19 +11,6 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StudyControllerRequest {
-
-
-    @Getter
-    @ToString
-    @AllArgsConstructor
-    @Builder
-    public static final class GetPublicStudyListRequest {
-
-        private String name;
-        private String leaderId;
-
-        private Pageable pageable;
-    }
 
     @Getter
     @ToString
