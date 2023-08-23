@@ -56,14 +56,8 @@ class StudyServiceTest extends TestHelper {
         studyRepository.save(Study.ofPublic(member, "Study Test", "스터디", 10L, IsUse.Y));
         Pageable pageRequest = PageRequest.of(0, 10);
 
-        StudyControllerRequest.GetPublicStudyListRequest request = StudyControllerRequest
-                .GetPublicStudyListRequest
-                .builder()
-                .pageable(pageRequest)
-                .build();
-
         // when
-        Pagination<List<StudyDto>> response = service.getPublicStudyList(request);
+        Pagination<List<StudyDto>> response = service.getPublicStudyList(null, null, pageRequest);
 
         // then
         assertAll(() -> assertThat(response.getData()).hasSize(1),
