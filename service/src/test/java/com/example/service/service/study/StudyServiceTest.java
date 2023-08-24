@@ -13,6 +13,7 @@ import com.example.common.repository.study.StudyCodeRepository;
 import com.example.common.repository.study.StudyMemberRepository;
 import com.example.common.repository.study.StudyRegisterRepository;
 import com.example.common.repository.study.StudyRepository;
+import com.example.service.service.study.request.StudyServiceRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -69,38 +69,39 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("공개 스터디를 정상 생성한다.")
     void createPublicStudy() {
         // given
-        String studyName = "스터디 테스트";
-        String content = "공부 스터디 입니다.";
-        Boolean secret = false;
-        String password = null;
-        Long fullCount = 10L;
-        IsUse isUse = IsUse.Y;
-        StudyControllerRequest.CreateStudyRequest request
-                = new StudyControllerRequest.CreateStudyRequest(studyName, content, secret, password, fullCount, isUse);
+        StudyServiceRequest.CreateStudy request
+                = StudyServiceRequest.CreateStudy.builder()
+                .studyName("스터디 테스트")
+                .content("공부 스터디 입니다.")
+                .secret(false)
+                .password(null)
+                .fullCount(10L)
+                .isUse(IsUse.Y)
+                .build();
 
         // when
         service.createPublicStudy(request);
 
         // then
         List<Study> studyList = studyRepository.findAll();
-        assertAll(
-                () -> assertThat(studyList).hasSize(1),
-                () -> assertThat(studyList.get(0).getName()).isEqualTo(studyName)
-        );
+        assertThat(studyList).hasSize(1)
+                .extracting( "name", "content", "secret", "password", "fullCount", "isUse")
+                .contains(tuple("스터디 테스트", "공부 스터디 입니다.", false, null, 10L, IsUse.Y));
     }
 
     @Test
     @DisplayName("공개 스터디 생성에 성공하면 스터디 장이므로 자동으로 가입된다.")
     void joinNewStudyWhenCreatePublicStudySuccess() {
         // given
-        String studyName = "스터디 테스트";
-        String content = "공부 스터디 입니다.";
-        Boolean secret = false;
-        String password = "";
-        Long fullCount = 10L;
-        IsUse isUse = IsUse.Y;
-        StudyControllerRequest.CreateStudyRequest request
-                = new StudyControllerRequest.CreateStudyRequest(studyName, content, secret, password, fullCount, isUse);
+        StudyServiceRequest.CreateStudy request
+                = StudyServiceRequest.CreateStudy.builder()
+                .studyName("스터디 테스트")
+                .content("공부 스터디 입니다.")
+                .secret(false)
+                .password(null)
+                .fullCount(10L)
+                .isUse(IsUse.Y)
+                .build();
 
         // when
         service.createPublicStudy(request);
@@ -150,14 +151,15 @@ class StudyServiceTest extends TestHelper {
     @DisplayName("비공개 스터디를 정상 생성한다.")
     void createPrivateStudy() {
         // given
-        String studyName = "스터디 테스트";
-        String content = "공부 스터디 입니다.";
-        Boolean secret = true;
-        String password = "test";
-        Long fullCount = 10L;
-        IsUse isUse = IsUse.Y;
-        StudyControllerRequest.CreateStudyRequest request
-                = new StudyControllerRequest.CreateStudyRequest(studyName, content,  secret, password, fullCount, isUse);
+        StudyServiceRequest.CreateStudy request
+                = StudyServiceRequest.CreateStudy.builder()
+                .studyName("스터디 테스트")
+                .content("공부 스터디 입니다.")
+                .secret(false)
+                .password("test")
+                .fullCount(10L)
+                .isUse(IsUse.Y)
+                .build();
 
         // when
         service.createPublicStudy(request);
@@ -166,9 +168,9 @@ class StudyServiceTest extends TestHelper {
         List<Study> studyList = studyRepository.findAll();
         assertAll(
                 () -> assertThat(studyList).hasSize(1),
-                () -> assertThat(studyList.get(0).getName()).isEqualTo(studyName),
+                () -> assertThat(studyList.get(0).getName()).isEqualTo("스터디 테스트"),
                 () -> assertThat(studyList.get(0).getSecret()).isTrue(),
-                () -> assertThat(passwordEncoder.matches(password, studyList.get(0).getPassword())).isTrue()
+                () -> assertThat(passwordEncoder.matches("test", studyList.get(0).getPassword())).isTrue()
         );
     }
 
@@ -294,7 +296,7 @@ class StudyServiceTest extends TestHelper {
     void changeStudyToSecretStudy() {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
-        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(true, "test1234");
+        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(true, "test1234");
 
         // when
         service.changeStudySecretOrPublic(study.getId(), request);
@@ -310,7 +312,7 @@ class StudyServiceTest extends TestHelper {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
         study.changeToPrivate("test1234");
-        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(true, "test5678");
+        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(true, "test5678");
 
         // when
         service.changeStudySecretOrPublic(study.getId(), request);
@@ -325,7 +327,7 @@ class StudyServiceTest extends TestHelper {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
         study.changeToPrivate("test1234");
-        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(false, "test1234");
+        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(false, "test1234");
 
         // when
         service.changeStudySecretOrPublic(study.getId(), request);
@@ -341,7 +343,7 @@ class StudyServiceTest extends TestHelper {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
         study.changeToPrivate("test1234");
-        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(false, "test1235");
+        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(false, "test1235");
 
         // when & then
         assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
@@ -354,7 +356,7 @@ class StudyServiceTest extends TestHelper {
     void causeExceptionWhenChangePublicStudyIfNotSecretStudy() {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
-        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(false, "test1235");
+        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(false, "test1235");
 
         // when & then
         assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
@@ -367,7 +369,7 @@ class StudyServiceTest extends TestHelper {
     void causeExceptionWhenChangePrivateStudyIfNotContainPassword() {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
-        StudyControllerRequest.ChangeSecretRequest request = new StudyControllerRequest.ChangeSecretRequest(true, "");
+        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(true, "");
 
         // when & then
         assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
