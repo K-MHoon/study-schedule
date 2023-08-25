@@ -18,6 +18,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -155,7 +157,7 @@ class StudyServiceTest extends TestHelper {
                 = StudyServiceRequest.CreateStudy.builder()
                 .studyName("스터디 테스트")
                 .content("공부 스터디 입니다.")
-                .secret(false)
+                .secret(true)
                 .password("test")
                 .fullCount(10L)
                 .isUse(IsUse.Y)
@@ -296,7 +298,10 @@ class StudyServiceTest extends TestHelper {
     void changeStudyToSecretStudy() {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
-        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(true, "test1234");
+        StudyServiceRequest.ChangeSecret request = StudyServiceRequest.ChangeSecret.builder()
+                .secret(true)
+                .password("test1234")
+                .build();
 
         // when
         service.changeStudySecretOrPublic(study.getId(), request);
@@ -312,7 +317,10 @@ class StudyServiceTest extends TestHelper {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
         study.changeToPrivate("test1234");
-        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(true, "test5678");
+        StudyServiceRequest.ChangeSecret request = StudyServiceRequest.ChangeSecret.builder()
+                .secret(true)
+                .password("test5678")
+                .build();
 
         // when
         service.changeStudySecretOrPublic(study.getId(), request);
@@ -327,7 +335,10 @@ class StudyServiceTest extends TestHelper {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
         study.changeToPrivate("test1234");
-        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(false, "test1234");
+        StudyServiceRequest.ChangeSecret request = StudyServiceRequest.ChangeSecret.builder()
+                .secret(false)
+                .password("test1234")
+                .build();
 
         // when
         service.changeStudySecretOrPublic(study.getId(), request);
@@ -343,7 +354,10 @@ class StudyServiceTest extends TestHelper {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
         study.changeToPrivate("test1234");
-        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(false, "test1235");
+        StudyServiceRequest.ChangeSecret request = StudyServiceRequest.ChangeSecret.builder()
+                .secret(false)
+                .password("test1235")
+                .build();
 
         // when & then
         assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
@@ -356,7 +370,10 @@ class StudyServiceTest extends TestHelper {
     void causeExceptionWhenChangePublicStudyIfNotSecretStudy() {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
-        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(false, "test1235");
+        StudyServiceRequest.ChangeSecret request = StudyServiceRequest.ChangeSecret.builder()
+                .secret(false)
+                .password("test1235")
+                .build();
 
         // when & then
         assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))
@@ -364,12 +381,16 @@ class StudyServiceTest extends TestHelper {
                 .hasMessage("해당 스터디는 비밀 스터디가 아닙니다.");
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("비밀 스터디로 전환하는데 비밀번호가 없는 경우 예외가 발생한다.")
-    void causeExceptionWhenChangePrivateStudyIfNotContainPassword() {
+    @NullAndEmptySource
+    void causeExceptionWhenChangePrivateStudyIfNotContainPassword(String empty) {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
-        StudyControllerRequest.ChangeSecret request = new StudyControllerRequest.ChangeSecret(true, "");
+        StudyServiceRequest.ChangeSecret request = StudyServiceRequest.ChangeSecret.builder()
+                .secret(true)
+                .password(empty)
+                .build();
 
         // when & then
         assertThatThrownBy(() -> service.changeStudySecretOrPublic(study.getId(), request))

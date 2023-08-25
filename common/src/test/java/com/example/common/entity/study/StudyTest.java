@@ -27,20 +27,6 @@ class StudyTest {
     }
 
     @Test
-    @DisplayName("비밀 스터디는 비밀 스터디로 변환하지 못한다.")
-    void changeToPrivateSecret() {
-        // given
-        Study study = Study.builder()
-                .secret(Boolean.TRUE)
-                .build();
-
-        // when // then
-        assertThatThrownBy(() -> study.changeToPrivate("testPassword"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("해당 스터디는 이미 비밀 스터디 입니다.");
-    }
-
-    @Test
     @DisplayName("비밀 스터디는 반드시 비밀번호가 입력되어야 한다.")
     void changeToPrivateNonePassword() {
         // given
