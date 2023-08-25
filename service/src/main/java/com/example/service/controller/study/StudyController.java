@@ -57,8 +57,8 @@ public class StudyController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteStudyMemberAll(@RequestBody @Validated StudyControllerRequest.DeleteStudyMemberAllRequest request) {
-        studyService.deleteStudyMemberAll(request);
+    public void deleteStudyMemberAll(@RequestBody @Validated StudyControllerRequest.DeleteStudyMemberAll request) {
+        studyService.deleteStudyMemberAll(request.toServiceRequest());
     }
 
     @GetMapping("/secret")

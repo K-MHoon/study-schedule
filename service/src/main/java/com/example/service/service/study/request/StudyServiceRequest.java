@@ -3,6 +3,8 @@ package com.example.service.service.study.request;
 import com.example.common.enums.IsUse;
 import lombok.*;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyServiceRequest {
 
@@ -30,5 +32,15 @@ public class StudyServiceRequest {
 
         private Boolean secret;
         private String password;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @ToString
+    public static class DeleteStudyMemberAll {
+
+        private List<Long> studyList;
     }
 }

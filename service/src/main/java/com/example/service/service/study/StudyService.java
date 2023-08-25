@@ -96,7 +96,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void deleteStudyMemberAll(StudyControllerRequest.DeleteStudyMemberAllRequest request) {
+    public void deleteStudyMemberAll(StudyServiceRequest.DeleteStudyMemberAll request) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         List<StudyMember> studyMemberList = getRequestStudyMemberList(request, loggedInMember);
 
@@ -107,11 +107,11 @@ public class StudyService {
         studyMemberRepository.deleteAllInBatch(studyMemberList);
     }
 
-    private boolean sizeNotEqual(StudyControllerRequest.DeleteStudyMemberAllRequest request, List<StudyMember> studyMemberList) {
+    private boolean sizeNotEqual(StudyServiceRequest.DeleteStudyMemberAll request, List<StudyMember> studyMemberList) {
         return studyMemberList.size() != request.getStudyList().size();
     }
 
-    private List<StudyMember> getRequestStudyMemberList(StudyControllerRequest.DeleteStudyMemberAllRequest request, Member loggedInMember) {
+    private List<StudyMember> getRequestStudyMemberList(StudyServiceRequest.DeleteStudyMemberAll request, Member loggedInMember) {
         return studyMemberRepository.findAllByStudy_IdInAndMember_Id(request.getStudyList(), loggedInMember.getId());
     }
 

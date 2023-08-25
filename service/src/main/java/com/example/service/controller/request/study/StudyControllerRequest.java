@@ -68,11 +68,17 @@ public final class StudyControllerRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static final class DeleteStudyMemberAllRequest {
+    public static final class DeleteStudyMemberAll {
 
         @NotNull
         @UniqueElements
         private List<Long> studyList;
+
+        public StudyServiceRequest.DeleteStudyMemberAll toServiceRequest() {
+            return StudyServiceRequest.DeleteStudyMemberAll.builder()
+                    .studyList(this.studyList)
+                    .build();
+        }
     }
     @Getter
     @ToString
