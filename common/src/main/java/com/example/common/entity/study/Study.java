@@ -67,25 +67,18 @@ public final class Study extends BaseEntity {
     }
 
     @Builder
-    private Study(Long id, List<StudyMember> studyMemberList, List<StudyRegister> studyRegisterList, List<Schedule> scheduleList, Member leader, String name, String content, Boolean secret, String password, Long fullCount, List<StudyCode> studyCodeList, IsUse isUse) {
+    private Study(Long id, Member leader, String name, String content, Boolean secret, String password, Long fullCount, IsUse isUse) {
         this.id = id;
-        this.studyMemberList = studyMemberList;
-        this.studyRegisterList = studyRegisterList;
-        this.scheduleList = scheduleList;
         this.leader = leader;
         this.name = name;
         this.content = content;
         this.secret = secret;
         this.password = password;
-        this.studyCodeList = studyCodeList;
         this.isUse = isUse;
         this.updateFullCount(fullCount);
     }
 
     public void changeToPrivate(String password) {
-        if(this.secret) {
-            throw new IllegalArgumentException("해당 스터디는 이미 비밀 스터디 입니다.");
-        }
         if(StringUtils.isEmpty(password)) {
             throw new IllegalArgumentException("비밀 스터디에는 반드시 비밀번호가 포함되어야 합니다.");
         }
