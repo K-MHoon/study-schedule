@@ -212,7 +212,9 @@ class StudyServiceTest extends TestHelper {
         studyRepository.save(study2);
         studyMemberRepository.save(new StudyMember(member, study1));
         studyMemberRepository.save(new StudyMember(member, study2));
-        StudyControllerRequest.DeleteStudyMemberAllRequest request = new StudyControllerRequest.DeleteStudyMemberAllRequest(Arrays.asList(study1.getId(), study2.getId()));
+        StudyServiceRequest.DeleteStudyMemberAll request = StudyServiceRequest.DeleteStudyMemberAll.builder()
+                .studyList(Arrays.asList(study1.getId(), study2.getId()))
+                .build();
 
         // when
         service.deleteStudyMemberAll(request);
@@ -231,8 +233,9 @@ class StudyServiceTest extends TestHelper {
         studyRepository.save(study1);
         studyRepository.save(study2);
         studyMemberRepository.save(new StudyMember(member, study1));
-        StudyControllerRequest.DeleteStudyMemberAllRequest request = new StudyControllerRequest.DeleteStudyMemberAllRequest(Arrays.asList(study1.getId(), study2.getId()));
-
+        StudyServiceRequest.DeleteStudyMemberAll request = StudyServiceRequest.DeleteStudyMemberAll.builder()
+                .studyList(Arrays.asList(study1.getId(), study2.getId()))
+                .build();
         // when & then
         assertThatThrownBy(() -> service.deleteStudyMemberAll(request))
                 .isInstanceOf(IllegalArgumentException.class)
