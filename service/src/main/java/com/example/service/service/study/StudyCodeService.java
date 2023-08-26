@@ -7,6 +7,7 @@ import com.example.common.model.dto.study.StudyCodeDto;
 import com.example.service.controller.request.study.StudyCodeControllerRequest;
 import com.example.service.controller.response.study.StudyCodeControllerResponse;
 import com.example.common.repository.study.StudyCodeRepository;
+import com.example.service.service.study.request.StudyCodeServiceRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class StudyCodeService {
 
 
     @Transactional
-    public void deleteInviteCodeAll(Long studyId, StudyCodeControllerRequest.DeleteInviteCodeAllRequest request) {
+    public void deleteInviteCodeAll(Long studyId, StudyCodeServiceRequest.DeleteInviteCodeAll request) {
         StudyMember studyMember = studyCommonService.getMyStudyMember(studyId);
 
         Study study = studyMember.getStudy();

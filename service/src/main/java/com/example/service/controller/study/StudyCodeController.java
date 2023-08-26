@@ -31,7 +31,7 @@ public class StudyCodeController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteInviteCodeAll(@PathVariable(name = "study_id") Long studyId, @RequestBody @Validated StudyCodeControllerRequest.DeleteInviteCodeAllRequest request) {
-        service.deleteInviteCodeAll(studyId, request);
+    public void deleteInviteCodeAll(@PathVariable(name = "study_id") Long studyId, @RequestBody @Validated StudyCodeControllerRequest.DeleteInviteCodeAll request) {
+        service.deleteInviteCodeAll(studyId, request.toServiceRequest());
     }
 }

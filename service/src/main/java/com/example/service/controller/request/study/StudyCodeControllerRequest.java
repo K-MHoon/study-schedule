@@ -1,5 +1,6 @@
 package com.example.service.controller.request.study;
 
+import com.example.service.service.study.request.StudyCodeServiceRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,11 +16,17 @@ public final class StudyCodeControllerRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static final class DeleteInviteCodeAllRequest {
+    public static final class DeleteInviteCodeAll {
 
         @NotNull
         @UniqueElements
         private List<Long> inviteCodeList;
+
+        public StudyCodeServiceRequest.DeleteInviteCodeAll toServiceRequest() {
+            return StudyCodeServiceRequest.DeleteInviteCodeAll.builder()
+                    .inviteCodeList(this.inviteCodeList)
+                    .build();
+        }
     }
 
 }
