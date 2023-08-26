@@ -2,7 +2,7 @@ package com.example.service.controller.study;
 
 import com.example.common.model.dto.study.StudyDto;
 import com.example.common.model.dto.study.StudyRegisterDto;
-import com.example.service.controller.request.study.StudyControllerRequest;
+import com.example.service.controller.request.study.StudyMyControllerRequest;
 import com.example.service.controller.response.study.StudyMyControllerResponse;
 import com.example.service.service.study.StudyMyService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class StudyMyController {
     @PostMapping("/{studyId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateMyStudy(@PathVariable("studyId") Long studyId,
-                              @RequestBody @Validated StudyControllerRequest.UpdateStudyRequest request) {
+                              @RequestBody @Validated StudyMyControllerRequest.UpdateStudy request) {
         studyMyService.updateMyStudy(studyId, request);
     }
 
@@ -45,7 +45,7 @@ public class StudyMyController {
     @ResponseStatus(HttpStatus.OK)
     public void updateStudyState(@PathVariable Long studyId,
                                  @PathVariable Long registerId,
-                                 @RequestBody @Validated StudyControllerRequest.UpdateStudyStateRequest state) {
+                                 @RequestBody @Validated StudyMyControllerRequest.UpdateStudyState state) {
         studyMyService.updateStudyState(studyId, registerId, state);
     }
 

@@ -51,23 +51,6 @@ public final class StudyControllerRequest {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static final class UpdateStudyRequest {
-
-        @NotEmpty
-        private String studyName;
-
-        @NotEmpty
-        private String content;
-
-        @NotNull
-        private Long fullCount;
-
-    }
-
-    @Getter
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static final class DeleteStudyMemberAll {
 
         @NotNull
@@ -93,16 +76,6 @@ public final class StudyControllerRequest {
         private String objective;
 
         private String comment;
-    }
-
-    @Getter
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static final class UpdateStudyStateRequest {
-
-        @NotEmpty
-        private String state;
     }
 
     @Getter

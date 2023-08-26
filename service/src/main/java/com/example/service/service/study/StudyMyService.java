@@ -10,6 +10,7 @@ import com.example.common.model.dto.study.StudyCodeDto;
 import com.example.common.model.dto.study.StudyDto;
 import com.example.common.model.dto.study.StudyRegisterDto;
 import com.example.service.controller.request.study.StudyControllerRequest;
+import com.example.service.controller.request.study.StudyMyControllerRequest;
 import com.example.service.controller.response.study.StudyMyControllerResponse;
 import com.example.common.repository.study.StudyCodeRepository;
 import com.example.common.repository.study.StudyMemberRepository;
@@ -66,7 +67,7 @@ public class StudyMyService {
     }
 
     @Transactional
-    public void updateStudyState(Long studyId, Long registerId, StudyControllerRequest.UpdateStudyStateRequest request) {
+    public void updateStudyState(Long studyId, Long registerId, StudyMyControllerRequest.UpdateStudyState request) {
         StudyMember myStudyMember = studyCommonService.getMyStudyMember(studyId);
         StudyRegister studyRegister = studyRegisterRepository.findByIdAndRequestStudy_Id(registerId, studyId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 스터디에 가입 요청이 존재하지 않습니다. study Id = " + studyId + " register Id = " + registerId));
@@ -95,7 +96,7 @@ public class StudyMyService {
     }
 
     @Transactional
-    public void updateMyStudy(Long studyId, StudyControllerRequest.UpdateStudyRequest request) {
+    public void updateMyStudy(Long studyId, StudyMyControllerRequest.UpdateStudy request) {
         StudyMember myStudyMember = studyCommonService.getMyStudyMember(studyId);
         Study study = myStudyMember.getStudy();
 
