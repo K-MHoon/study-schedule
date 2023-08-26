@@ -1,11 +1,11 @@
 package com.example.service.service.study;
 
-import com.example.service.TestHelper;
 import com.example.common.entity.study.Study;
 import com.example.common.entity.study.StudyCode;
-import com.example.service.controller.request.study.StudyCodeControllerRequest;
-import com.example.service.controller.response.study.StudyCodeControllerResponse;
 import com.example.common.repository.study.StudyCodeRepository;
+import com.example.service.TestHelper;
+import com.example.service.controller.response.study.StudyCodeControllerResponse;
+import com.example.service.service.study.request.StudyCodeServiceRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,10 @@ class StudyCodeServiceTest extends TestHelper {
         StudyCode studyCode2 = studyCodeHelper.createStudyCode(member, simpleStudy);
         entityManagerFlushAndClear();
 
-        StudyCodeControllerRequest.DeleteInviteCodeAllRequest request = new StudyCodeControllerRequest.DeleteInviteCodeAllRequest(Arrays.asList(studyCode1.getId(), studyCode2.getId()));
+        StudyCodeServiceRequest.DeleteInviteCodeAll request = StudyCodeServiceRequest.DeleteInviteCodeAll
+                .builder()
+                .inviteCodeList(Arrays.asList(studyCode1.getId(), studyCode2.getId()))
+                .build();
 
         // when
         service.deleteInviteCodeAll(simpleStudy.getId(), request);
@@ -81,7 +84,10 @@ class StudyCodeServiceTest extends TestHelper {
     void causeExceptionIfStudyIsNotSecret() {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
-        StudyCodeControllerRequest.DeleteInviteCodeAllRequest request = new StudyCodeControllerRequest.DeleteInviteCodeAllRequest(Collections.emptyList());
+        StudyCodeServiceRequest.DeleteInviteCodeAll request = StudyCodeServiceRequest.DeleteInviteCodeAll
+                .builder()
+                .inviteCodeList(Collections.emptyList())
+                .build();
 
         // when & then
         assertThatThrownBy(() -> service.deleteInviteCodeAll(simpleStudy.getId(), request))
@@ -95,7 +101,10 @@ class StudyCodeServiceTest extends TestHelper {
         // given
         Study simpleStudy = studyHelper.createStudyWithStudyMember(member);
         simpleStudy.changeToPrivate("password");
-        StudyCodeControllerRequest.DeleteInviteCodeAllRequest request = new StudyCodeControllerRequest.DeleteInviteCodeAllRequest(Arrays.asList(999L));
+        StudyCodeServiceRequest.DeleteInviteCodeAll request = StudyCodeServiceRequest.DeleteInviteCodeAll
+                .builder()
+                .inviteCodeList(Arrays.asList(Long.MAX_VALUE))
+                .build();
 
         // when & then
         assertThatThrownBy(() -> service.deleteInviteCodeAll(simpleStudy.getId(), request))
