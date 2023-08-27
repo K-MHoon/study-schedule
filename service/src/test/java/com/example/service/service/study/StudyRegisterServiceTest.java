@@ -1,18 +1,18 @@
 package com.example.service.service.study;
 
-import com.example.service.TestHelper;
 import com.example.common.entity.member.Member;
 import com.example.common.entity.study.Study;
 import com.example.common.entity.study.StudyMember;
 import com.example.common.entity.study.StudyRegister;
 import com.example.common.enums.IsUse;
 import com.example.common.enums.RegisterState;
-import com.example.service.exception.enums.common.CommonErrorCode;
-import com.example.service.exception.StudyScheduleException;
-import com.example.service.controller.request.study.StudyControllerRequest;
 import com.example.common.repository.study.StudyMemberRepository;
 import com.example.common.repository.study.StudyRegisterRepository;
 import com.example.common.repository.study.StudyRepository;
+import com.example.service.TestHelper;
+import com.example.service.controller.request.study.StudyRegisterControllerRequest;
+import com.example.service.exception.StudyScheduleException;
+import com.example.service.exception.enums.common.CommonErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.*;
 
 class StudyRegisterServiceTest extends TestHelper {
 
@@ -43,19 +41,14 @@ class StudyRegisterServiceTest extends TestHelper {
     @DisplayName("스터디 가입 요청에 성공한다.")
     void successCreateStudyRegister() {
         Study study = studyHelper.createSimpleStudy(member);
-        StudyControllerRequest.CreateStudyRegisterRequest request = new StudyControllerRequest.CreateStudyRegisterRequest("목표 테스트", "목적 테스트", "주석 테스트");
+        StudyRegisterControllerRequest.CreateStudyRegister request = new StudyRegisterControllerRequest.CreateStudyRegister("목표 테스트", "목적 테스트", "주석 테스트");
 
         service.createStudyRegister(study.getId(), request);
 
         List<StudyRegister> result = studyRegisterRepository.findAll();
-        assertAll(() -> assertThat(result).hasSize(1),
-                () -> assertThat(result.get(0).getGoal()).isEqualTo("목표 테스트"),
-                () -> assertThat(result.get(0).getObjective()).isEqualTo("목적 테스트"),
-                () -> assertThat(result.get(0).getComment()).isEqualTo("주석 테스트"),
-                () -> assertThat(result.get(0).getState()).isEqualTo(RegisterState.NO_READ),
-                () -> assertThat(result.get(0).getRequestMember()).isEqualTo(member),
-                () -> assertThat(result.get(0).getRequestStudy()).isEqualTo(study)
-        );
+        assertThat(result).hasSize(1)
+                .extracting("goal", "objective", "comment", "state", "requestMember", "requestStudy")
+                .contains(tuple("목표 테스트", "목적 테스트", "주석 테스트", RegisterState.NO_READ, member, study));
     }
 
     @Test
@@ -66,7 +59,7 @@ class StudyRegisterServiceTest extends TestHelper {
         study.getStudyMemberList().add(savedStudyMember);
         Study savedStudy = studyRepository.save(study);
 
-        StudyControllerRequest.CreateStudyRegisterRequest request = new StudyControllerRequest.CreateStudyRegisterRequest("목표 테스트", "목적 테스트", "주석 테스트");
+        StudyRegisterControllerRequest.CreateStudyRegister request = new StudyRegisterControllerRequest.CreateStudyRegister("목표 테스트", "목적 테스트", "주석 테스트");
 
         assertThatThrownBy(() -> service.createStudyRegister(savedStudy.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -76,7 +69,7 @@ class StudyRegisterServiceTest extends TestHelper {
     @Test
     @DisplayName("요청한 스터디가 존재하지 않을 경우, 예외가 발생한다.")
     void rejectWhenNotFoundStudy() {
-        StudyControllerRequest.CreateStudyRegisterRequest request = new StudyControllerRequest.CreateStudyRegisterRequest("목표 테스트", "목적 테스트", "주석 테스트");
+        StudyRegisterControllerRequest.CreateStudyRegister request = new StudyRegisterControllerRequest.CreateStudyRegister("목표 테스트", "목적 테스트", "주석 테스트");
 
         assertThatThrownBy(() -> service.createStudyRegister(Long.MAX_VALUE, request))
                 .isInstanceOf(StudyScheduleException.class)
@@ -88,11 +81,12 @@ class StudyRegisterServiceTest extends TestHelper {
     @DisplayName("스터디 정원이 가득 찬 경우 예외가 발생한다.")
     void rejectWhenStudyIsFull() {
         Study study = Study.ofPublic(member, "스터디 테스트", "스터디 설명", 1L, IsUse.Y);
-        StudyMember savedStudyMember = studyMemberRepository.save(new StudyMember(memberHelper.getUnknownMember(), study));
-        study.getStudyMemberList().add(savedStudyMember);
         Study savedStudy = studyRepository.save(study);
 
-        StudyControllerRequest.CreateStudyRegisterRequest request = new StudyControllerRequest.CreateStudyRegisterRequest("목표 테스트", "목적 테스트", "주석 테스트");
+        StudyMember savedStudyMember = studyMemberRepository.save(new StudyMember(memberHelper.getUnknownMember(), savedStudy));
+        study.getStudyMemberList().add(savedStudyMember);
+
+        StudyRegisterControllerRequest.CreateStudyRegister request = new StudyRegisterControllerRequest.CreateStudyRegister("목표 테스트", "목적 테스트", "주석 테스트");
 
         assertThatThrownBy(() -> service.createStudyRegister(savedStudy.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -111,7 +105,7 @@ class StudyRegisterServiceTest extends TestHelper {
                 .map(studyRegister -> studyRegister.getId())
                 .collect(Collectors.toList());
 
-        StudyControllerRequest.CancelStudyRegisterRequest request = new StudyControllerRequest.CancelStudyRegisterRequest(studyRegisterIdList);
+        StudyRegisterControllerRequest.CancelStudyRegister request = new StudyRegisterControllerRequest.CancelStudyRegister(studyRegisterIdList);
 
         // when
         service.cancelStudyRegisterAll(request);
@@ -119,8 +113,10 @@ class StudyRegisterServiceTest extends TestHelper {
         // then
         entityManagerFlushAndClear();
         List<StudyRegister> result = studyRegisterRepository.findAll();
-        assertThat(result).hasSize(studyRegisterIdList.size());
-        assertThat(result).extracting("state").containsExactlyInAnyOrder(RegisterState.CANCEL);
+        assertThat(result)
+                .hasSize(studyRegisterIdList.size())
+                .extracting("state")
+                .containsExactlyInAnyOrder(RegisterState.CANCEL);
     }
 
     @Test
@@ -130,7 +126,7 @@ class StudyRegisterServiceTest extends TestHelper {
         Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         StudyRegister studyRegister = studyHelper.createStudyRegister(savedStudy, memberHelper.getUnknownMember(), RegisterState.READ);
 
-        StudyControllerRequest.CancelStudyRegisterRequest request = new StudyControllerRequest.CancelStudyRegisterRequest(Arrays.asList(studyRegister.getId()));
+        StudyRegisterControllerRequest.CancelStudyRegister request = new StudyRegisterControllerRequest.CancelStudyRegister(Arrays.asList(studyRegister.getId()));
 
         // when & then
         assertThatThrownBy(() -> service.cancelStudyRegisterAll(request))
