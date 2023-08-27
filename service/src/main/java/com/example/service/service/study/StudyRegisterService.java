@@ -5,12 +5,12 @@ import com.example.common.entity.member.Member;
 import com.example.common.entity.study.Study;
 import com.example.common.entity.study.StudyRegister;
 import com.example.common.enums.RegisterState;
-import com.example.service.exception.enums.common.CommonErrorCode;
-import com.example.service.exception.StudyScheduleException;
-import com.example.service.controller.request.study.StudyControllerRequest;
 import com.example.common.repository.study.StudyMemberRepository;
 import com.example.common.repository.study.StudyRegisterRepository;
 import com.example.common.repository.study.StudyRepository;
+import com.example.service.controller.request.study.StudyRegisterControllerRequest;
+import com.example.service.exception.StudyScheduleException;
+import com.example.service.exception.enums.common.CommonErrorCode;
 import com.example.service.service.member.MemberCommonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class StudyRegisterService {
     private final StudyMemberRepository studyMemberRepository;
 
     @Transactional
-    public void createStudyRegister(Long studyId, StudyControllerRequest.CreateStudyRegisterRequest request) {
+    public void createStudyRegister(Long studyId, StudyRegisterControllerRequest.CreateStudyRegister request) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         checkAlreadyJoinedStudy(studyId, loggedInMember);
 
@@ -56,7 +56,7 @@ public class StudyRegisterService {
     }
 
     @Transactional
-    public int cancelStudyRegisterAll(StudyControllerRequest.CancelStudyRegisterRequest request) {
+    public int cancelStudyRegisterAll(StudyRegisterControllerRequest.CancelStudyRegister request) {
         Member member = memberCommonService.getLoggedInMember();
         if (isNotSameRequestAndDataCount(request, member)) {
             throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스터디 가입 요청을 포함하고 있습니다. memberId = " + member.getMemberId());
@@ -64,7 +64,7 @@ public class StudyRegisterService {
         return studyRegisterRepository.updateAllCancelStudyRegister(RegisterState.CANCEL, request.getStudyRegisterList(), member.getId());
     }
 
-    private boolean isNotSameRequestAndDataCount(StudyControllerRequest.CancelStudyRegisterRequest request, Member member) {
+    private boolean isNotSameRequestAndDataCount(StudyRegisterControllerRequest.CancelStudyRegister request, Member member) {
         return studyRegisterRepository.countAllByIdInAndRequestMember_Id(request.getStudyRegisterList(), member.getId()) != request.getStudyRegisterList().size();
     }
 

@@ -63,31 +63,6 @@ public final class StudyControllerRequest {
                     .build();
         }
     }
-    @Getter
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static final class CreateStudyRegisterRequest {
-
-        @NotEmpty
-        private String goal;
-
-        @NotEmpty
-        private String objective;
-
-        private String comment;
-    }
-
-    @Getter
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CancelStudyRegisterRequest {
-
-        @UniqueElements
-        @NotNull
-        private List<Long> studyRegisterList;
-    }
 
     @Getter
     @NoArgsConstructor
