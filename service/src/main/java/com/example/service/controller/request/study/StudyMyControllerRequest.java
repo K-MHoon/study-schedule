@@ -1,5 +1,6 @@
 package com.example.service.controller.request.study;
 
+import com.example.service.service.study.request.StudyMyServiceRequest;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -22,6 +23,13 @@ public final class StudyMyControllerRequest {
         @NotNull
         private Long fullCount;
 
+        public StudyMyServiceRequest.UpdateStudy toServiceRequest() {
+            return StudyMyServiceRequest.UpdateStudy.builder()
+                    .studyName(this.studyName)
+                    .content(this.content)
+                    .fullCount(this.fullCount)
+                    .build();
+        }
     }
 
     @Getter
