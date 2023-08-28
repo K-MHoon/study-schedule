@@ -37,7 +37,7 @@ public class StudyMyController {
     @ResponseStatus(HttpStatus.OK)
     public void updateMyStudy(@PathVariable("studyId") Long studyId,
                               @RequestBody @Validated StudyMyControllerRequest.UpdateStudy request) {
-        studyMyService.updateMyStudy(studyId, request);
+        studyMyService.updateMyStudy(studyId, request.toServiceRequest());
     }
 
 

@@ -16,6 +16,7 @@ import com.example.common.repository.study.StudyCodeRepository;
 import com.example.common.repository.study.StudyMemberRepository;
 import com.example.common.repository.study.StudyRegisterRepository;
 import com.example.service.service.member.MemberCommonService;
+import com.example.service.service.study.request.StudyMyServiceRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +97,7 @@ public class StudyMyService {
     }
 
     @Transactional
-    public void updateMyStudy(Long studyId, StudyMyControllerRequest.UpdateStudy request) {
+    public void updateMyStudy(Long studyId, StudyMyServiceRequest.UpdateStudy request) {
         StudyMember myStudyMember = studyCommonService.getMyStudyMember(studyId);
         Study study = myStudyMember.getStudy();
 
