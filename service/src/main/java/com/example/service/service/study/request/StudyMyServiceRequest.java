@@ -16,4 +16,14 @@ public class StudyMyServiceRequest {
         private String content;
         private Long fullCount;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @ToString
+    public static final class UpdateStudyState {
+
+        private String state;
+    }
 }

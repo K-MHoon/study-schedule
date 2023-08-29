@@ -46,7 +46,7 @@ public class StudyMyController {
     public void updateStudyState(@PathVariable Long studyId,
                                  @PathVariable Long registerId,
                                  @RequestBody @Validated StudyMyControllerRequest.UpdateStudyState state) {
-        studyMyService.updateStudyState(studyId, registerId, state);
+        studyMyService.updateStudyState(studyId, registerId, state.toServiceRequest());
     }
 
     @PostMapping("/{studyId}/member/{memberId}/out")

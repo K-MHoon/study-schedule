@@ -68,7 +68,7 @@ public class StudyMyService {
     }
 
     @Transactional
-    public void updateStudyState(Long studyId, Long registerId, StudyMyControllerRequest.UpdateStudyState request) {
+    public void updateStudyState(Long studyId, Long registerId, StudyMyServiceRequest.UpdateStudyState request) {
         StudyMember myStudyMember = studyCommonService.getMyStudyMember(studyId);
         StudyRegister studyRegister = studyRegisterRepository.findByIdAndRequestStudy_Id(registerId, studyId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 스터디에 가입 요청이 존재하지 않습니다. study Id = " + studyId + " register Id = " + registerId));

@@ -40,5 +40,11 @@ public final class StudyMyControllerRequest {
 
         @NotEmpty
         private String state;
+
+        public StudyMyServiceRequest.UpdateStudyState toServiceRequest() {
+            return StudyMyServiceRequest.UpdateStudyState.builder()
+                    .state(this.state)
+                    .build();
+        }
     }
 }
