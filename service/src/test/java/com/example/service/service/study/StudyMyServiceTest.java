@@ -13,7 +13,9 @@ import com.example.common.repository.study.StudyRepository;
 import com.example.service.TestHelper;
 import com.example.service.controller.request.study.StudyMyControllerRequest;
 import com.example.service.controller.response.study.StudyMyControllerResponse;
+import com.example.service.service.study.request.StudyMyServiceRequest;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,13 +48,9 @@ class StudyMyServiceTest extends TestHelper {
     @Test
     @DisplayName("로그인한 계정과 연관된 스터디 정보만 가지고 온다.")
     void successGetMyStudyList() {
-        Study study1 = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
-        studyMemberRepository.save(new StudyMember(member, study1));
-        Study study2 = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트2", "스터디 설명", 11L, IsUse.Y);
-        studyMemberRepository.save(new StudyMember(member, study2));
-        Study study3 = Study.ofPublic(memberHelper.getUnknownMember(), "스터디 테스트3", "스터디 설명", 12L, IsUse.Y);
-        studyMemberRepository.save(new StudyMember(member, study3));
-        studyRepository.saveAll(Arrays.asList(study1, study2, study3));
+        Study study1 = getStudy(member, member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
+        Study study2 = getStudy(memberHelper.getUnknownMember(), member, "스터디 테스트2", "스터디 설명", 11L, IsUse.Y);
+        Study study3 = getStudy(memberHelper.getUnknownMember(), member, "스터디 테스트3", "스터디 설명", 12L, IsUse.Y);
         entityManagerFlushAndClear();
 
         List<StudyDto> result = service.getMyStudy();
@@ -63,28 +61,29 @@ class StudyMyServiceTest extends TestHelper {
         assertThat(result).filteredOn(StudyDto::getIsMine).singleElement().extracting("id").isEqualTo(study1.getId());
     }
 
+    private Study getStudy(Member createMember, Member connectMember, String name, String content, Long fullCount, IsUse isUse) {
+        Study publicStudy = Study.ofPublic(createMember, name, content, fullCount, isUse);
+        Study savedStudy = studyRepository.save(publicStudy);
+        studyMemberRepository.save(new StudyMember(connectMember, savedStudy));
+        return savedStudy;
+    }
+
     @Test
     @DisplayName("내 스터디 세부 정보를 가지고 온다.")
     void successGetMeyStudyDetail() {
         // given
-        Study study = Study.ofPublic(member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
-        studyMemberRepository.save(new StudyMember(member, study));
-        Study savedStudy = studyRepository.save(study);
-
+        Study study = getStudy(member, member, "스터디 테스트1", "스터디 설명", 10L, IsUse.Y);
         List<Member> memberList = memberHelper.createTestMembersAndSaveByCount(5);
-        studyHelper.createStudyMember(savedStudy, memberList);
-
+        studyHelper.createStudyMember(study, memberList);
         List<Member> studyRegisterMemberList = memberHelper.createTestMembersAndSaveByCount(5, 9);
-        studyHelper.createStudyRegister(savedStudy, studyRegisterMemberList);
-
+        studyHelper.createStudyRegister(study, studyRegisterMemberList);
         entityManagerFlushAndClear();
 
         // when
-        StudyMyControllerResponse.GetMyStudyDetailResponse result = service.getMyStudyDetail(savedStudy.getId());
-
+        StudyMyControllerResponse.GetMyStudyDetailResponse result = service.getMyStudyDetail(study.getId());
 
         // then
-        assertThat(result.getStudy().getId()).isEqualTo(savedStudy.getId());
+        assertThat(result.getStudy().getId()).isEqualTo(study.getId());
         assertThat(result.getStudy().getStudyName()).isEqualTo("스터디 테스트1");
         assertThat(result.getStudy().getRegisteredMemberList()).hasSize(6);
         assertThat(result.getStudy().getRegisterRequestList()).hasSize(4);
@@ -124,8 +123,9 @@ class StudyMyServiceTest extends TestHelper {
         Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = studyHelper.createStudyRegister(savedStudy, memberList);
+        StudyMyServiceRequest.UpdateStudyState request = StudyMyServiceRequest.UpdateStudyState.builder().state(state).build();
 
-        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), new StudyMyControllerRequest.UpdateStudyState(state));
+        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), request);
 
         List<StudyRegister> result = studyRegisterRepository.findAll();
         assertThat(result).hasSize(1);
@@ -139,9 +139,10 @@ class StudyMyServiceTest extends TestHelper {
         Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = studyHelper.createStudyRegister(savedStudy, memberList, RegisterState.READ);
+        StudyMyServiceRequest.UpdateStudyState request = StudyMyServiceRequest.UpdateStudyState.builder().state("pass").build();
 
         // when
-        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), new StudyMyControllerRequest.UpdateStudyState("pass"));
+        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), request);
 
         // then
         assertStudyRegister(RegisterState.PASS);
@@ -155,9 +156,10 @@ class StudyMyServiceTest extends TestHelper {
         Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         List<Member> memberList = Arrays.asList(memberHelper.getUnknownMember());
         List<StudyRegister> studyRegister = studyHelper.createStudyRegister(savedStudy, memberList, RegisterState.READ);
+        StudyMyServiceRequest.UpdateStudyState request = StudyMyServiceRequest.UpdateStudyState.builder().state("reject").build();
 
         // when
-        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), new StudyMyControllerRequest.UpdateStudyState("reject"));
+        service.updateStudyState(savedStudy.getId(), studyRegister.get(0).getId(), request);
 
         // then
         assertStudyRegister(RegisterState.REJECT);
@@ -247,8 +249,11 @@ class StudyMyServiceTest extends TestHelper {
     void updateStudyInfo() {
         // given
         Study study = studyHelper.createStudyWithStudyMember(member);
-        StudyMyControllerRequest.UpdateStudy request = new StudyMyControllerRequest.UpdateStudy("스터디 업데이트 제목", "스터디 업데이트 내용", 100L);
-
+        StudyMyServiceRequest.UpdateStudy request = StudyMyServiceRequest.UpdateStudy.builder()
+                .studyName("스터디 업데이트 제목")
+                .content("스터디 업데이트 내용")
+                .fullCount(100L)
+                .build();
         // when
         service.updateMyStudy(study.getId(), request);
 
@@ -267,7 +272,11 @@ class StudyMyServiceTest extends TestHelper {
         testMembersAndSaveByCount.forEach(m -> studyMemberRepository.save(new StudyMember(m, study)));
         entityManagerFlushAndClear();
 
-        StudyMyControllerRequest.UpdateStudy request = new StudyMyControllerRequest.UpdateStudy("스터디 업데이트 제목", "스터디 업데이트 내용", 2L);
+        StudyMyServiceRequest.UpdateStudy request = StudyMyServiceRequest.UpdateStudy.builder()
+                .studyName("스터디 업데이트 제목")
+                .content("스터디 업데이트 내용")
+                .fullCount(2L)
+                .build();
 
         // when & then
         assertThatThrownBy(() -> service.updateMyStudy(study.getId(), request))
