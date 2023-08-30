@@ -13,6 +13,7 @@ import com.example.service.TestHelper;
 import com.example.service.controller.request.study.StudyRegisterControllerRequest;
 import com.example.service.exception.StudyScheduleException;
 import com.example.service.exception.enums.common.CommonErrorCode;
+import com.example.service.service.study.request.StudyRegisterServiceRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,11 @@ class StudyRegisterServiceTest extends TestHelper {
     @DisplayName("스터디 가입 요청에 성공한다.")
     void successCreateStudyRegister() {
         Study study = studyHelper.createSimpleStudy(member);
-        StudyRegisterControllerRequest.CreateStudyRegister request = new StudyRegisterControllerRequest.CreateStudyRegister("목표 테스트", "목적 테스트", "주석 테스트");
+        StudyRegisterServiceRequest.CreateStudyRegister request = StudyRegisterServiceRequest.CreateStudyRegister.builder()
+                .goal("목표 테스트")
+                .objective("목적 테스트")
+                .comment("주석 테스트")
+                .build();
 
         service.createStudyRegister(study.getId(), request);
 
@@ -58,8 +63,11 @@ class StudyRegisterServiceTest extends TestHelper {
         StudyMember savedStudyMember = studyMemberRepository.save(new StudyMember(member, study));
         study.getStudyMemberList().add(savedStudyMember);
         Study savedStudy = studyRepository.save(study);
-
-        StudyRegisterControllerRequest.CreateStudyRegister request = new StudyRegisterControllerRequest.CreateStudyRegister("목표 테스트", "목적 테스트", "주석 테스트");
+        StudyRegisterServiceRequest.CreateStudyRegister request = StudyRegisterServiceRequest.CreateStudyRegister.builder()
+                .goal("목표 테스트")
+                .objective("목적 테스트")
+                .comment("주석 테스트")
+                .build();
 
         assertThatThrownBy(() -> service.createStudyRegister(savedStudy.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -69,7 +77,11 @@ class StudyRegisterServiceTest extends TestHelper {
     @Test
     @DisplayName("요청한 스터디가 존재하지 않을 경우, 예외가 발생한다.")
     void rejectWhenNotFoundStudy() {
-        StudyRegisterControllerRequest.CreateStudyRegister request = new StudyRegisterControllerRequest.CreateStudyRegister("목표 테스트", "목적 테스트", "주석 테스트");
+        StudyRegisterServiceRequest.CreateStudyRegister request = StudyRegisterServiceRequest.CreateStudyRegister.builder()
+                .goal("목표 테스트")
+                .objective("목적 테스트")
+                .comment("주석 테스트")
+                .build();
 
         assertThatThrownBy(() -> service.createStudyRegister(Long.MAX_VALUE, request))
                 .isInstanceOf(StudyScheduleException.class)
@@ -86,7 +98,11 @@ class StudyRegisterServiceTest extends TestHelper {
         StudyMember savedStudyMember = studyMemberRepository.save(new StudyMember(memberHelper.getUnknownMember(), savedStudy));
         study.getStudyMemberList().add(savedStudyMember);
 
-        StudyRegisterControllerRequest.CreateStudyRegister request = new StudyRegisterControllerRequest.CreateStudyRegister("목표 테스트", "목적 테스트", "주석 테스트");
+        StudyRegisterServiceRequest.CreateStudyRegister request = StudyRegisterServiceRequest.CreateStudyRegister.builder()
+                .goal("목표 테스트")
+                .objective("목적 테스트")
+                .comment("주석 테스트")
+                .build();
 
         assertThatThrownBy(() -> service.createStudyRegister(savedStudy.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
