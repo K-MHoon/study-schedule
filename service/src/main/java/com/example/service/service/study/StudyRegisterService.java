@@ -12,6 +12,7 @@ import com.example.service.controller.request.study.StudyRegisterControllerReque
 import com.example.service.exception.StudyScheduleException;
 import com.example.service.exception.enums.common.CommonErrorCode;
 import com.example.service.service.member.MemberCommonService;
+import com.example.service.service.study.request.StudyRegisterServiceRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class StudyRegisterService {
     private final StudyMemberRepository studyMemberRepository;
 
     @Transactional
-    public void createStudyRegister(Long studyId, StudyRegisterControllerRequest.CreateStudyRegister request) {
+    public void createStudyRegister(Long studyId, StudyRegisterServiceRequest.CreateStudyRegister request) {
         Member loggedInMember = memberCommonService.getLoggedInMember();
         checkAlreadyJoinedStudy(studyId, loggedInMember);
 

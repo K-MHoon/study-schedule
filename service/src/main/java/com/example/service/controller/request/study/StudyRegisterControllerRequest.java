@@ -1,5 +1,6 @@
 package com.example.service.controller.request.study;
 
+import com.example.service.service.study.request.StudyRegisterServiceRequest;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -23,6 +24,14 @@ public class StudyRegisterControllerRequest {
         private String objective;
 
         private String comment;
+
+        public StudyRegisterServiceRequest.CreateStudyRegister toServiceRequest() {
+            return StudyRegisterServiceRequest.CreateStudyRegister.builder()
+                    .goal(this.goal)
+                    .objective(this.objective)
+                    .comment(this.comment)
+                    .build();
+        }
     }
 
     @Getter

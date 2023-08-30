@@ -19,10 +19,10 @@ public class StudyRegisterController {
     @PostMapping("/{study_id}")
     @ResponseStatus(HttpStatus.OK)
     public void createStudyRegister(@PathVariable("study_id") Long studyId, @RequestBody @Validated StudyRegisterControllerRequest.CreateStudyRegister request){
-        studyService.createStudyRegister(studyId, request);
+        studyService.createStudyRegister(studyId, request.toServiceRequest());
     }
 
-    @PostMapping("/register/cancel")
+    @PostMapping("/cancel")
     @ResponseStatus(HttpStatus.OK)
     public void cancelStudyRegisterAll(@RequestBody @Validated StudyRegisterControllerRequest.CancelStudyRegister request) {
         studyService.cancelStudyRegisterAll(request);
