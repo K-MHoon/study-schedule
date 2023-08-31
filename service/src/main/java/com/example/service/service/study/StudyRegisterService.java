@@ -57,7 +57,7 @@ public class StudyRegisterService {
     }
 
     @Transactional
-    public int cancelStudyRegisterAll(StudyRegisterControllerRequest.CancelStudyRegister request) {
+    public int cancelStudyRegisterAll(StudyRegisterServiceRequest.CancelStudyRegister request) {
         Member member = memberCommonService.getLoggedInMember();
         if (isNotSameRequestAndDataCount(request, member)) {
             throw new IllegalArgumentException("해당 사용자가 삭제할 수 없는 스터디 가입 요청을 포함하고 있습니다. memberId = " + member.getMemberId());
@@ -65,7 +65,7 @@ public class StudyRegisterService {
         return studyRegisterRepository.updateAllCancelStudyRegister(RegisterState.CANCEL, request.getStudyRegisterList(), member.getId());
     }
 
-    private boolean isNotSameRequestAndDataCount(StudyRegisterControllerRequest.CancelStudyRegister request, Member member) {
+    private boolean isNotSameRequestAndDataCount(StudyRegisterServiceRequest.CancelStudyRegister request, Member member) {
         return studyRegisterRepository.countAllByIdInAndRequestMember_Id(request.getStudyRegisterList(), member.getId()) != request.getStudyRegisterList().size();
     }
 

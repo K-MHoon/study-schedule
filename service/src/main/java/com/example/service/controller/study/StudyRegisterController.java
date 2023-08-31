@@ -25,6 +25,6 @@ public class StudyRegisterController {
     @PostMapping("/cancel")
     @ResponseStatus(HttpStatus.OK)
     public void cancelStudyRegisterAll(@RequestBody @Validated StudyRegisterControllerRequest.CancelStudyRegister request) {
-        studyService.cancelStudyRegisterAll(request);
+        studyService.cancelStudyRegisterAll(request.toServiceRequest());
     }
 }

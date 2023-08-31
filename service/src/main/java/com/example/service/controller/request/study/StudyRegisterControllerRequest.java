@@ -43,5 +43,11 @@ public class StudyRegisterControllerRequest {
         @UniqueElements
         @NotNull
         private List<Long> studyRegisterList;
+
+        public StudyRegisterServiceRequest.CancelStudyRegister toServiceRequest() {
+            return StudyRegisterServiceRequest.CancelStudyRegister.builder()
+                    .studyRegisterList(this.studyRegisterList)
+                    .build();
+        }
     }
 }
