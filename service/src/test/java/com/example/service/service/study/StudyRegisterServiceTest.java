@@ -121,7 +121,9 @@ class StudyRegisterServiceTest extends TestHelper {
                 .map(studyRegister -> studyRegister.getId())
                 .collect(Collectors.toList());
 
-        StudyRegisterControllerRequest.CancelStudyRegister request = new StudyRegisterControllerRequest.CancelStudyRegister(studyRegisterIdList);
+        StudyRegisterServiceRequest.CancelStudyRegister request = StudyRegisterServiceRequest.CancelStudyRegister.builder()
+                .studyRegisterList(studyRegisterIdList)
+                .build();
 
         // when
         service.cancelStudyRegisterAll(request);
@@ -142,7 +144,9 @@ class StudyRegisterServiceTest extends TestHelper {
         Study savedStudy = studyHelper.createStudyWithStudyMember(member);
         StudyRegister studyRegister = studyHelper.createStudyRegister(savedStudy, memberHelper.getUnknownMember(), RegisterState.READ);
 
-        StudyRegisterControllerRequest.CancelStudyRegister request = new StudyRegisterControllerRequest.CancelStudyRegister(Arrays.asList(studyRegister.getId()));
+        StudyRegisterServiceRequest.CancelStudyRegister request = StudyRegisterServiceRequest.CancelStudyRegister.builder()
+                .studyRegisterList(Arrays.asList(studyRegister.getId()))
+                .build();
 
         // when & then
         assertThatThrownBy(() -> service.cancelStudyRegisterAll(request))
