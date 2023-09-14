@@ -11,16 +11,16 @@ public class MemberControllerRequest {
     @AllArgsConstructor
     public static class CreateMember {
 
-        @NotBlank(message = "회원 아이디는 빈 칸일 수 없습니다.")
+        @NotBlank(message = "{member.id.not-blank}")
         private String memberId;
 
-        @NotBlank(message = "비밀번호는 빈 칸일 수 없습니다.")
+        @NotBlank(message = "{member.password.not-blank}")
         private String password;
 
-        @NotBlank(message = "이름은 빈 칸일 수 없습니다.")
+        @NotBlank(message = "{member.name.not-blank}")
         private String name;
 
-        @NotNull(message = "해당 값은 널(Null)일 수 없습니다.")
+        @NotNull(message = "{member.age.not-null}")
         private Integer age;
 
         public MemberServiceRequest.CreateMember toServiceRequest() {
@@ -39,12 +39,12 @@ public class MemberControllerRequest {
     @ToString
     public static class UpdateMemberProfile {
 
-        @NotBlank(message = "이름은 빈 칸일 수 없습니다.")
+        @NotBlank(message = "{member.name.not-blank}")
         private String name;
 
         private String password;
 
-        @NotNull(message = "해당 값은 널(Null)일 수 없습니다.")
+        @NotNull(message = "{member.age.not-null}")
         private Integer age;
 
         public MemberServiceRequest.UpdateMemberProfile toServiceRequest() {
