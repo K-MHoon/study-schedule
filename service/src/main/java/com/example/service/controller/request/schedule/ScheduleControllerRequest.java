@@ -23,7 +23,7 @@ public class ScheduleControllerRequest {
     @AllArgsConstructor
     public static class UpdateTodaySchedule {
 
-        @NotNull
+        @NotNull(message = "{common.list.not-null}")
         @Valid
         private List<Element> clearScheduleTodoList;
 
@@ -41,11 +41,11 @@ public class ScheduleControllerRequest {
     @Getter
     public static class Element {
 
-        @NotNull
+        @NotNull(message = "{schedule.id.not-null}")
         private Long scheduleId;
 
-        @NotNull
-        @UniqueElements
+        @NotNull(message = "{common.list.not-null}")
+        @UniqueElements(message = "{common.list.unique-elements}")
         private List<Long> clearTodoIdList;
 
         public ScheduleServiceRequest.Element toServiceRequest() {
@@ -64,31 +64,31 @@ public class ScheduleControllerRequest {
 
         private Long scheduleId;
 
-        @NotBlank
+        @NotBlank(message = "{schedule.name.not-blank}")
         private String name;
 
-        @NotNull
+        @NotNull(message = "{study.id.not-null}")
         private Long studyId;
 
-        @NotNull
+        @NotNull(message = "{schedule.date.start.not-null}")
         private LocalDate startDate;
 
-        @NotNull
+        @NotNull(message = "{schedule.date.end.not-null}")
         private LocalDate endDate;
 
-        @NotNull
+        @NotNull(message = "{schedule.is-use.not-null}")
         private IsUse isUse;
 
-        @NotNull
+        @NotNull(message = "{schedule.type.not-null}")
         private ScheduleType scheduleType;
 
-        @NotNull
+        @NotNull(message = "{schedule.period.not-null}")
         private SchedulePeriod period;
 
         private Long customDay;
 
-        @NotNull
-        @UniqueElements
+        @NotNull(message = "{common.list.not-null}")
+        @UniqueElements(message = "{common.list.unique-elements}")
         private List<Long> todoList;
 
         public ScheduleServiceRequest.CreateSchedule toServiceRequest() {
@@ -113,8 +113,8 @@ public class ScheduleControllerRequest {
     @AllArgsConstructor
     public static class DeleteSchedule {
 
-        @UniqueElements
-        @NotNull
+        @NotNull(message = "{common.list.not-null}")
+        @UniqueElements(message = "{common.list.unique-elements}")
         private List<Long> scheduleList;
 
         public ScheduleServiceRequest.DeleteSchedule toServiceRequest() {
