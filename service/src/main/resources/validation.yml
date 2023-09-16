@@ -1,9 +1,34 @@
+common:
+  list:
+    not-null: 목록은 NULL 일 수 없습니다.
+    unique-elements: 중복된 ID를 가질 수 없습니다.
 member:
   id:
-    not-blank: ?? ???? ? ?? ? ????.
+    not-blank: 회원 아이디는 빈 칸일 수 없습니다.
   password:
-    not-blank: ????? ? ?? ? ????.
+    not-blank: 비밀번호는 빈 칸일 수 없습니다.
   name:
-    not-blank: ??? ? ?? ? ????.
+    not-blank: 비밀번호는 빈 칸일 수 없습니다.
   age:
-    not-null: ??? ? ?? ? ????.
+    not-null: 비밀번호는 NULL 일 수 없습니다.
+schedule:
+  id:
+    not-null: 스케줄 ID는 NULL 일 수 없습니다.
+  name:
+    not-blank: 스케줄 이름은 빈 칸일 수 없습니다.
+  date:
+    start:
+      not-null: 스케줄 시작일은 NULL 일 수 없습니다.
+    end:
+      not-null: 스케줄 종료일은 NULL 일 수 없습니다.
+  is-use:
+    not-null: 스케줄 사용 여부는 NULL 일 수 없습니다.
+  type:
+    not-null: 스케줄 타입은 NULL 일 수 없습니다.
+  period:
+    not-null: 스케줄 기간은 NULL 일 수 없습니다.
+study:
+  id:
+    not-null: 스터디 ID는 NULL 일 수 없습니다.
+
+
