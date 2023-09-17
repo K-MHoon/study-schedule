@@ -18,8 +18,8 @@ public final class StudyCodeControllerRequest {
     @AllArgsConstructor
     public static final class DeleteInviteCodeAll {
 
-        @NotNull
-        @UniqueElements
+        @NotNull(message = "{common.list.not-null}")
+        @UniqueElements(message = "{common.list.unique-elements}")
         private List<Long> inviteCodeList;
 
         public StudyCodeServiceRequest.DeleteInviteCodeAll toServiceRequest() {
