@@ -17,10 +17,10 @@ public class TodoControllerRequest {
     @ToString
     public static class CreateTodo {
 
-        @NotBlank
+        @NotBlank(message = "{todo.id.not-blank}")
         private String title;
 
-        @NotBlank
+        @NotBlank(message = "{todo.content.not-blank}")
         private String content;
 
         public TodoServiceRequest.CreateTodo toServiceRequest() {
@@ -37,8 +37,8 @@ public class TodoControllerRequest {
     @AllArgsConstructor
     public static class DeleteTodo {
 
-        @UniqueElements
-        @NotNull
+        @NotNull(message = "{common.list.not-null}")
+        @UniqueElements(message = "{common.list.unique-elements}")
         private List<Long> todoList;
 
         public TodoServiceRequest.DeleteTodo toServiceRequest() {

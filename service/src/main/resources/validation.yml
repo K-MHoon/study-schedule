@@ -30,5 +30,11 @@ schedule:
 study:
   id:
     not-null: 스터디 ID는 NULL 일 수 없습니다.
+todo:
+  id:
+    not-blank: 할 일 제목은 빈 칸일 수 없습니다.
+  content:
+    not-blank: 할 일 내용은 빈 칸일 수 없습니다.
+
 
 
