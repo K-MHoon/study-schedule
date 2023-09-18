@@ -1,7 +1,7 @@
 package com.example.service.controller.request.study;
 
 import com.example.service.service.study.request.StudyMyServiceRequest;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -14,13 +14,13 @@ public final class StudyMyControllerRequest {
     @AllArgsConstructor
     public static final class UpdateStudy {
 
-        @NotEmpty
+        @NotBlank(message = "{study.name.not-blank}")
         private String studyName;
 
-        @NotEmpty
+        @NotBlank(message = "{study.content.not-blank}")
         private String content;
 
-        @NotNull
+        @NotNull(message = "{study.full-count.not-null}")
         private Long fullCount;
 
         public StudyMyServiceRequest.UpdateStudy toServiceRequest() {
@@ -38,7 +38,7 @@ public final class StudyMyControllerRequest {
     @AllArgsConstructor
     public static final class UpdateStudyState {
 
-        @NotEmpty
+        @NotBlank(message = "{study.state.not-blank}")
         private String state;
 
         public StudyMyServiceRequest.UpdateStudyState toServiceRequest() {
