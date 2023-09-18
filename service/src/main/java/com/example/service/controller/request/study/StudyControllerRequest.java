@@ -2,7 +2,7 @@ package com.example.service.controller.request.study;
 
 import com.example.common.enums.IsUse;
 import com.example.service.service.study.request.StudyServiceRequest;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
@@ -18,21 +18,21 @@ public final class StudyControllerRequest {
     @AllArgsConstructor
     public static final class CreateStudy {
 
-        @NotEmpty
+        @NotBlank(message = "{study.name.not-blank}")
         private String studyName;
 
-        @NotEmpty
+        @NotBlank(message = "{study.content.not-blank}")
         private String content;
 
-        @NotNull
+        @NotNull(message = "{study.secret.not-null}")
         private Boolean secret;
 
         private String password;
 
-        @NotNull
+        @NotNull(message = "{study.full-count.not-null}")
         private Long fullCount;
 
-        @NotNull
+        @NotNull(message = "{study.is-use.not-null}")
         private IsUse isUse;
 
         public StudyServiceRequest.CreateStudy toServiceRequest() {
@@ -53,8 +53,8 @@ public final class StudyControllerRequest {
     @AllArgsConstructor
     public static final class DeleteStudyMemberAll {
 
-        @NotNull
-        @UniqueElements
+        @NotNull(message = "{common.list.not-null}")
+        @UniqueElements(message = "{common.list.unique-elements}")
         private List<Long> studyList;
 
         public StudyServiceRequest.DeleteStudyMemberAll toServiceRequest() {
@@ -71,7 +71,7 @@ public final class StudyControllerRequest {
 
         private Boolean secret;
 
-        @NotEmpty
+        @NotBlank(message = "{study.password.not-blank}")
         private String password;
 
         public StudyServiceRequest.ChangeSecret toServiceRequest() {

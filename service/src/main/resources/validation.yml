@@ -30,6 +30,18 @@ schedule:
 study:
   id:
     not-null: 스터디 ID는 NULL 일 수 없습니다.
+  name:
+    not-blank: 스터디 이름은 빈 칸일 수 없습니다.
+  content:
+    not-blank: 스터디 내용은 빈 칸일 수 없습니다.
+  secret:
+    not-null: 비밀 스터디 여부는 NULL 일 수 없습니다.
+  full-count:
+    not-null: 스터디 최대 회원 수 값은 NULL 일 수 없습니다.
+  is-use:
+    not-null: 스터디 사용 여부는 NULL 일 수 없습니다.
+  password:
+    not-blank: 스터디 비밀번호는 빈 칸일 수 없습니다.
 todo:
   id:
     not-blank: 할 일 제목은 빈 칸일 수 없습니다.
