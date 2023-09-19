@@ -44,6 +44,11 @@ study:
     not-blank: 스터디 비밀번호는 빈 칸일 수 없습니다.
   state:
     not-blank: 스터디 가입상태는 빈 칸일 수 없습니다.
+register:
+  goal:
+    not-blank: 가입 목적은 빈 칸일 수 없습니다.
+  objective:
+    not-blank: 가입 목표는 빈 칸일 수 없습니다.
 todo:
   id:
     not-blank: 할 일 제목은 빈 칸일 수 없습니다.
