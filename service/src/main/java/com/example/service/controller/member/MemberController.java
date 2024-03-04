@@ -70,29 +70,6 @@ public class MemberController {
         memberService.updateMemberProfile(request.toServiceRequest());
     }
 
-    @PostMapping("/token/check")
-    public ResponseEntity<TokenInfo> tokenCheck(HttpServletRequest request) {
-        log.info("[tokenCheck] = request");
-
-        Cookie[] cookies = request.getCookies();
-
-        if(cookies == null || cookies.length < 2) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
-        MemberService.ClientAuthInfo response = memberService.tokenCheck(cookies);
-
-        if(!response.isAuth()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
-        if(!response.isRefresh()) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(response.getTokenInfo(), HttpStatus.OK);
-    }
-
     @DeleteMapping("/member")
     @ResponseStatus(HttpStatus.OK)
     public void deleteMember() {
