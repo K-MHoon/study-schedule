@@ -1,13 +1,15 @@
 package com.example.common.model.dto.security;
 
+
 import lombok.*;
 
-@Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
+@Getter
 @ToString
-public final class TokenInfo {
+public final class JwtToken {
 
-    private JwtToken accessToken;
-    private JwtToken refreshToken;
+    private String token;
+    private long expiredTime;
+
 }
