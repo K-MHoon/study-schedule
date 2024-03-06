@@ -1,5 +1,6 @@
 package com.example.service.security.handler;
 
+import com.example.common.model.dto.security.JwtToken;
 import com.example.common.model.dto.security.TokenInfo;
 import com.example.service.security.provider.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        JwtToken accessToken = jwtTokenProvider.generateAccessToken(authentication);
+        JwtToken refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+        TokenInfo tokenInfo = new TokenInfo(accessToken, refreshToken);
+
         String tokenString = objectMapper.writeValueAsString(tokenInfo);
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
