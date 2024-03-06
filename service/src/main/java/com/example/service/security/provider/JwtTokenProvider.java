@@ -1,5 +1,6 @@
 package com.example.service.security.provider;
 
+import com.example.common.model.dto.security.JwtToken;
 import com.example.common.model.dto.security.TokenInfo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -38,22 +39,27 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfo generateToken(Authentication authentication) {
-        long currentTime = new Date().getTime();
-
-        String accessToken = createAccessToken(authentication, currentTime);
-        Token refreshToken = createRefreshToken(currentTime);
-
-        /**
-         * access_token과 refresh_token의 실제 유효기간은 분리 되어 있지만,
-         * 클라이언트 쿠키는 refresh_token의 만료 시간으로 공통되게 생성할 수 있도록 한다.
-         */
-        return new TokenInfo("Bearer", accessToken, refreshToken.getToken(), refreshToken.getExpiredTime());
+    public JwtToken generateAccessToken(Authentication authentication) {
+        return createToken(authentication, accessTokenExpired);
     }
 
-    public Authentication getAuthentication(String accessToken) {
+    public JwtToken generateAccessToken(String token) {
+        Authentication authentication = getAuthentication(token);
+        return createToken(authentication, accessTokenExpired);
+    }
 
-        Claims claims = parseClaims(accessToken);
+    public JwtToken generateRefreshToken(Authentication authentication) {
+        return createToken(authentication, refreshTokenExpired);
+    }
+
+    public JwtToken generateRefreshToken(String token) {
+        Authentication authentication = getAuthentication(token);
+        return createToken(authentication, refreshTokenExpired);
+    }
+
+    public Authentication getAuthentication(String token) {
+
+        Claims claims = parseClaims(token);
 
         if(claims.get("auth") == null) {
             throw new IllegalArgumentException("토큰에 권한 정보가 없습니다.");
@@ -67,10 +73,10 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    private Claims parseClaims(String accessToken) {
+    public Claims parseClaims(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().
-                    parseClaimsJws(accessToken)
+                    parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
@@ -99,37 +105,17 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
     }
 
-    private Token createRefreshToken(long currentTime) {
-        Date expiredDate = new Date(currentTime + refreshTokenExpired);
+    private JwtToken createToken(Authentication authentication, long expiredTime) {
+        long currentTime = new Date().getTime();
+        Date expiredDate = new Date(currentTime + expiredTime);
 
         String token = Jwts.builder()
-                .setExpiration(expiredDate)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        return new Token(token, expiredDate.getTime());
-    }
-
-    private String createAccessToken(Authentication authentication, long currentTime) {
-        Date expiredDate = new Date(currentTime + accessTokenExpired);
-
-        return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", getAuthorities(authentication))
                 .setExpiration(expiredDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-    }
 
-    @Getter
-    private static class Token {
-
-        private String token;
-        private long expiredTime;
-
-        public Token(String token, long expiredTime) {
-            this.token = token;
-            this.expiredTime = expiredTime;
-        }
+        return new JwtToken(token, expiredDate.getTime());
     }
 }
